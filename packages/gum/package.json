@@ -1,24 +1,30 @@
 {
   "name": "gum",
   "version": "0.0.0",
-  "description": "> TODO: description",
+  "description": ":rocket: Easier and faster unit testing toolkit for micro.",
+  "keywords": [
+    "micro",
+    "service",
+    "microservice",
+    "serverless",
+    "API"
+  ],
   "author": "Junyoung Choi <fluke8259@gmail.com>",
-  "homepage": "https://github.com/BoostIO/gum#readme",
+  "homepage": "https://github.com/BoostIO/gum/blob/master/packages/gum/README.md",
   "license": "MIT",
-  "main": "src/lib/index.ts",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
+  "main": "dist",
   "files": [
-    "lib"
+    "dist/**/*",
+    "!dist/specs/**/*"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BoostIO/gum.git"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/BoostIO/gum/issues"
