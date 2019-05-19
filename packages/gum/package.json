@@ -1,0 +1,42 @@
+{
+  "name": "gum",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Junyoung Choi <fluke8259@gmail.com>",
+  "homepage": "https://github.com/BoostIO/gum#readme",
+  "license": "MIT",
+  "main": "src/lib/index.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BoostIO/gum.git"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "bugs": {
+    "url": "https://github.com/BoostIO/gum/issues"
+  },
+  "devDependencies": {
+    "@types/got": "^9.4.4",
+    "@types/jest": "^24.0.13",
+    "@types/node": "^12.0.2",
+    "@types/test-listen": "^1.1.0",
+    "got": "^9.6.0",
+    "jest": "^24.8.0",
+    "micro": "^9.3.5-canary.1",
+    "test-listen": "^1.1.0",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
+  },
+  "peerDependencies": {
+    "micro": "^9.3.5-canary.1"
+  }
+}

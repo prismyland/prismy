@@ -1,0 +1,15 @@
+{
+  "name": "gum",
+  "description": "",
+  "scripts": {
+    "format": "prettier --write packages/**/*.ts",
+    "lint:prettier": "prettier --check packages/**/*.ts",
+    "test": "lerna run test"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "lerna": "^3.14.1",
+    "prettier": "^1.17.1"
+  }
+}
