@@ -1,9 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http'
 
-export type Selector<P> = (
-  req: IncomingMessage,
-  res: ServerResponse
-) => P | Promise<P>
+export type Selector<P> = (req: IncomingMessage, res: ServerResponse) => P
 
 const selectorMap = new Map<any, Selector<any>[]>()
 
@@ -21,7 +18,7 @@ export function getSelectors(target: any): Selector<any>[] {
   return selectorMap.get(target) || []
 }
 
-export function createSelectDecorators<P>(selector: Selector<P>) {
+export function createInjectDecorators<P>(selector: Selector<P>) {
   return function selectDecorator(
     target: any,
     propertyName: string,
