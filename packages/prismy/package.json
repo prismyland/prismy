@@ -39,10 +39,17 @@
     "micro": "^9.3.5-canary.1",
     "test-listen": "^1.1.0",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.16.0",
     "typescript": "^3.4.5"
   },
   "peerDependencies": {
     "micro": "^9.3.5-canary.1"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ]
   }
 }
