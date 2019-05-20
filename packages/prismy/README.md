@@ -1,16 +1,26 @@
+<img  width='240' src='../../resources/logo.svg' alt='Prismy'>
+
 # `prismy`
 
 :rocket: Easier and faster unit testing toolkit for micro.
 
 ## Usage
 
-Implementation
+### Installation
+
+```sh
+npm i micro prismy
+```
+
+### Implementation
+
+1. Create `index.ts`
 
 ```ts
 import prismy from 'prismy'
 
 export class MyHandler {
-  async execute(@selectJsonBody() body: any) {
+  async execute(@injectJsonBody() body: any) {
     await doSomethingWithBody(body)
     return {
       message: 'Done!'
@@ -18,10 +28,21 @@ export class MyHandler {
   }
 }
 
+// prismy will returns request handler for micro.
 export default prismy(MyHandler)
 ```
 
-Unit test
+2. Compile `index.ts` to `index.js`
+
+3. Start `micro`
+
+```sh
+micro
+```
+
+### Unit testing
+
+You don't have to mock request to test.
 
 ```ts
 import { MyHandler } from './MyHandler'
@@ -41,6 +62,8 @@ describe('MyHandler', () => {
   })
 })
 ```
+
+###
 
 ## License
 
