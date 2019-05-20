@@ -1,5 +1,5 @@
 {
-  "name": "gum",
+  "name": "prismy",
   "description": ":rocket: Easier and faster unit testing toolkit for micro.",
   "scripts": {
     "lerna": "lerna",
@@ -9,7 +9,7 @@
     "build": "lerna run build"
   },
   "author": "Junyoung Choi <fluke8259@gmail.com>",
-  "homepage": "https://github.com/BoostIO/gum",
+  "homepage": "https://github.com/BoostIO/prismy",
   "license": "MIT",
   "devDependencies": {
     "lerna": "^3.14.1",

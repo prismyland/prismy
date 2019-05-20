@@ -2,19 +2,19 @@ import http from 'http'
 import micro from 'micro'
 import listen from 'test-listen'
 import got from 'got'
-import { gum } from '../'
+import { prismy } from '../'
 import { createSelectDecorators } from '../createSelectDecorators'
 import { selectTextBody } from '../decorators/selectTextBody'
 import { testServer } from './testServer'
 
-describe('gum', () => {
+describe('prismy', () => {
   it('returns micro handler', async () => {
     class MyHandler {
       execute() {
         return 'Hello, World'
       }
     }
-    const server = new http.Server(micro(gum(MyHandler)))
+    const server = new http.Server(micro(prismy(MyHandler)))
     const url = await listen(server)
 
     try {

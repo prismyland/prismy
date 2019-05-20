@@ -1,5 +1,5 @@
 {
-  "name": "gum",
+  "name": "prismy",
   "version": "0.1.0",
   "description": ":rocket: Easier and faster unit testing toolkit for micro.",
   "keywords": [
@@ -10,7 +10,7 @@
     "API"
   ],
   "author": "Junyoung Choi <fluke8259@gmail.com>",
-  "homepage": "https://github.com/BoostIO/gum/blob/master/packages/gum/README.md",
+  "homepage": "https://github.com/BoostIO/prismy/blob/master/packages/prismy/README.md",
   "license": "MIT",
   "main": "dist",
   "files": [
@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BoostIO/gum.git"
+    "url": "git+https://github.com/BoostIO/prismy.git"
   },
   "scripts": {
     "test": "jest",
@@ -27,7 +27,7 @@
     "prepublishOnly": "npm run build"
   },
   "bugs": {
-    "url": "https://github.com/BoostIO/gum/issues"
+    "url": "https://github.com/BoostIO/prismy/issues"
   },
   "devDependencies": {
     "@types/got": "^9.4.4",

@@ -1,10 +1,10 @@
-# gum
+# prismy
 
 :rocket: Easier and faster unit testing toolkit for micro.
 
 ## Packages
 
-- [`gum`](./packages/gum)
+- [`prismy`](./packages/prismy)
 
 ## License
 

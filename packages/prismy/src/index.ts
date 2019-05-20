@@ -7,7 +7,7 @@ export interface HandlerClass {
   new (): { execute: (...args: any[]) => any }
 }
 
-export function gum(handlerClass: HandlerClass) {
+export function prismy(handlerClass: HandlerClass) {
   return async function handler(req: IncomingMessage, res: ServerResponse) {
     const selectors = getSelectors(handlerClass)
     const args = await Promise.all(

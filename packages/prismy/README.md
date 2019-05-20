@@ -1,4 +1,4 @@
-# `gum`
+# `prismy`
 
 :rocket: Easier and faster unit testing toolkit for micro.
 
@@ -7,7 +7,7 @@
 Implementation
 
 ```ts
-import gum from 'gum'
+import prismy from 'prismy'
 
 export class MyHandler {
   async execute(@selectJsonBody() body: any) {
@@ -18,7 +18,7 @@ export class MyHandler {
   }
 }
 
-export default gum(MyHandler)
+export default prismy(MyHandler)
 ```
 
 Unit test
