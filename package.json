@@ -3,6 +3,7 @@
   "description": ":rocket: Easier and faster unit testing toolkit for micro.",
   "scripts": {
     "lerna": "lerna",
+    "postinstall": "lerna bootstrap",
     "format": "prettier --write packages/**/*.ts",
     "lint:prettier": "prettier --check packages/**/*.ts",
     "test": "lerna run test",
