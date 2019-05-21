@@ -13,6 +13,7 @@
 - [`prismy-validator`]
 - [`prismy-auth`]
 - [`prismy-auth-github`]
+- [`prismy-di`]
 
 ## License
 
