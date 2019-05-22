@@ -1,6 +1,6 @@
 {
   "name": "prismy",
-  "description": ":rocket: Easier and faster unit testing toolkit for micro.",
+  "description": ":rocket: Simple and fast type safe server library based on micro for now.sh v2.",
   "scripts": {
     "lerna": "lerna",
     "postinstall": "lerna bootstrap",

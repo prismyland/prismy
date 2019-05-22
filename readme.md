@@ -1,6 +1,6 @@
 <img  width='240' src='./resources/logo.svg' alt='Prismy'>
 
-:rocket: Easier and faster unit testing toolkit for micro.
+:rocket: Simple and fast type safe server library based on micro for now.sh v2.
 
 ## Packages
 

@@ -2,7 +2,7 @@
 
 # `prismy`
 
-:rocket: Easier and faster unit testing toolkit for micro.
+:rocket: Simple and fast type safe server library based on micro for now.sh v2.
 
 ## Usage
 
@@ -17,7 +17,7 @@ npm i micro prismy
 1. Create `index.ts`
 
 ```ts
-import prismy from 'prismy'
+import { prismy, injectJsonBody } from 'prismy'
 
 export class MyHandler {
   async execute(@injectJsonBody() body: any) {
@@ -37,7 +37,7 @@ export default prismy(MyHandler)
 3. Start `micro`
 
 ```sh
-micro
+micro index.js
 ```
 
 ### Unit testing
@@ -62,8 +62,6 @@ describe('MyHandler', () => {
   })
 })
 ```
-
-###
 
 ## License
 
