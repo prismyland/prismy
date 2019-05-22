@@ -1,0 +1,26 @@
+{
+  "name": "basic-server",
+  "scripts": {
+    "build": "tsc",
+    "start": "micro dist/index.js",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.13",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.4.5"
+  },
+  "dependencies": {
+    "micro": "^9.3.4",
+    "prismy": "^0.2.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ]
+  }
+}
