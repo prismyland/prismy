@@ -23,8 +23,10 @@
     "url": "git+https://github.com/BoostIO/prismy.git"
   },
   "scripts": {
-    "test": "jest",
     "build": "rimraf dist && tsc",
+    "test": "jest",
+    "test-ci": "jest --coverage",
+    "codecov": "codecov -f coverage/*.json",
     "prepublishOnly": "npm run build"
   },
   "bugs": {

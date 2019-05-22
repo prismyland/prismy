@@ -3,11 +3,13 @@
   "description": ":rainbow: Simple and fast type safe server library based on micro for now.sh v2.",
   "scripts": {
     "lerna": "lerna",
-    "postinstall": "lerna bootstrap",
+    "build": "lerna run build",
     "format": "prettier --write packages/**/*.ts",
-    "lint:prettier": "prettier --check packages/**/*.ts",
+    "lint": "prettier --check packages/**/*.ts",
     "test": "lerna run test",
-    "build": "lerna run build"
+    "test-ci": "lerna run test-ci",
+    "codecov": "lerna run codecov",
+    "postinstall": "lerna bootstrap"
   },
   "author": "Junyoung Choi <fluke8259@gmail.com>",
   "homepage": "https://github.com/BoostIO/prismy",
