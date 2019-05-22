@@ -24,7 +24,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "tsc",
+    "build": "rimraf dist && tsc",
     "prepublishOnly": "npm run build"
   },
   "bugs": {
@@ -38,6 +38,7 @@
     "got": "^9.6.0",
     "jest": "^24.8.0",
     "micro": "^9.3.5-canary.1",
+    "rimraf": "^2.6.3",
     "test-listen": "^1.1.0",
     "ts-jest": "^24.0.2",
     "typescript": "^3.4.5"

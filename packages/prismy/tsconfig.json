@@ -1,31 +1,29 @@
 {
   "include": ["src/**/*.ts"],
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
     "target": "es2018",
-    "downlevelIteration": true,
-    "importHelpers": true,
-    "sourceMap": true,
+    "lib": ["es2018"],
     "module": "commonjs",
     "moduleResolution": "node",
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
     "jsx": "react",
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "noEmitOnError": true,
+
     "allowJs": false,
     "checkJs": false,
-    "outDir": "dist",
-    "lib": ["es2018"],
+    "skipLibCheck": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true,
-    "noImplicitAny": true,
     "noUnusedParameters": false,
     "noImplicitReturns": true,
-    "noImplicitThis": true,
     "noUnusedLocals": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "esModuleInterop": true,
-    "emitDecoratorMetadata": true,
-    "declaration": true,
-    "declarationMap": true
+    "noFallthroughCasesInSwitch": true,
+
+    "suppressImplicitAnyIndexErrors": true
   }
 }
