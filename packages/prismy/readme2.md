@@ -9,8 +9,21 @@
 ### Installation
 
 ```sh
-npm i micro prismy
+npm i micro prismy tslib
 ```
+
+> #### Why do I need `tslib`?
+>
+> It is needed to minimize your app bundle size.
+>
+> Typescript compiler emits helpers by default to enable fancy ecma syntax which
+> your runtime env does not support.
+> But the problem is that it will emit duplicated helper code to every module.
+> To prevent it, Typescript provides `--importHelpers` option which let
+> modules import those helpers from `tslib`.
+> So every module of prismy enables the option.
+>
+> To know more, see https://github.com/microsoft/tslib
 
 ### Implementation
 
