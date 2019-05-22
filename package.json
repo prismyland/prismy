@@ -9,7 +9,8 @@
     "test": "lerna run test",
     "test-ci": "lerna run test-ci",
     "codecov": "lerna run codecov",
-    "postinstall": "lerna bootstrap"
+    "postinstall": "lerna bootstrap",
+    "prepublishOnly": "npm run lint"
   },
   "author": "Junyoung Choi <fluke8259@gmail.com>",
   "homepage": "https://github.com/BoostIO/prismy",
