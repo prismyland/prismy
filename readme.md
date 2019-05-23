@@ -4,7 +4,8 @@
 
 ## Packages
 
-- [`prismy`](./packages/prismy) Core library.
+- [`prismy`](./packages/prismy) :rainbow: Core library.
+- [`prismy-test-server`](./packages/prismy-test-server) :telescope: E2E test tool for prismy.
 
 ### Development plan
 
