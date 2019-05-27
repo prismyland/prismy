@@ -8,9 +8,9 @@ import {
 describe('createInjectDecorators', () => {
   it('sets a selector.', () => {
     const selectUrl: Selector<string | undefined> = req => req.url
-    const injectUrl = createInjectDecorators(selectUrl)
+    const StringUrl = createInjectDecorators(selectUrl)
     class MyHandler {
-      execute(@injectUrl url: string) {
+      execute(@StringUrl url: string) {
         return {
           url
         }
@@ -23,9 +23,9 @@ describe('createInjectDecorators', () => {
 
   it('throws when inject decorator is applied to other methods.', () => {
     expect(() => {
-      const injectUrl = createInjectDecorators(req => req.url)
+      const StringUrl = createInjectDecorators(req => req.url)
       class MyHandler {
-        test(@injectUrl url: string) {
+        test(@StringUrl url: string) {
           return {
             url
           }

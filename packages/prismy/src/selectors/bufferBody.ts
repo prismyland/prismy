@@ -14,6 +14,6 @@ export function selectBufferBody(
   }
 }
 
-export function injectBufferBody(options?: SelectBufferBodyOptions) {
+export function BufferBody(options?: SelectBufferBodyOptions) {
   return createInjectDecorators(selectBufferBody(options))
 }

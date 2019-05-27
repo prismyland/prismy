@@ -30,10 +30,10 @@ npm i micro prismy tslib
 1. Create `index.ts`
 
 ```ts
-import { prismy, injectJsonBody } from 'prismy'
+import { prismy, JsonBody } from 'prismy'
 
 export class MyHandler {
-  async execute(@injectJsonBody() body: any) {
+  async execute(@JsonBody() body: any) {
     await doSomethingWithBody(body)
     return {
       message: 'Done!'

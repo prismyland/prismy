@@ -1,11 +1,11 @@
-import { injectJsonBody } from '../../selectors'
+import { JsonBody } from '../../selectors'
 import { testServer } from '../testServer'
 import got from 'got'
 
-describe('injectJsonBody', () => {
+describe('JsonBody', () => {
   it('injects parsed json body', async () => {
     class MyHandler {
-      execute(@injectJsonBody() body: any) {
+      execute(@JsonBody() body: any) {
         return body
       }
     }

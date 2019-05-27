@@ -1,12 +1,12 @@
 import got from 'got'
 import { testServer } from '../testServer'
-import { injectTextBody } from '../../'
+import { TextBody } from '../../'
 
-describe('injectTextBody', () => {
+describe('TextBody', () => {
   it('injects parsed text body', async () => {
     let parsedBody: string
     class MyHandler {
-      execute(@injectTextBody() body: string) {
+      execute(@TextBody() body: string) {
         parsedBody = body
         return body
       }

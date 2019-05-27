@@ -6,6 +6,6 @@ export function selectMethod(): Selector<string | undefined> {
   }
 }
 
-export function injectMethod() {
+export function Method() {
   return createInjectDecorators(selectMethod())
 }

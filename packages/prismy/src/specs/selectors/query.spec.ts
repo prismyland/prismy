@@ -1,11 +1,11 @@
-import { injectQuery } from '../../selectors'
+import { Query } from '../../selectors'
 import { testServer } from '../testServer'
 import got from 'got'
 
-describe('injectQuery', () => {
+describe('Query', () => {
   it('injects query', async () => {
     class MyHandler {
-      execute(@injectQuery() query: any) {
+      execute(@Query() query: any) {
         return query
       }
     }

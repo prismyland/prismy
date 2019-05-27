@@ -2,7 +2,7 @@ import http from 'http'
 import micro from 'micro'
 import listen from 'test-listen'
 import got from 'got'
-import { prismy, createInjectDecorators, injectTextBody, SendResult } from '..'
+import { prismy, createInjectDecorators, TextBody, SendResult } from '..'
 import { testServer } from './testServer'
 
 console.error = jest.fn()
@@ -31,9 +31,9 @@ describe('prismy', () => {
   })
 
   it('injects via a selector', async () => {
-    const injectUrl = createInjectDecorators(req => req.url)
+    const StringUrl = createInjectDecorators(req => req.url)
     class MyHandler {
-      execute(@injectUrl url: string) {
+      execute(@StringUrl url: string) {
         return url
       }
     }
@@ -48,9 +48,9 @@ describe('prismy', () => {
   })
 
   it('injects via multiple selectors', async () => {
-    const injectUrl = createInjectDecorators(req => req.url)
+    const StringUrl = createInjectDecorators(req => req.url)
     class MyHandler {
-      execute(@injectUrl url: string, @injectTextBody() textBody: string) {
+      execute(@StringUrl url: string, @TextBody() textBody: string) {
         return {
           url,
           textBody
@@ -73,9 +73,9 @@ describe('prismy', () => {
   })
 
   it('sets statusCode via SendResult', async () => {
-    const injectUrl = createInjectDecorators(req => req.url)
+    const StringUrl = createInjectDecorators(req => req.url)
     class MyHandler {
-      execute(@injectUrl url: string) {
+      execute(@StringUrl url: string) {
         return new SendResult(201, url)
       }
     }

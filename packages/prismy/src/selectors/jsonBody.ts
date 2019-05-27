@@ -14,6 +14,6 @@ export function selectJsonBody(
   }
 }
 
-export function injectJsonBody(options?: SelectJsonBodyOptions) {
+export function JsonBody(options?: SelectJsonBodyOptions) {
   return createInjectDecorators(selectJsonBody(options))
 }
