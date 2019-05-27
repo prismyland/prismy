@@ -1,4 +1,4 @@
-<img  width='240' src='./resources/logo.svg' alt='prismy'>
+<img  width='240' src='https://github.com/BoostIO/prismy/blob/master/resources/logo.svg' alt='prismy'>
 
 # `prismy`
 
