@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "micro": "^9.3.4",
-    "prismy": "^0.2.0",
+    "prismy": "^0.3.0",
     "tslib": "^1.9.3"
   },
   "jest": {

@@ -1,7 +1,7 @@
-import { prismy, injectQuery } from 'prismy'
+import { prismy, Query } from 'prismy'
 
 export class MyHandler {
-  async execute(@injectQuery() query: any) {
+  async execute(@Query() query: any) {
     return query
   }
 }
