@@ -24,8 +24,8 @@
   },
   "scripts": {
     "build": "rimraf dist && tsc",
-    "lint": "prettier --check packages/**/*.ts",
-    "format": "prettier --write packages/**/*.ts",
+    "lint": "prettier --check src/**/*.ts examples/*/src/**/*.ts",
+    "format": "prettier --write src/**/*.ts examples/*/src/**/*.ts",
     "test": "jest",
     "test-ci": "jest --coverage",
     "codecov": "codecov -f coverage/*.json",
