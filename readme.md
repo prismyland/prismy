@@ -1,4 +1,4 @@
-<img  width='240' src='../../resources/logo.svg' alt='Prismy'>
+<img  width='240' src='./resources/logo.svg' alt='prismy'>
 
 # `prismy`
 
