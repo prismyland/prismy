@@ -1,6 +1,6 @@
-import { JsonBody } from '../../selectors'
-import { testServer } from '../testServer'
 import got from 'got'
+import { JsonBody } from '../..'
+import { testServer } from '../testServer'
 
 describe('JsonBody', () => {
   it('injects parsed json body', async () => {

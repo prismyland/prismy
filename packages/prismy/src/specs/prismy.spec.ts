@@ -1,8 +1,5 @@
-import http from 'http'
-import micro from 'micro'
-import listen from 'test-listen'
 import got from 'got'
-import { prismy, createInjectDecorators, TextBody, SendResult } from '..'
+import { createInjectDecorators, TextBody, SendResult } from '..'
 import { testServer } from './testServer'
 
 console.error = jest.fn()
@@ -14,20 +11,14 @@ describe('prismy', () => {
         return 'Hello, World'
       }
     }
-    const server = new http.Server(micro(prismy(MyHandler)))
-    const url = await listen(server)
 
-    try {
+    await testServer(MyHandler, async url => {
       const response = await got(url)
       expect(response).toMatchObject({
         statusCode: 200,
         body: 'Hello, World'
       })
-    } catch (error) {
-      throw error
-    } finally {
-      server.close()
-    }
+    })
   })
 
   it('injects via a selector', async () => {

@@ -1,7 +1,7 @@
+import { ServerResponse, IncomingMessage } from 'http'
 import got from 'got'
 import { createInjectDecorators, BaseHandler } from '..'
 import { testServer } from './testServer'
-import { ServerResponse, IncomingMessage } from 'http'
 
 console.error = jest.fn()
 

@@ -1,6 +1,6 @@
 import got from 'got'
+import { TextBody } from '../..'
 import { testServer } from '../testServer'
-import { TextBody } from '../../'
 
 describe('TextBody', () => {
   it('injects parsed text body', async () => {

@@ -1,6 +1,6 @@
-import { Query } from '../../selectors'
-import { testServer } from '../testServer'
 import got from 'got'
+import { Query } from '../..'
+import { testServer } from '../testServer'
 
 describe('Query', () => {
   it('injects query', async () => {

@@ -1,6 +1,6 @@
-import { Method } from '../../selectors'
-import { testServer } from '../testServer'
 import got from 'got'
+import { Method } from '../..'
+import { testServer } from '../testServer'
 
 describe('Method', () => {
   it('injects method', async () => {

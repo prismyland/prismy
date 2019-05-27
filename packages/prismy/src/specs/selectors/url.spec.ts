@@ -1,7 +1,7 @@
-import got from 'got'
 import { UrlObject } from 'url'
+import got from 'got'
+import { Url } from '../..'
 import { testServer } from '../testServer'
-import { Url } from '../../'
 
 describe('Url', () => {
   it('injects url', async () => {

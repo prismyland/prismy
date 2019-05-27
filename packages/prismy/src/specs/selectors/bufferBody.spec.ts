@@ -1,6 +1,6 @@
 import got from 'got'
+import { BufferBody } from '../..'
 import { testServer } from '../testServer'
-import { BufferBody } from '../../'
 
 describe('BufferBody', () => {
   it('injects parsed buffer body', async () => {

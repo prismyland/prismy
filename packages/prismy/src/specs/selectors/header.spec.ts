@@ -1,6 +1,6 @@
+import got from 'got'
 import { Header } from '../../selectors'
 import { testServer } from '../testServer'
-import got from 'got'
 
 describe('Header', () => {
   it('injects a header value', async () => {

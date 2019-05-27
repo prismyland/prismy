@@ -1,7 +1,7 @@
 import http from 'http'
 import micro from 'micro'
 import listen from 'test-listen'
-import { prismy, HandlerClass } from '../'
+import { prismy, HandlerClass } from '..'
 
 export async function testServer(
   handlerClass: HandlerClass,
@@ -13,6 +13,7 @@ export async function testServer(
   try {
     await testCallback(url)
   } catch (error) {
+    /* istanbul ignore next */
     throw error
   } finally {
     server.close()
