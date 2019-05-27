@@ -1,6 +1,6 @@
 {
   "name": "prismy-test-server",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "e2e test tool for prismy",
   "keywords": [
     "micro",
