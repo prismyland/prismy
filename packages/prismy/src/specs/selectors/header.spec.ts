@@ -1,11 +1,11 @@
-import { injectHeader } from '../../selectors'
+import { Header } from '../../selectors'
 import { testServer } from '../testServer'
 import got from 'got'
 
-describe('injectHeader', () => {
+describe('Header', () => {
   it('injects a header value', async () => {
     class MyHandler {
-      execute(@injectHeader('x-test') xTest: string) {
+      execute(@Header('x-test') xTest: string) {
         return xTest
       }
     }

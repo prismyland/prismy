@@ -14,6 +14,6 @@ export function selectTextBody(
   }
 }
 
-export function injectTextBody(options?: SelectTextBodyOptions) {
+export function TextBody(options?: SelectTextBodyOptions) {
   return createInjectDecorators(selectTextBody(options))
 }

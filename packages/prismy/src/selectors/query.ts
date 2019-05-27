@@ -19,10 +19,6 @@ export function selectQuery(
   }
 }
 
-export function injectQuery(
-  sep?: string,
-  eq?: string,
-  options?: SelectQueryOptions
-) {
+export function Query(sep?: string, eq?: string, options?: SelectQueryOptions) {
   return createInjectDecorators(selectQuery(sep, eq, options))
 }

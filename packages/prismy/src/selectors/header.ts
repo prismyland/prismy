@@ -8,6 +8,6 @@ export function selectHeader(
   }
 }
 
-export function injectHeader(key: string) {
+export function Header(key: string) {
   return createInjectDecorators(selectHeader(key))
 }

@@ -1,11 +1,11 @@
-import { injectMethod } from '../../selectors'
+import { Method } from '../../selectors'
 import { testServer } from '../testServer'
 import got from 'got'
 
-describe('injectMethod', () => {
+describe('Method', () => {
   it('injects method', async () => {
     class MyHandler {
-      execute(@injectMethod() method: string) {
+      execute(@Method() method: string) {
         return method
       }
     }

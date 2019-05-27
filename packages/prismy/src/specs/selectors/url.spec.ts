@@ -1,12 +1,12 @@
 import got from 'got'
 import { UrlObject } from 'url'
 import { testServer } from '../testServer'
-import { injectUrl } from '../../'
+import { Url } from '../../'
 
-describe('injectUrl', () => {
+describe('Url', () => {
   it('injects url', async () => {
     class MyHandler {
-      execute(@injectUrl() url: UrlObject) {
+      execute(@Url() url: UrlObject) {
         return url
       }
     }

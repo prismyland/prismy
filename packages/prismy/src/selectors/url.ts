@@ -20,10 +20,7 @@ export function selectUrl(
   }
 }
 
-export function injectUrl(
-  parseQueryString?: boolean,
-  slashesDenoteHost?: boolean
-) {
+export function Url(parseQueryString?: boolean, slashesDenoteHost?: boolean) {
   return createInjectDecorators(
     selectUrl(parseQueryString as any, slashesDenoteHost)
   )
