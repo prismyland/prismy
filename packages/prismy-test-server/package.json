@@ -11,7 +11,7 @@
     "now"
   ],
   "author": "Junyoung Choi <fluke8259@gmail.com>",
-  "homepage": "https://github.com/BoostIO/prismy/blob/master/packages/prismy/README.md",
+  "homepage": "https://github.com/BoostIO/prismy/blob/master/packages/prismy-test-server/readme.md",
   "license": "MIT",
   "main": "dist",
   "files": [
