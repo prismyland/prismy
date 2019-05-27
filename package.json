@@ -1,22 +1,65 @@
 {
   "name": "prismy",
+  "version": "0.2.0",
   "description": ":rainbow: Simple and fast type safe server library based on micro for now.sh v2.",
-  "scripts": {
-    "lerna": "lerna",
-    "build": "lerna run build",
-    "format": "prettier --write packages/**/*.ts",
-    "lint": "prettier --check packages/**/*.ts",
-    "test": "lerna run test",
-    "test-ci": "lerna run test-ci",
-    "codecov": "lerna run codecov",
-    "postinstall": "lerna exec -- npm i",
-    "prepublishOnly": "npm run lint"
-  },
+  "keywords": [
+    "micro",
+    "service",
+    "microservice",
+    "serverless",
+    "API",
+    "now"
+  ],
   "author": "Junyoung Choi <fluke8259@gmail.com>",
   "homepage": "https://github.com/BoostIO/prismy",
   "license": "MIT",
+  "main": "dist",
+  "files": [
+    "dist/**/*",
+    "!dist/specs/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BoostIO/prismy.git"
+  },
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "lint": "prettier --check packages/**/*.ts",
+    "format": "prettier --write packages/**/*.ts",
+    "test": "jest",
+    "test-ci": "jest --coverage",
+    "codecov": "codecov -f coverage/*.json",
+    "prepublishOnly": "npm run build"
+  },
+  "bugs": {
+    "url": "https://github.com/BoostIO/prismy/issues"
+  },
   "devDependencies": {
-    "lerna": "^3.14.1",
-    "prettier": "^1.17.1"
+    "@types/got": "^9.4.4",
+    "@types/jest": "^24.0.13",
+    "@types/node": "^12.0.2",
+    "@types/test-listen": "^1.1.0",
+    "codecov": "^3.5.0",
+    "got": "^9.6.0",
+    "jest": "^24.8.0",
+    "micro": "^9.3.5-canary.1",
+    "prettier": "^1.17.1",
+    "rimraf": "^2.6.3",
+    "test-listen": "^1.1.0",
+    "ts-jest": "^24.0.2",
+    "tslib": "^1.9.3",
+    "typescript": "^3.4.5"
+  },
+  "peerDependencies": {
+    "micro": "^9.3.5-canary.1",
+    "tslib": "^1.9.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ]
   }
 }
