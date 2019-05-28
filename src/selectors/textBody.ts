@@ -1,19 +1,19 @@
 import { text } from 'micro'
 import { Selector, createInjectDecorators } from '../createInjectDecorators'
 
-export interface SelectTextBodyOptions {
+export interface TextBodySelectorOptions {
   limit?: string | number
   encoding?: string
 }
 
-export function selectTextBody(
-  options?: SelectTextBodyOptions
+export function createTextBodySelector(
+  options?: TextBodySelectorOptions
 ): Selector<Promise<string>> {
   return (req, res) => {
     return text(req, options)
   }
 }
 
-export function TextBody(options?: SelectTextBodyOptions) {
-  return createInjectDecorators(selectTextBody(options))
+export function TextBody(options?: TextBodySelectorOptions) {
+  return createInjectDecorators(createTextBodySelector(options))
 }

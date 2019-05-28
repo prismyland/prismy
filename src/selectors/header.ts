@@ -1,6 +1,6 @@
 import { Selector, createInjectDecorators } from '../createInjectDecorators'
 
-export function selectHeader(
+export function createHeaderSelector(
   key: string
 ): Selector<string | string[] | undefined> {
   return (req, res) => {
@@ -9,5 +9,5 @@ export function selectHeader(
 }
 
 export function Header(key: string) {
-  return createInjectDecorators(selectHeader(key))
+  return createInjectDecorators(createHeaderSelector(key))
 }

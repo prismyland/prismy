@@ -2,12 +2,12 @@ import querystring, { ParseOptions, ParsedUrlQuery } from 'querystring'
 import { Selector, createInjectDecorators } from '../createInjectDecorators'
 import url from 'url'
 
-export type SelectQueryOptions = ParseOptions
+export type QuerySelectorOptions = ParseOptions
 
-export function selectQuery(
+export function createQuerySelector(
   sep?: string,
   eq?: string,
-  options?: SelectQueryOptions
+  options?: QuerySelectorOptions
 ): Selector<ParsedUrlQuery> {
   return (req, res) => {
     /* istanbul ignore next */
@@ -19,6 +19,10 @@ export function selectQuery(
   }
 }
 
-export function Query(sep?: string, eq?: string, options?: SelectQueryOptions) {
-  return createInjectDecorators(selectQuery(sep, eq, options))
+export function Query(
+  sep?: string,
+  eq?: string,
+  options?: QuerySelectorOptions
+) {
+  return createInjectDecorators(createQuerySelector(sep, eq, options))
 }

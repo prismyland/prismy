@@ -1,15 +1,15 @@
 import url, { Url, UrlWithParsedQuery } from 'url'
 import { Selector, createInjectDecorators } from '../createInjectDecorators'
 
-export function selectUrl(
+export function createUrlSelector(
   parseQueryString: true,
   slashesDenoteHost?: boolean
 ): Selector<UrlWithParsedQuery>
-export function selectUrl(
+export function createUrlSelector(
   parseQueryString?: false,
   slashesDenoteHost?: boolean
 ): Selector<Url>
-export function selectUrl(
+export function createUrlSelector(
   parseQueryString?: boolean,
   slashesDenoteHost?: boolean
 ): Selector<Url | UrlWithParsedQuery> {
@@ -22,6 +22,6 @@ export function selectUrl(
 
 export function Url(parseQueryString?: boolean, slashesDenoteHost?: boolean) {
   return createInjectDecorators(
-    selectUrl(parseQueryString as any, slashesDenoteHost)
+    createUrlSelector(parseQueryString as any, slashesDenoteHost)
   )
 }

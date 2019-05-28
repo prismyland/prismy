@@ -1,19 +1,19 @@
 import { buffer } from 'micro'
 import { Selector, createInjectDecorators } from '../createInjectDecorators'
 
-export interface SelectBufferBodyOptions {
+export interface BufferBodySelectorOptions {
   limit?: string | number
   encoding?: string
 }
 
-export function selectBufferBody(
-  options?: SelectBufferBodyOptions
+export function createBufferBodySelector(
+  options?: BufferBodySelectorOptions
 ): Selector<Promise<string | Buffer>> {
   return (req, res) => {
     return buffer(req, options)
   }
 }
 
-export function BufferBody(options?: SelectBufferBodyOptions) {
-  return createInjectDecorators(selectBufferBody(options))
+export function BufferBody(options?: BufferBodySelectorOptions) {
+  return createInjectDecorators(createBufferBodySelector(options))
 }
