@@ -8,7 +8,7 @@ export interface SelectJsonBodyOptions {
 
 export function selectJsonBody(
   options?: SelectJsonBodyOptions
-): Selector<Promise<string | Buffer>> {
+): Selector<Promise<any>> {
   return (req, res) => {
     return json(req, options)
   }
