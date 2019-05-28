@@ -6,7 +6,7 @@ export interface JsonBodySelectorOptions {
   encoding?: string
 }
 
-export function selectJsonBody(
+export function createJsonBodySelector(
   options?: JsonBodySelectorOptions
 ): Selector<Promise<any>> {
   return (req, res) => {
@@ -15,5 +15,5 @@ export function selectJsonBody(
 }
 
 export function JsonBody(options?: JsonBodySelectorOptions) {
-  return createInjectDecorators(selectJsonBody(options))
+  return createInjectDecorators(createJsonBodySelector(options))
 }
