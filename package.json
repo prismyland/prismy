@@ -29,7 +29,7 @@
     "test": "jest",
     "test-ci": "jest --coverage",
     "codecov": "codecov -f coverage/*.json",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run lint && npm test && npm run build"
   },
   "bugs": {
     "url": "https://github.com/BoostIO/prismy/issues"
