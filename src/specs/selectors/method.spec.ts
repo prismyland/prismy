@@ -1,5 +1,5 @@
 import got from 'got'
-import { Method } from '../../results'
+import { Method } from '../..'
 import { testServer } from '../testServer'
 
 describe('Method', () => {

@@ -1,6 +1,6 @@
 import { UrlObject } from 'url'
 import got from 'got'
-import { Url } from '../../results'
+import { Url } from '../..'
 import { testServer } from '../testServer'
 
 describe('Url', () => {

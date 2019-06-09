@@ -1,5 +1,5 @@
 import got from 'got'
-import { TextBody } from '../../results'
+import { TextBody } from '../..'
 import { testServer } from '../testServer'
 
 describe('TextBody', () => {

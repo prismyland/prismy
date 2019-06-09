@@ -1,10 +1,10 @@
-import { getSelectors } from '../createInjectDecorators'
+import { getSelectors } from './createInjectDecorators'
 import { IncomingMessage, ServerResponse } from 'http'
-import { BaseResult } from './BaseResult'
-export * from '../createInjectDecorators'
-export * from '../selectors'
-export * from './SendResult'
-export * from '../BaseHandler'
+import { BaseResult } from './results/BaseResult'
+export * from './createInjectDecorators'
+export * from './selectors'
+export * from './results/SendResult'
+export * from './BaseHandler'
 
 export interface HandlerClass {
   new (): {

@@ -1,5 +1,5 @@
 import got from 'got'
-import { BufferBody } from '../../results'
+import { BufferBody } from '../..'
 import { testServer } from '../testServer'
 
 describe('BufferBody', () => {
