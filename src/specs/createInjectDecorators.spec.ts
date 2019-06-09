@@ -1,9 +1,4 @@
-import {
-  prismy,
-  createInjectDecorators,
-  getSelectors,
-  Selector
-} from '../results'
+import { prismy, createInjectDecorators, getSelectors, Selector } from '..'
 
 describe('createInjectDecorators', () => {
   it('sets a selector.', () => {
