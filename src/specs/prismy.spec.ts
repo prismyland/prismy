@@ -1,5 +1,5 @@
 import got from 'got'
-import { createInjectDecorators, TextBody, SendResult } from '..'
+import { createInjectDecorators, TextBody, SendResult } from '../results'
 import { testServer } from './testServer'
 
 console.error = jest.fn()

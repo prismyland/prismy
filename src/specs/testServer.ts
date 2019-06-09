@@ -1,7 +1,7 @@
 import http from 'http'
 import micro from 'micro'
 import listen from 'test-listen'
-import { prismy, HandlerClass } from '..'
+import { prismy, HandlerClass } from '../results'
 
 export async function testServer(
   handlerClass: HandlerClass,
