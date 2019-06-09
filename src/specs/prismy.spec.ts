@@ -67,7 +67,9 @@ describe('prismy', () => {
     const StringUrl = createInjectDecorators(req => req.url)
     class MyHandler {
       execute(@StringUrl url: string) {
-        return new SendResult(201, url)
+        return new SendResult(url, {
+          statusCode: 201
+        })
       }
     }
 
@@ -84,7 +86,9 @@ describe('prismy', () => {
     const injectUrl = createInjectDecorators(req => req.url)
     class MyHandler {
       execute(@injectUrl url: string) {
-        return new SendResult(200, url, [['x-test', 'Hello, World!']])
+        return new SendResult(url, {
+          headers: [['x-test', 'Hello, World!']]
+        })
       }
     }
 
