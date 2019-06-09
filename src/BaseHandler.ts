@@ -15,7 +15,6 @@ export class BaseHandler {
   }
 
   redirect(location: string, options?: RedirectResultOptions) {
-    console.log(location)
     return new RedirectResult(location, options)
   }
 
