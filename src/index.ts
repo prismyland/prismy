@@ -5,6 +5,7 @@ export * from './createInjectDecorators'
 export * from './selectors'
 export * from './results/SendResult'
 export * from './BaseHandler'
+export * from './results'
 
 export interface HandlerClass {
   new (): {
