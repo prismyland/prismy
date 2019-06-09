@@ -1,4 +1,4 @@
-import { SendResult } from './results/SendResult'
+import { SendResult, SendResultOptions } from './results/SendResult'
 import { Selector } from './createInjectDecorators'
 import { IncomingMessage, ServerResponse } from 'http'
 import { sendError } from 'micro'
@@ -9,12 +9,8 @@ export class BaseHandler {
     res: ServerResponse
   }
 
-  send(
-    statusCode: number,
-    data?: any,
-    headers?: [string, number | string | string[]][]
-  ) {
-    return new SendResult(statusCode, data, headers)
+  send<D = any>(data?: D, options?: SendResultOptions) {
+    return new SendResult(data, options)
   }
 
   select<P>(selector: Selector<P>): P {

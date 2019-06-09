@@ -11,7 +11,10 @@ describe('BaseHandler', () => {
       const injectUrl = createInjectDecorators(req => req.url)
       class MyHandler extends BaseHandler {
         execute(@injectUrl url: string) {
-          return this.send(201, url, [['x-test', 'Hello, World!']])
+          return this.send(url, {
+            statusCode: 201,
+            headers: [['x-test', 'Hello, World!']]
+          })
         }
       }
 
@@ -79,7 +82,12 @@ describe('BaseHandler', () => {
         }
 
         onError(req: IncomingMessage, res: ServerResponse, error: any) {
-          return this.send(500, { message: error.message })
+          return this.send(
+            { message: error.message },
+            {
+              statusCode: 500
+            }
+          )
         }
       }
 
