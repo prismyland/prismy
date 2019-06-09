@@ -31,6 +31,32 @@ describe('BaseHandler', () => {
     })
   })
 
+  describe('#redirect', () => {
+    it('sets statusCode via RedirectResult', async () => {
+      class MyHandler extends BaseHandler {
+        execute() {
+          return this.redirect('http://example.com/', {
+            statusCode: 301,
+            headers: [['x-test', 'Hello, World!']]
+          })
+        }
+      }
+
+      await testServer(MyHandler, async url => {
+        const response = await got(url, {
+          followRedirect: false
+        })
+        expect(response).toMatchObject({
+          statusCode: 301,
+          headers: expect.objectContaining({
+            'x-test': 'Hello, World!',
+            location: 'http://example.com/'
+          })
+        })
+      })
+    })
+  })
+
   describe('#select', () => {
     it('selects via a selector', async () => {
       class MyHandler extends BaseHandler {
