@@ -1,11 +1,10 @@
-import { getSelectors } from './createInjectDecorators'
+import { getSelectors } from '../createInjectDecorators'
 import { IncomingMessage, ServerResponse } from 'http'
-import { SendResult } from './SendResult'
-import { send } from 'micro'
-export * from './createInjectDecorators'
-export * from './selectors'
+import { BaseResult } from './BaseResult'
+export * from '../createInjectDecorators'
+export * from '../selectors'
 export * from './SendResult'
-export * from './BaseHandler'
+export * from '../BaseHandler'
 
 export interface HandlerClass {
   new (): {
@@ -36,25 +35,24 @@ export function prismy(handlerClass: HandlerClass) {
       )
 
       const result = await handler.execute(...args)
-      return handleSendResult(res, result)
+      return handleSendResult(req, res, result)
     } catch (error) {
       if (handler.onError == null) {
         throw error
       }
       const errorResult = await handler.onError(req, res, error)
-      return handleSendResult(res, errorResult)
+      return handleSendResult(req, res, errorResult)
     }
   }
 }
 
-function handleSendResult(res: ServerResponse, result: any) {
-  if (result instanceof SendResult) {
-    if (result.headers != null) {
-      result.headers.forEach(([key, value]) => {
-        res.setHeader(key, value)
-      })
-    }
-    send(res, result.statusCode, result.data)
+function handleSendResult(
+  req: IncomingMessage,
+  res: ServerResponse,
+  result: unknown
+) {
+  if (result instanceof BaseResult) {
+    return result.execute(req, res)
   } else {
     return result
   }

@@ -1,5 +1,5 @@
 import got from 'got'
-import { Query } from '../..'
+import { Query } from '../../results'
 import { testServer } from '../testServer'
 
 describe('Query', () => {

@@ -1,4 +1,4 @@
-import { SendResult } from './SendResult'
+import { SendResult } from './results/SendResult'
 import { Selector } from './createInjectDecorators'
 import { IncomingMessage, ServerResponse } from 'http'
 import { sendError } from 'micro'

@@ -1,5 +1,5 @@
 import got from 'got'
-import { JsonBody } from '../..'
+import { JsonBody } from '../../results'
 import { testServer } from '../testServer'
 
 describe('JsonBody', () => {
