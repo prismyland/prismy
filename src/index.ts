@@ -34,9 +34,9 @@ export function prismy(handlerClass: HandlerClass) {
     try {
       const { before, after } = getMiddlewareMeta(handlerClass)
 
-      before.forEach(middleware => {
-        middleware(req, res)
-      })
+      for (const middleware of before) {
+        await middleware(req, res)
+      }
 
       const selectors = getSelectors(handlerClass)
       const args = await Promise.all(
@@ -44,9 +44,9 @@ export function prismy(handlerClass: HandlerClass) {
       )
       const result = await handler.execute(...args)
 
-      after.forEach(middleware => {
-        middleware(req, res)
-      })
+      for (const middleware of after) {
+        await middleware(req, res)
+      }
 
       return handleSendResult(req, res, result)
     } catch (error) {
