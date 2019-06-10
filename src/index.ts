@@ -1,11 +1,13 @@
 import { getSelectors } from './createInjectDecorators'
 import { IncomingMessage, ServerResponse } from 'http'
 import { BaseResult } from './results/BaseResult'
+import { getMiddlewareMeta } from './middleware'
 export * from './createInjectDecorators'
 export * from './selectors'
 export * from './results/SendResult'
 export * from './BaseHandler'
 export * from './results'
+export * from './middleware'
 
 export interface HandlerClass {
   new (): {
@@ -30,12 +32,22 @@ export function prismy(handlerClass: HandlerClass) {
       res
     }
     try {
+      const { before, after } = getMiddlewareMeta(handlerClass)
+
+      before.forEach(middleware => {
+        middleware(req, res)
+      })
+
       const selectors = getSelectors(handlerClass)
       const args = await Promise.all(
         [...selectors].map(selector => selector(req, res))
       )
-
       const result = await handler.execute(...args)
+
+      after.forEach(middleware => {
+        middleware(req, res)
+      })
+
       return handleSendResult(req, res, result)
     } catch (error) {
       if (handler.onError == null) {
