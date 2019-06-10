@@ -80,4 +80,20 @@ describe('prismy', () => {
       })
     })
   })
+
+  it('throws when a handler is returning undefined', async () => {
+    class MyHandler {
+      execute() {}
+    }
+
+    await testServer(MyHandler, async url => {
+      const response = await got(url, {
+        throwHttpErrors: false
+      })
+      expect(response).toMatchObject({
+        statusCode: 500,
+        body: 'Internal Server Error'
+      })
+    })
+  })
 })
