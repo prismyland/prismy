@@ -1,5 +1,4 @@
 import { IncomingMessage, ServerResponse } from 'http'
-import { sendError } from 'micro'
 import { SendResult, SendResultOptions } from './results/SendResult'
 import { RedirectResultOptions, RedirectResult } from './results/RedirectResult'
 import { Selector } from './createInjectDecorators'
@@ -25,6 +24,6 @@ export class BaseHandler {
   }
 
   onError(req: IncomingMessage, res: ServerResponse, error: any): any {
-    return sendError(req, res, error)
+    throw error
   }
 }

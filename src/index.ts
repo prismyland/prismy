@@ -52,9 +52,13 @@ function handleSendResult(
   res: ServerResponse,
   result: unknown
 ) {
+  if (result === undefined) {
+    throw new Error(
+      'Returning undefined value from handlers are not allowed. Please use BaseResult.'
+    )
+  }
   if (result instanceof BaseResult) {
     return result.execute(req, res)
-  } else {
-    return result
   }
+  return result
 }
