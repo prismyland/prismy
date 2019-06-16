@@ -15,7 +15,7 @@ export interface HandlerClass {
     context?: {
       req: IncomingMessage
       res: ServerResponse
-      [key: string]: any
+      cacheMap: Map<symbol, unknown>
     }
     onError?: (req: IncomingMessage, res: ServerResponse, error: any) => any
   }
@@ -27,25 +27,28 @@ export function prismy(handlerClass: HandlerClass) {
     res: ServerResponse
   ) {
     const handler = new handlerClass()
+    const cacheMap = new Map<symbol, unknown>()
     handler.context = {
       req,
-      res
+      res,
+      cacheMap
     }
+
     try {
       const { before, after } = getMiddlewareMeta(handlerClass)
 
       for (const middleware of before) {
-        await middleware(req, res)
+        await middleware(req, res, cacheMap)
       }
 
       const selectors = getSelectors(handlerClass)
       const args = await Promise.all(
-        [...selectors].map(selector => selector(req, res))
+        [...selectors].map(selector => selector(req, res, cacheMap))
       )
       const result = await handler.execute(...args)
 
       for (const middleware of after) {
-        await middleware(req, res)
+        await middleware(req, res, cacheMap)
       }
 
       return handleSendResult(req, res, result)
