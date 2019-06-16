@@ -1,5 +1,5 @@
 import got from 'got'
-import { Before, After } from '..'
+import { Before, After, CacheMap, Cache } from '..'
 import { testServer } from './testServer'
 
 describe('Before', () => {
@@ -116,6 +116,34 @@ describe('After', () => {
       expect(spy1).toBeCalledWith(2)
       expect(spy2).toBeCalledWith(3)
       expect(spy3).toBeCalledWith(1)
+    })
+  })
+
+  it('shares data between a handler and other middleware via cacheMap', async () => {
+    const spy1 = jest.fn()
+    const spy2 = jest.fn()
+    const keySymbol = Symbol()
+
+    @Before((req, res, cacheMap) => {
+      cacheMap.set(keySymbol, 'Hello, World!')
+    })
+    @After((req, res, cacheMap) => {
+      spy2(cacheMap.get(keySymbol))
+    })
+    class MyHandler {
+      execute(@Cache() cacheMap: CacheMap) {
+        spy1(cacheMap.get(keySymbol))
+        return null
+      }
+    }
+
+    await testServer(MyHandler, async url => {
+      await got(url, {
+        json: true
+      })
+
+      expect(spy1).toBeCalledWith('Hello, World!')
+      expect(spy2).toBeCalledWith('Hello, World!')
     })
   })
 })
