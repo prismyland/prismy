@@ -1,6 +1,12 @@
 import { IncomingMessage, ServerResponse } from 'http'
 
-export type Selector<P> = (req: IncomingMessage, res: ServerResponse) => P
+export type CacheMap = Map<symbol, unknown>
+
+export type Selector<P> = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  cacheMap: CacheMap
+) => P
 
 const selectorMap = new Map<any, Selector<any>[]>()
 

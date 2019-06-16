@@ -1,6 +1,11 @@
 import { IncomingMessage, ServerResponse } from 'http'
+import { CacheMap } from './createInjectDecorators'
 
-export type Middleware = (req: IncomingMessage, res: ServerResponse) => void
+export type Middleware = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  cacheMap: CacheMap
+) => void
 
 export interface MiddlewareMeta {
   before: Middleware[]
