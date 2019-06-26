@@ -1,28 +1,20 @@
-import querystring, { ParseOptions, ParsedUrlQuery } from 'querystring'
-import { Selector, createInjectDecorators } from '../createInjectDecorators'
-import url from 'url'
+import { ParsedUrlQuery, parse } from 'querystring'
+import { Selector } from '../types'
+import { createInjectDecorators } from '../createInjectDecorators'
+import { createUrlSelector } from './url'
 
-export type QuerySelectorOptions = ParseOptions
+export const querySymbol = Symbol()
 
-export function createQuerySelector(
-  sep?: string,
-  eq?: string,
-  options?: QuerySelectorOptions
-): Selector<ParsedUrlQuery> {
-  return (req, res) => {
+export function createQuerySelector(): Selector<ParsedUrlQuery> {
+  return context => {
+    const url = createUrlSelector()(context)
     /* istanbul ignore next */
-    if (req.url == null) return {}
-    const { query } = url.parse(req.url)
-    /* istanbul ignore next */
-    if (query == null) return {}
-    return querystring.parse(query, sep, eq, options)
+    if (url.query == null) return {}
+
+    return parse(url.query as string)
   }
 }
 
-export function Query(
-  sep?: string,
-  eq?: string,
-  options?: QuerySelectorOptions
-) {
-  return createInjectDecorators(createQuerySelector(sep, eq, options))
+export function Query() {
+  return createInjectDecorators(createQuerySelector())
 }

@@ -1,5 +1,6 @@
 import { json } from 'micro'
-import { Selector, createInjectDecorators } from '../createInjectDecorators'
+import { Selector } from '../types'
+import { createInjectDecorators } from '../createInjectDecorators'
 
 export interface JsonBodySelectorOptions {
   limit?: string | number
@@ -9,7 +10,7 @@ export interface JsonBodySelectorOptions {
 export function createJsonBodySelector(
   options?: JsonBodySelectorOptions
 ): Selector<Promise<any>> {
-  return (req, res) => {
+  return ({ req }) => {
     return json(req, options)
   }
 }

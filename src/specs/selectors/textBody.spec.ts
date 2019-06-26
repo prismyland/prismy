@@ -6,7 +6,7 @@ describe('TextBody', () => {
   it('injects parsed text body', async () => {
     let parsedBody: string
     class MyHandler {
-      execute(@TextBody() body: string) {
+      handle(@TextBody() body: string) {
         parsedBody = body
         return body
       }

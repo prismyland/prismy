@@ -1,12 +1,4 @@
-import { IncomingMessage, ServerResponse } from 'http'
-
-export type CacheMap = Map<symbol, unknown>
-
-export type Selector<P> = (
-  req: IncomingMessage,
-  res: ServerResponse,
-  cacheMap: CacheMap
-) => P
+import { Selector } from './types'
 
 const selectorMap = new Map<any, Selector<any>[]>()
 
@@ -30,9 +22,9 @@ export function createInjectDecorators<P>(selector: Selector<P>) {
     propertyName: string,
     paramIndex: number
   ) {
-    if (propertyName !== 'execute') {
+    if (propertyName !== 'handle') {
       throw new Error(
-        'selector decorator must be applied `execute` method of a handler class.'
+        'selector decorator must be applied `handle` method of a handler class.'
       )
     }
 

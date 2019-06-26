@@ -38,7 +38,7 @@ npm i micro prismy tslib
 import { prismy, JsonBody } from 'prismy'
 
 export class MyHandler {
-  async execute(@JsonBody() body: any) {
+  async handle(@JsonBody() body: any) {
     await doSomethingWithBody(body)
     return {
       message: 'Done!'

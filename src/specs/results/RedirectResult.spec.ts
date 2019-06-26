@@ -4,9 +4,9 @@ import { createInjectDecorators, RedirectResult } from '../..'
 
 describe('RedirectResult', () => {
   it('sets statusCode', async () => {
-    const StringUrl = createInjectDecorators(req => req.url)
+    const StringUrl = createInjectDecorators(({ req }) => req.url)
     class MyHandler {
-      execute(@StringUrl url: string) {
+      handle(@StringUrl url: string) {
         return new RedirectResult('https://example.com', {
           statusCode: 301
         })
@@ -25,9 +25,9 @@ describe('RedirectResult', () => {
   })
 
   it('sets headers', async () => {
-    const injectUrl = createInjectDecorators(req => req.url)
+    const injectUrl = createInjectDecorators(({ req }) => req.url)
     class MyHandler {
-      execute(@injectUrl url: string) {
+      handle(@injectUrl url: string) {
         return new RedirectResult('https://example.com', {
           headers: [['x-test', 'Hello, World!']]
         })

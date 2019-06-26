@@ -5,7 +5,7 @@ import { testServer } from '../testServer'
 describe('JsonBody', () => {
   it('injects parsed json body', async () => {
     class MyHandler {
-      execute(@JsonBody() body: any) {
+      handle(@JsonBody() body: any) {
         return body
       }
     }

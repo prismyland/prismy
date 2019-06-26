@@ -1,5 +1,6 @@
 import { buffer } from 'micro'
-import { Selector, createInjectDecorators } from '../createInjectDecorators'
+import { Selector } from '../types'
+import { createInjectDecorators } from '../createInjectDecorators'
 
 export interface BufferBodySelectorOptions {
   limit?: string | number
@@ -9,7 +10,7 @@ export interface BufferBodySelectorOptions {
 export function createBufferBodySelector(
   options?: BufferBodySelectorOptions
 ): Selector<Promise<string | Buffer>> {
-  return (req, res) => {
+  return ({ req }) => {
     return buffer(req, options)
   }
 }

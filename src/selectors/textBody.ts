@@ -1,5 +1,6 @@
 import { text } from 'micro'
-import { Selector, createInjectDecorators } from '../createInjectDecorators'
+import { Selector } from '../types'
+import { createInjectDecorators } from '../createInjectDecorators'
 
 export interface TextBodySelectorOptions {
   limit?: string | number
@@ -9,7 +10,7 @@ export interface TextBodySelectorOptions {
 export function createTextBodySelector(
   options?: TextBodySelectorOptions
 ): Selector<Promise<string>> {
-  return (req, res) => {
+  return ({ req }) => {
     return text(req, options)
   }
 }

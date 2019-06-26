@@ -1,9 +1,10 @@
-import { Selector, createInjectDecorators } from '../createInjectDecorators'
+import { Selector } from '../types'
+import { createInjectDecorators } from '../createInjectDecorators'
 
 export function createHeaderSelector(
   key: string
 ): Selector<string | string[] | undefined> {
-  return (req, res) => {
+  return ({ req }) => {
     return req.headers[key]
   }
 }

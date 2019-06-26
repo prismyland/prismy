@@ -1,17 +1,16 @@
 import got from 'got'
-import { IncomingMessage, ServerResponse } from 'http'
-import { BaseResult } from '../..'
+import { BaseResult, Context } from '../..'
 import { testServer } from '../testServer'
 
 describe('BaseResult', () => {
   it('can be customized', async () => {
     class CustomResult extends BaseResult {
-      execute(req: IncomingMessage, res: ServerResponse) {
+      handle({ res }: Context) {
         res.end('Hello, World!')
       }
     }
     class MyHandler {
-      execute() {
+      handle() {
         return new CustomResult()
       }
     }

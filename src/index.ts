@@ -1,79 +1,80 @@
+import { Context, HandlerClass } from './types'
 import { getSelectors } from './createInjectDecorators'
 import { IncomingMessage, ServerResponse } from 'http'
 import { BaseResult } from './results/BaseResult'
-import { getMiddlewareMeta } from './middleware'
+import { BaseHandler } from './BaseHandler'
+export * from './types'
 export * from './createInjectDecorators'
 export * from './selectors'
 export * from './results/SendResult'
 export * from './BaseHandler'
 export * from './results'
-export * from './middleware'
 
-export interface HandlerClass {
-  new (): {
-    execute: (...args: any[]) => any
-    context?: {
-      req: IncomingMessage
-      res: ServerResponse
-      cacheMap: Map<symbol, unknown>
-    }
-    onError?: (req: IncomingMessage, res: ServerResponse, error: any) => any
-  }
+export interface PrismyOptions {
+  onError?: HandlerClass
+  production?: boolean
 }
 
-export function prismy(handlerClass: HandlerClass) {
+export function prismy(
+  handlerClasses: HandlerClass | HandlerClass[],
+  options: PrismyOptions = {}
+) {
   return async function requestHandler(
     req: IncomingMessage,
     res: ServerResponse
   ) {
-    const handler = new handlerClass()
-    const cacheMap = new Map<symbol, unknown>()
-    handler.context = {
+    const context: Context = {
       req,
-      res,
-      cacheMap
+      res
+    }
+    if (!Array.isArray(handlerClasses)) {
+      handlerClasses = [handlerClasses]
     }
 
+    let result: any
     try {
-      const { before, after } = getMiddlewareMeta(handlerClass)
+      for (const handlerClass of handlerClasses) {
+        const handler = new handlerClass()
+        if (handler instanceof BaseHandler) {
+          handler.context = context
+        }
 
-      for (const middleware of before) {
-        await middleware(req, res, cacheMap)
+        const args = await getArgs(handlerClass, context)
+
+        result = await handler.handle(...args)
+        if (result !== undefined) {
+          break
+        }
       }
-
-      const selectors = getSelectors(handlerClass)
-      const args = await Promise.all(
-        [...selectors].map(selector => selector(req, res, cacheMap))
-      )
-      const result = await handler.execute(...args)
-
-      for (const middleware of after) {
-        await middleware(req, res, cacheMap)
-      }
-
-      return handleSendResult(req, res, result)
     } catch (error) {
-      if (handler.onError == null) {
+      if (options.onError == null) {
         throw error
       }
-      const errorResult = await handler.onError(req, res, error)
-      return handleSendResult(req, res, errorResult)
+      const handler = new options.onError()
+      const args = await getArgs(options.onError, context)
+      result = await handler.handle(error, ...args)
     }
+
+    return handleSendResult(context, result)
   }
 }
 
-function handleSendResult(
-  req: IncomingMessage,
-  res: ServerResponse,
-  result: unknown
-) {
+async function getArgs(handlerClass: any, context: Context): Promise<any[]> {
+  const selectors = getSelectors(handlerClass)
+  const args = await Promise.all(
+    [...selectors].map(selector => selector(context))
+  )
+  return args
+}
+
+function handleSendResult(context: Context, result: unknown) {
   if (result === undefined) {
     throw new Error(
       'Returning undefined value from handlers are not allowed. Please use BaseResult.'
     )
   }
   if (result instanceof BaseResult) {
-    return result.execute(req, res)
+    return result.handle(context)
   }
   return result
 }

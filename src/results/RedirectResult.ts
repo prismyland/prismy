@@ -1,5 +1,5 @@
-import { IncomingMessage, ServerResponse } from 'http'
 import { BaseResult } from './BaseResult'
+import { Context } from '../types'
 
 export interface RedirectResultOptions {
   statusCode?: number
@@ -17,7 +17,7 @@ export class RedirectResult extends BaseResult {
     this.headers = headers
   }
 
-  execute(req: IncomingMessage, res: ServerResponse) {
+  handle({ req, res }: Context) {
     this.headers.forEach(([key, value]) => {
       res.setHeader(key, value)
     })

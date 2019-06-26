@@ -5,7 +5,7 @@ import { testServer } from '../testServer'
 describe('Method', () => {
   it('injects method', async () => {
     class MyHandler {
-      execute(@Method() method: string) {
+      handle(@Method() method: string) {
         return method
       }
     }

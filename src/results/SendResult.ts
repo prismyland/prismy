@@ -1,6 +1,6 @@
-import { IncomingMessage, ServerResponse } from 'http'
 import { send } from 'micro'
 import { BaseResult } from './BaseResult'
+import { Context } from '../types'
 
 export interface SendResultOptions {
   statusCode?: number
@@ -18,7 +18,7 @@ export class SendResult<D = any> extends BaseResult {
     this.headers = headers
   }
 
-  execute(req: IncomingMessage, res: ServerResponse) {
+  handle({ req, res }: Context) {
     this.headers.forEach(([key, value]) => {
       res.setHeader(key, value)
     })

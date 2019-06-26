@@ -1,7 +1,8 @@
-import { Selector, createInjectDecorators } from '../createInjectDecorators'
+import { Selector } from '../types'
+import { createInjectDecorators } from '../createInjectDecorators'
 
 export function createMethodSelector(): Selector<string | undefined> {
-  return (req, res) => {
+  return ({ req }) => {
     return req.method
   }
 }

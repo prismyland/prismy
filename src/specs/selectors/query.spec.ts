@@ -5,7 +5,7 @@ import { testServer } from '../testServer'
 describe('Query', () => {
   it('injects query', async () => {
     class MyHandler {
-      execute(@Query() query: any) {
+      handle(@Query() query: any) {
         return query
       }
     }

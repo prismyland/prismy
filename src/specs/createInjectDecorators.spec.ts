@@ -2,10 +2,10 @@ import { prismy, createInjectDecorators, getSelectors, Selector } from '..'
 
 describe('createInjectDecorators', () => {
   it('sets a selector.', () => {
-    const selectUrl: Selector<string | undefined> = req => req.url
+    const selectUrl: Selector<string | undefined> = ({ req }) => req.url
     const StringUrl = createInjectDecorators(selectUrl)
     class MyHandler {
-      execute(@StringUrl url: string) {
+      handle(@StringUrl url: string) {
         return {
           url
         }
@@ -18,14 +18,14 @@ describe('createInjectDecorators', () => {
 
   it('throws when inject decorator is applied to other methods.', () => {
     expect(() => {
-      const StringUrl = createInjectDecorators(req => req.url)
+      const StringUrl = createInjectDecorators(({ req }) => req.url)
       class MyHandler {
         test(@StringUrl url: string) {
           return {
             url
           }
         }
-        execute() {
+        handle() {
           return {}
         }
       }

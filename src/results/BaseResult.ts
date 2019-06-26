@@ -1,5 +1,5 @@
-import { IncomingMessage, ServerResponse } from 'http'
+import { Context } from '../types'
 
 export abstract class BaseResult {
-  abstract execute(req: IncomingMessage, res: ServerResponse): any
+  abstract handle(context: Context): any
 }

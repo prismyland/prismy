@@ -6,7 +6,7 @@ import { testServer } from '../testServer'
 describe('Url', () => {
   it('injects url', async () => {
     class MyHandler {
-      execute(@Url() url: UrlObject) {
+      handle(@Url() url: UrlObject) {
         return url
       }
     }

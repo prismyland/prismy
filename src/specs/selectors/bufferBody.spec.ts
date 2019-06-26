@@ -6,7 +6,7 @@ describe('BufferBody', () => {
   it('injects parsed buffer body', async () => {
     let parsedBody: Buffer
     class MyHandler {
-      execute(@BufferBody() body: Buffer) {
+      handle(@BufferBody() body: Buffer) {
         parsedBody = body
         return body
       }

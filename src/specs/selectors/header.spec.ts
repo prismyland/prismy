@@ -5,7 +5,7 @@ import { testServer } from '../testServer'
 describe('Header', () => {
   it('injects a header value', async () => {
     class MyHandler {
-      execute(@Header('x-test') xTest: string) {
+      handle(@Header('x-test') xTest: string) {
         return xTest
       }
     }
