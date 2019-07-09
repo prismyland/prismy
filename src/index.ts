@@ -9,6 +9,7 @@ export * from './selectors'
 export * from './results/SendResult'
 export * from './BaseHandler'
 export * from './results'
+import micro from 'micro'
 
 export interface PrismyOptions {
   onError?: HandlerClass
@@ -19,10 +20,7 @@ export function prismy(
   handlerClasses: HandlerClass | HandlerClass[],
   options: PrismyOptions = {}
 ) {
-  return async function requestHandler(
-    req: IncomingMessage,
-    res: ServerResponse
-  ) {
+  async function requestHandler(req: IncomingMessage, res: ServerResponse) {
     const context: Context = {
       req,
       res
@@ -57,6 +55,7 @@ export function prismy(
 
     return handleSendResult(context, result)
   }
+  return micro(requestHandler)
 }
 
 async function getArgs(handlerClass: any, context: Context): Promise<any[]> {

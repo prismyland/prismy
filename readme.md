@@ -14,7 +14,7 @@
 ### Installation
 
 ```sh
-npm i micro prismy tslib
+npm i prismy tslib
 ```
 
 > #### Why do I need `tslib`?
@@ -32,8 +32,6 @@ npm i micro prismy tslib
 
 ### Implementation
 
-1. Create `index.ts`
-
 ```ts
 import { prismy, JsonBody } from 'prismy'
 
@@ -46,16 +44,10 @@ export class MyHandler {
   }
 }
 
-// prismy will returns request handler for micro.
-export default prismy(MyHandler)
-```
+// prismy will returns a request handler for a Node.js HTTP Server.
+const server = new http.Server(prismy(handlerClass))
 
-2. Compile `index.ts` to `index.js`
-
-3. Start `micro`
-
-```sh
-micro index.js
+server.listen(8000)
 ```
 
 ### Unit testing
