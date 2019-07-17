@@ -1,7 +1,7 @@
 import { prismy, Query } from 'prismy'
 
 export class MyHandler {
-  async execute(@Query() query: any) {
+  async handle(@Query() query: any) {
     return query
   }
 }

@@ -12,8 +12,7 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "micro": "^9.3.4",
-    "prismy": "^0.3.0",
+    "prismy": "^0.9.0",
     "tslib": "^1.9.3"
   },
   "jest": {
