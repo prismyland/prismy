@@ -1,0 +1,27 @@
+{
+  "name": "with-session",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/scripts/serve.js"
+  },
+  "devDependencies": {
+    "typescript": "^3.4.5"
+  },
+  "dependencies": {
+    "micro": "^9.3.4",
+    "prismy": "^0.9.0",
+    "prismy-cookie": "^0.3.0",
+    "prismy-session": "0.0.1-2",
+    "prismy-session-redis": "0.0.1-0",
+    "tslib": "^1.9.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ]
+  }
+}
