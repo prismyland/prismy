@@ -1,8 +1,9 @@
 {
   "name": "basic-server",
+  "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "micro dist/index.js",
+    "start": "node dist/scripts/serve.js",
     "test": "jest"
   },
   "devDependencies": {

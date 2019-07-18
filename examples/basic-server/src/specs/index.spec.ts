@@ -6,7 +6,7 @@ describe('index', () => {
     const handler = new MyHandler()
 
     // When
-    const result = await handler.execute({
+    const result = await handler.handle({
       message: 'Hello, World!'
     })
 
