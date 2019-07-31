@@ -1,11 +1,11 @@
-<img  width='240' src='https://github.com/BoostIO/prismy/blob/master/resources/logo.svg' alt='prismy'>
+<img  width='240' src='https://github.com/prismyland/prismy/blob/master/resources/logo.svg' alt='prismy'>
 
 # `prismy`
 
 :rainbow: Simple and fast type safe server library based on micro for now.sh v2.
 
-[![Build Status](https://travis-ci.com/BoostIO/prismy.svg?branch=master)](https://travis-ci.com/BoostIO/prismy)
-[![codecov](https://codecov.io/gh/BoostIO/prismy/branch/master/graph/badge.svg)](https://codecov.io/gh/BoostIO/prismy)
+[![Build Status](https://travis-ci.com/prismyland/prismy.svg?branch=master)](https://travis-ci.com/prismyland/prismy)
+[![codecov](https://codecov.io/gh/prismyland/prismy/branch/master/graph/badge.svg)](https://codecov.io/gh/prismyland/prismy)
 [![NPM download](https://img.shields.io/npm/dm/prismy.svg)](https://www.npmjs.com/package/prismy)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/prismyland/prismy.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/prismyland/prismy/context:javascript)
 
