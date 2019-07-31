@@ -4,6 +4,7 @@ import { testServer } from './testServer'
 import http from 'http'
 import micro from 'micro'
 import listen from 'test-listen'
+import { Method } from '../selectors'
 console.error = jest.fn()
 
 describe('prismy', () => {
@@ -125,6 +126,41 @@ describe('prismy', () => {
       expect(response).toMatchObject({
         statusCode: 200,
         body: 'Hello, World!'
+      })
+    } catch (error) {
+      throw error
+    } finally {
+      server.close()
+    }
+  })
+
+  it('handles errors with onError with injected args', async () => {
+    const StringUrl = createInjectDecorators(({ req }) => req.url)
+    class MyHandler {
+      handle() {
+        throw new Error('Hello, World!')
+      }
+    }
+    class MyErrorHandler {
+      handle(error: Error, @Method() method: string, @StringUrl url: string) {
+        return `${method} ${url} - ${error.message}`
+      }
+    }
+
+    const server = new http.Server(
+      micro(
+        prismy(MyHandler, {
+          onError: MyErrorHandler
+        })
+      )
+    )
+
+    const url = await listen(server)
+    try {
+      const response = await got(url)
+      expect(response).toMatchObject({
+        statusCode: 200,
+        body: 'GET / - Hello, World!'
       })
     } catch (error) {
       throw error
