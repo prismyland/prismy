@@ -5,13 +5,14 @@ import {
   createInjectDecorators,
   createTextBodySelector
 } from 'prismy'
-import createSession, { SessionStore } from 'prismy-session'
-import MemoryStore from 'prismy-session/dist/MemoryStore'
+import createSession, { SessionState } from 'prismy-session'
 import querystring from 'querystring'
+import SignedCookieStrategy from 'prismy-session-strategy-signed-cookie'
 
 const { Session, sessionMiddleware } = createSession({
-  store: new MemoryStore(),
-  secret: 'secret'
+  strategy: new SignedCookieStrategy({
+    secret: 'RANDOM_HASH'
+  })
 })
 
 const UrlencodedBody = () =>
@@ -23,14 +24,14 @@ const UrlencodedBody = () =>
 class MyHandler extends BaseHandler {
   async handle(
     @Method() method: string,
-    @Session() session: SessionStore,
+    @Session() session: SessionState<any>,
     @UrlencodedBody() body: any
   ) {
     if (method === 'POST') {
-      session.update({ message: body.message })
+      session.data = { message: body.message }
       return this.redirect('/')
     } else {
-      const data = session.get()
+      const { data } = session
       return [
         '<!DOCTYPE html>',
         '<body>',
