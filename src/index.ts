@@ -9,22 +9,27 @@ export * from './selectors'
 export * from './results/SendResult'
 export * from './BaseHandler'
 export * from './results'
-import micro from 'micro'
+import { sendError, send } from 'micro'
 
 export interface PrismyOptions {
   onError?: HandlerClass
-  production?: boolean
 }
+
+const errorHandlerSymbol = Symbol('prismy-error-handler')
 
 export function prismy(
   handlerClasses: HandlerClass | HandlerClass[],
   options: PrismyOptions = {}
 ) {
-  async function requestHandler(req: IncomingMessage, res: ServerResponse) {
+  return async function requestHandler(
+    req: IncomingMessage,
+    res: ServerResponse
+  ) {
     const context: Context = {
       req,
       res
     }
+    context[errorHandlerSymbol] = options.onError
     if (!Array.isArray(handlerClasses)) {
       handlerClasses = [handlerClasses]
     }
@@ -37,7 +42,7 @@ export function prismy(
           handler.context = context
         }
 
-        const args = await getArgs(handlerClass, context)
+        const args = await getArgsOfHandlerClass(context, handlerClass)
 
         result = await handler.handle(...args)
         if (result !== undefined) {
@@ -45,20 +50,18 @@ export function prismy(
         }
       }
     } catch (error) {
-      if (options.onError == null) {
-        throw error
-      }
-      const handler = new options.onError()
-      const args = await getArgs(options.onError, context)
-      result = await handler.handle(error, ...args)
+      handleError(context, error)
+      return
     }
 
-    return handleSendResult(context, result)
+    handleSendResult(context, result)
   }
-  return micro(requestHandler)
 }
 
-async function getArgs(handlerClass: any, context: Context): Promise<any[]> {
+async function getArgsOfHandlerClass(
+  context: Context,
+  handlerClass: any
+): Promise<any[]> {
   const selectors = getSelectors(handlerClass)
   const args = await Promise.all(
     [...selectors].map(selector => selector(context))
@@ -68,12 +71,45 @@ async function getArgs(handlerClass: any, context: Context): Promise<any[]> {
 
 function handleSendResult(context: Context, result: unknown) {
   if (result === undefined) {
-    throw new Error(
-      'Returning undefined value from handlers are not allowed. Please use BaseResult.'
+    sendError(
+      context.req,
+      context.res,
+      new Error(
+        'Returning undefined value from handlers are not allowed. Please use BaseResult.'
+      )
     )
+    return
   }
   if (result instanceof BaseResult) {
-    return result.handle(context)
+    result = result.handle(context)
   }
-  return result
+  if (result === undefined) {
+    return
+  }
+  if (result === null) {
+    send(context.res, 204, null)
+    return
+  }
+  send(context.res, 200, result)
+}
+
+export async function handleError(context: Context, error: any) {
+  const ErrorHandler = context[errorHandlerSymbol]
+  if (ErrorHandler == null) {
+    sendError(context.req, context.res, error)
+    return
+  }
+  try {
+    const errorHandler = new ErrorHandler()
+    const args = await getArgsOfHandlerClass(context, ErrorHandler)
+    const result = await errorHandler.handle(error, ...args)
+    handleSendResult(context, result)
+    return
+  } catch (error) {
+    console.warn(
+      '!!!Using fallback error handler...!!! onError Handler must NOT throws an error.'
+    )
+    sendError(context.req, context.res, error)
+    return
+  }
 }
