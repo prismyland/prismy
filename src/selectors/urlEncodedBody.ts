@@ -1,4 +1,4 @@
-import { text } from 'micro'
+import { text, createError } from 'micro'
 import { ParsedUrlQuery, parse } from 'querystring'
 import { Selector } from '../types'
 import { createInjectDecorators } from '../createInjectDecorators'
@@ -13,7 +13,12 @@ export function createUrlEncodedBodySelector(
 ): Selector<Promise<ParsedUrlQuery>> {
   return async ({ req }) => {
     const textBody = await text(req, options)
-    return parse(textBody)
+    try {
+      return parse(textBody)
+    } catch (error) {
+      /* istanbul ignore next */
+      throw createError(400, 'Invalid url-encoded body', error)
+    }
   }
 }
 
