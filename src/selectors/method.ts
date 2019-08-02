@@ -1,12 +1,10 @@
 import { Selector } from '../types'
 import { createInjectDecorators } from '../createInjectDecorators'
 
-export function createMethodSelector(): Selector<string | undefined> {
-  return ({ req }) => {
-    return req.method
-  }
+export const selectMethod: Selector<string | undefined> = ({ req }) => {
+  return req.method
 }
 
 export function Method() {
-  return createInjectDecorators(createMethodSelector())
+  return createInjectDecorators(selectMethod)
 }

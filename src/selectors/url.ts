@@ -1,14 +1,20 @@
-import { Url, parse } from 'url'
+import { UrlWithStringQuery, parse } from 'url'
 import { Selector } from '../types'
 import { createInjectDecorators } from '../createInjectDecorators'
 
-export function createUrlSelector(): Selector<Url> {
-  return ({ req }) => {
+const urlSymbol = Symbol('prismy-url')
+
+export const urlSelector: Selector<UrlWithStringQuery> = context => {
+  let url: UrlWithStringQuery | undefined = context[urlSymbol]
+  if (url == null) {
+    const { req } = context
     /* istanbul ignore next */
-    return req.url != null ? parse(req.url) : {}
+    context[urlSymbol] = url =
+      req.url != null ? parse(req.url, false) : { query: null }
   }
+  return url
 }
 
 export function Url() {
-  return createInjectDecorators(createUrlSelector())
+  return createInjectDecorators(urlSelector)
 }
