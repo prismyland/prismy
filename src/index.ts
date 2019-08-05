@@ -1,15 +1,16 @@
+import { IncomingMessage, ServerResponse } from 'http'
+import { sendError, send, createError } from 'micro'
 import { Context, HandlerClass } from './types'
 import { getSelectors } from './createInjectDecorators'
-import { IncomingMessage, ServerResponse } from 'http'
 import { BaseResult } from './results/BaseResult'
 import { BaseHandler } from './BaseHandler'
+export * from './selectors'
 export * from './types'
 export * from './createInjectDecorators'
-export * from './selectors'
 export * from './results/SendResult'
 export * from './BaseHandler'
 export * from './results'
-import { sendError, send } from 'micro'
+export { createError }
 
 export interface PrismyOptions {
   onError?: HandlerClass
