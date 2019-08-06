@@ -17,7 +17,7 @@ export class RedirectResult extends BaseResult {
     this.headers = headers
   }
 
-  handle({ req, res }: Context) {
+  handle({ res }: Context) {
     this.headers.forEach(([key, value]) => {
       res.setHeader(key, value)
     })
