@@ -13,9 +13,41 @@ describe('middleware', () => {
     const rawUrlSelector: Selector<string> = context => context.req.url!
     const errorMiddleware: Middleware = middleware(
       [rawUrlSelector],
-      next => url => {
+      next => async url => {
         try {
-          return next()
+          return await next()
+        } catch (error) {
+          return res(`${url} : ${error.message}`, 500)
+        }
+      }
+    )
+    const handler = prismy(
+      [],
+      () => {
+        throw new Error('Hey!')
+      },
+      [errorMiddleware]
+    )
+
+    await testHandler(handler, async url => {
+      const response = await got(url, {
+        throwHttpErrors: false
+      })
+      expect(response).toMatchObject({
+        statusCode: 500,
+        body: '/ : Hey!'
+      })
+    })
+  })
+
+  it('accepts async selectors', async () => {
+    const asyncRawUrlSelector: Selector<string> = async context =>
+      context.req.url!
+    const errorMiddleware: Middleware = middleware(
+      [asyncRawUrlSelector],
+      next => async url => {
+        try {
+          return await next()
         } catch (error) {
           return res(`${url} : ${error.message}`, 500)
         }

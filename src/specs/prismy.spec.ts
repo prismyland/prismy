@@ -27,6 +27,20 @@ describe('prismy', () => {
     })
   })
 
+  it('selects value from context via selector', async () => {
+    const asyncRawUrlSelector: Selector<string> = async context =>
+      context.req.url!
+    const handler = prismy([asyncRawUrlSelector], url => res(url))
+
+    await testHandler(handler, async url => {
+      const response = await got(url)
+      expect(response).toMatchObject({
+        statusCode: 200,
+        body: '/'
+      })
+    })
+  })
+
   it('expose raw prismy handler for unit tests', () => {
     const rawUrlSelector: Selector<string> = context => context.req.url!
     const handler = prismy([rawUrlSelector], url => res(url))
@@ -41,9 +55,9 @@ describe('prismy', () => {
   })
 
   it('applys middleware', async () => {
-    const errorMiddleware: Middleware = context => next => {
+    const errorMiddleware: Middleware = context => async next => {
       try {
-        return next()
+        return await next()
       } catch (error) {
         return res(error.message, 500)
       }
@@ -69,12 +83,12 @@ describe('prismy', () => {
   })
 
   it('applys middleware orderly', async () => {
-    const problematicMiddleware: Middleware = context => next => {
+    const problematicMiddleware: Middleware = context => async next => {
       throw new Error('Hey!')
     }
-    const errorMiddleware: Middleware = context => next => {
+    const errorMiddleware: Middleware = context => async next => {
       try {
-        return next()
+        return await next()
       } catch (error) {
         return res(error.message, 500)
       }
