@@ -12,6 +12,7 @@
 ## Features
 
 - Extremely small(No Expressjs)
+- Async/Await friendly
 - Type-safe(Written in typescript)
 - Highly testable(Request handlers can be tested without mocking request or sending actual http requests)
 - Better DX
@@ -92,9 +93,15 @@ describe('handler', () => {
 
 ## Concepts
 
+1. Asynchronously pick required values of a handler from context(which having HTTP Request obejct: IncomingMessage).
+2. Asynchronously Execute the handler with picked values.
+3. PROFIT!!
+
 ### Reselect style argument injection
 
-While other server libraries supporting argument injection, like inversifyjs, nestjs and tachijs, are using parameter decoartors, prismy don't need them. This might looks good but have several pitfalls.
+While other server libraries supporting argument injection, like inversifyjs,
+nestjs and tachijs, are using parameter decoartors, prismy don't need them.
+This might looks good but have several pitfalls.
 
 - Controllers must be declared as class.(But not class expressions)
 - Argument injection via the decorators is not type-safe.
@@ -138,6 +145,25 @@ export default prismy(
 )
 ```
 
+Moreover, you can use Async selector!
+Prismy understands async selector out of the box.
+It will resolve all selectors right before executing handler.
+
+```ts
+import { prismy, Selector, res, querySelector } from 'prismy'
+
+const asyncSearchQuerySelector: Selector<string> = async context => {
+  const query = querySelector(context)
+  const { search } = query
+  return search == null ? '' : Array.is(search) ? search[0] : search
+}
+
+export default prismy([searchQuerySelector], search => {
+  await doSomethingWithSearch(search)
+  return res('Done!')
+})
+```
+
 ### Redux style composable middleware
 
 Like Redux middleware, your middleware can do:
@@ -149,18 +175,17 @@ Like Redux middleware, your middleware can do:
 ```ts
 import { prismy, Selector, res, middleware } from 'prismy'
 
-const corsHandler = middleware([], next => () => {
-  const response = next()
+const corsHandler = middleware([], next => async () => {
+  const response = await next()
   response.headers['access-control-allow-origin'] = '*'
   return response.hader
 })
 
 // Middleware also accepts selectors too for unit test
 const urlSelector: Selector<string> = context => context.req.url!
-
-const errorHandler = middleware([urlSelector], next => url => {
+const errorHandler = middleware([urlSelector], next => async url => {
   try {
-    return next()
+    return await next()
   } catch (error) {
     return res(`Error from ${url} : ${error.message}`)
   }
@@ -175,7 +200,7 @@ export default prismy(
 )
 ```
 
-### APIs
+## APIs
 
 TBD
 
