@@ -31,7 +31,7 @@ npm i prismy
 `handler.ts`
 
 ```ts
-import { prismy, createJSONBodySelector } from 'prismy'
+import { prismy, createJSONBodySelector, res } from 'prismy'
 
 const jsonBodySelector = createJSONBodySelector({
   limit: '1mb'
@@ -147,6 +147,8 @@ Like Redux middleware, your middleware can do:
 - Something other than executing handler(Routing, Error handling)
 
 ```ts
+import { prismy, Selector, res, middleware } from 'prismy'
+
 const corsHandler = middleware([], next => () => {
   const response = next()
   response.headers['access-control-allow-origin'] = '*'
@@ -154,7 +156,7 @@ const corsHandler = middleware([], next => () => {
 })
 
 // Middleware also accepts selectors too for unit test
-const urlSelector = context => context.req.url
+const urlSelector: Selector<string> = context => context.req.url!
 
 const errorHandler = middleware([urlSelector], next => url => {
   try {
