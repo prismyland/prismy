@@ -32,6 +32,14 @@ export function prismy<A extends any[]>(
     } catch (error) {
       resObject = res(`Unhandled Error: ${error.message}`, 500)
     }
+
+    Object.entries(resObject.headers).forEach(([key, value]) => {
+      if (value == null) {
+        return
+      }
+      response.setHeader(key, value)
+    })
+
     await send(response, resObject.statusCode, resObject.body)
   }
 
