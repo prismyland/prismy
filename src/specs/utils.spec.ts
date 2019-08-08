@@ -1,6 +1,12 @@
 import got from 'got'
 import { prismy, res, Selector, Middleware, middleware, testHandler } from '..'
-import { redirect } from '../utils'
+import {
+  redirect,
+  setBody,
+  setStatusCode,
+  updateHeaders,
+  setHeaders
+} from '../utils'
 
 describe('middleware', () => {
   it('creates Middleware via selectors and middleware handler', async () => {
@@ -90,6 +96,76 @@ describe('redirect', () => {
           'x-test': 'Hello, World!'
         }
       })
+    })
+  })
+})
+
+describe('setBody', () => {
+  it('replaces body', () => {
+    const resObj = res('Hello, World!')
+
+    const newResObj = setBody(resObj, 'Good Bye!')
+
+    expect(newResObj).toEqual({
+      body: 'Good Bye!',
+      statusCode: 200,
+      headers: {}
+    })
+  })
+})
+
+describe('setStatusCode', () => {
+  it('replaces statusCode', () => {
+    const resObj = res('Hello, World!')
+
+    const newResObj = setStatusCode(resObj, 201)
+
+    expect(newResObj).toEqual({
+      body: 'Hello, World!',
+      statusCode: 201,
+      headers: {}
+    })
+  })
+})
+
+describe('updateHeaders', () => {
+  it('update headers', () => {
+    const resObj = res(null, 200, {
+      'x-test-message': 'Hello, World!'
+    })
+
+    const newResObj = updateHeaders(resObj, {
+      'x-test-message': 'Good Bye!',
+      'x-extra-message': 'Adios!'
+    })
+
+    expect(newResObj).toEqual({
+      body: null,
+      statusCode: 200,
+      headers: {
+        'x-test-message': 'Good Bye!',
+        'x-extra-message': 'Adios!'
+      }
+    })
+  })
+})
+
+describe('setHeaders', () => {
+  it('replace headers', () => {
+    const resObj = res(null, 200, {
+      'x-test-message': 'Hello, World!'
+    })
+
+    const newResObj = setHeaders(resObj, {
+      'x-extra-message': 'Hola!'
+    })
+
+    expect(newResObj).toEqual({
+      body: null,
+      statusCode: 200,
+      headers: {
+        'x-extra-message': 'Hola!'
+      }
     })
   })
 })

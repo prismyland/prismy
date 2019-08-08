@@ -28,6 +28,49 @@ export function redirect(
   }
 }
 
+export function setBody<B1, B2>(
+  resObject: ResponseObject<B1>,
+  body: B2
+): ResponseObject<B2> {
+  return {
+    ...resObject,
+    body
+  }
+}
+
+export function setStatusCode<B>(
+  resObject: ResponseObject<B>,
+  statusCode: number
+): ResponseObject<B> {
+  return {
+    ...resObject,
+    statusCode
+  }
+}
+
+export function updateHeaders<B>(
+  resObject: ResponseObject<B>,
+  extraHeaders: OutgoingHttpHeaders
+): ResponseObject<B> {
+  return {
+    ...resObject,
+    headers: {
+      ...resObject.headers,
+      ...extraHeaders
+    }
+  }
+}
+
+export function setHeaders<B>(
+  resObject: ResponseObject<B>,
+  headers: OutgoingHttpHeaders
+): ResponseObject<B> {
+  return {
+    ...resObject,
+    headers
+  }
+}
+
 export function compileHandler<A extends any[], R>(
   selectors: Selectors<A>,
   handler: (...args: A) => R
