@@ -1,10 +1,10 @@
-import { IncomingHttpHeaders } from 'http'
+import { OutgoingHttpHeaders } from 'http'
 import { ResponseObject, Selectors, Context, Middleware } from './types'
 
 export function res<B = unknown>(
   body: B,
   statusCode: number = 200,
-  headers: IncomingHttpHeaders = {}
+  headers: OutgoingHttpHeaders = {}
 ): ResponseObject<B> {
   return {
     body,
@@ -16,7 +16,7 @@ export function res<B = unknown>(
 export function redirect(
   location: string,
   statusCode: number = 302,
-  extraHeaders: IncomingHttpHeaders = {}
+  extraHeaders: OutgoingHttpHeaders = {}
 ): ResponseObject<null> {
   return {
     body: null,
