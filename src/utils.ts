@@ -13,6 +13,21 @@ export function res<B = unknown>(
   }
 }
 
+export function redirect(
+  location: string,
+  statusCode: number = 302,
+  extraHeaders: IncomingHttpHeaders = {}
+): ResponseObject<null> {
+  return {
+    body: null,
+    statusCode,
+    headers: {
+      location,
+      ...extraHeaders
+    }
+  }
+}
+
 export function compileHandler<A extends any[], R>(
   selectors: Selectors<A>,
   handler: (...args: A) => R
