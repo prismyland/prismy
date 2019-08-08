@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse, IncomingHttpHeaders } from 'http'
 import { send } from 'micro'
+import { ResponseObject } from './response'
 
 export interface Context {
   req: IncomingMessage
