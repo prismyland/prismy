@@ -28,7 +28,7 @@ export function prismy<A extends any[]>(
 
     let resObject
     try {
-      resObject = pipe()
+      resObject = await pipe()
     } catch (error) {
       resObject = res(`Unhandled Error: ${error.message}`, 500)
     }

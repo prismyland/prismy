@@ -74,24 +74,25 @@ export function setHeaders<B>(
 export function compileHandler<A extends any[], R>(
   selectors: Selectors<A>,
   handler: (...args: A) => R
-): (context: Context) => R {
-  return (context: Context) => handler(...useSelectors(context, selectors))
+): (context: Context) => Promise<R> {
+  return async (context: Context) => {
+    return handler(...(await resolveSelectors(context, selectors)))
+  }
 }
 
-export function useSelectors<A extends any[]>(
+export function resolveSelectors<A extends any[]>(
   context: Context,
   selectors: Selectors<A>
-): A {
-  return selectors.map(selector => selector(context)) as A
+): Promise<A> {
+  return Promise.all(selectors.map(selector => selector(context))) as Promise<A>
 }
 
 export function middleware<A extends any[]>(
   selectors: Selectors<A>,
   mhandler: (
-    next: () => ResponseObject<any>
-  ) => (...args: A) => ResponseObject<any>
+    next: () => Promise<ResponseObject<any>>
+  ) => (...args: A) => Promise<ResponseObject<any>>
 ): Middleware {
-  return (context: Context) => (next: () => ResponseObject<any>) => {
-    return compileHandler(selectors, mhandler(next))(context)
-  }
+  return context => async next =>
+    compileHandler(selectors, mhandler(next))(context)
 }
