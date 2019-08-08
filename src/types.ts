@@ -1,4 +1,4 @@
-import { IncomingMessage, ServerResponse, IncomingHttpHeaders } from 'http'
+import { IncomingMessage, ServerResponse, OutgoingHttpHeaders } from 'http'
 
 export interface Context {
   req: IncomingMessage
@@ -11,7 +11,7 @@ export type Selectors<T> = { [P in keyof T]: Selector<T[P]> }
 export interface ResponseObject<B> {
   body?: B
   statusCode: number
-  headers: IncomingHttpHeaders
+  headers: OutgoingHttpHeaders
 }
 
 export type Middleware = (
