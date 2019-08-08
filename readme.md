@@ -9,6 +9,15 @@
 [![NPM download](https://img.shields.io/npm/dm/prismy.svg)](https://www.npmjs.com/package/prismy)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/prismyland/prismy.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/prismyland/prismy/context:javascript)
 
+## Features
+
+- Extremely small(No Expressjs)
+- Type-safe(Written in typescript)
+- Highly testable(Request handlers can be tested without mocking request or sending actual http requests)
+- Better DX
+  - Argument injection without decorators(Reselect style)
+  - Composable middleware(Redux middleware style)
+
 ## Usage
 
 ### Installation
@@ -19,46 +28,154 @@ npm i prismy
 
 ### Implementation
 
+`handler.ts`
+
 ```ts
-import { prismy, JsonBody } from 'prismy'
+import { prismy, createJSONBodySelector } from 'prismy'
 
-export class MyHandler {
-  async handle(@JsonBody() body: any) {
-    await doSomethingWithBody(body)
-    return {
-      message: 'Done!'
-    }
-  }
-}
+const jsonBodySelector = createJSONBodySelector({
+  limit: '1mb'
+})
 
-// prismy will returns a request handler for a Node.js HTTP Server.
-const server = new http.Server(prismy(handlerClass))
+export default prismy([jsonBodySelector], async body => {
+  await doSomethingWithBody(body)
+  return res({
+    message: 'Done!'
+  })
+})
+```
+
+`serve.ts`
+(If you're using now.sh or next.js, you can just put handlers in `pages` without serve script.)
+
+```ts
+import handler from './handler'
+
+const server = new http.Server(prismy(handler))
 
 server.listen(8000)
 ```
 
-### Unit testing
-
-You don't have to mock request to test.
-
 ```ts
-import { MyHandler } from './MyHandler'
+import handler from './handler'
 
-describe('MyHandler', () => {
-  it('returns a message', async () => {
-    // Given
-    const body = {...}
+describe('handler', () => {
+  it('e2e test', async () => {
+    await testHandler(handler, async url => {
+      const response = await got.post(url, {
+        body: {
+          ... // JSON data
+        }
+      })
+      expect(response).toMatchObject({
+        statusCode: 200,
+        body: '/'
+      })
+    })
+  })
 
-    // When
-    const result = new MyHandler().execute(body)
+  it('unit test', () => {
+    // Prismy handler exposes its original handler function so you can determine what to put manually.
+    // It is very useful for unit testing because you don't need to prepare mockup requests or to send actual http requests either.
+    const result = handler.handler({
+      ... // JSON data
+    })
 
-    // Then
     expect(result).toEqual({
-      message: 'Done!'
+      body: 'Done!',
+      headers: {},
+      statusCode: 200
     })
   })
 })
 ```
+
+## Concepts
+
+### Reselect style argument injection
+
+While other server libraries supporting argument injection, like inversifyjs, nestjs and tachijs, are using parameter decoartors, prismy don't need them. This might looks good but have several pitfalls.
+
+- Controllers must be declared as class.(But not class expressions)
+- Argument injection via the decorators is not type-safe.
+
+```ts
+function createController() {
+  class GeneratedController {
+    // "Decorators are not valid here" compiler error thrown.
+    // https://github.com/microsoft/TypeScript/issues/7342
+    run(
+      // Argument types must be declared carefully because Typescript cannot infer it.
+      @Query() query: QueryParams
+    ): string {
+      return 'Done!'
+    }
+  }
+  return GeneratedController
+}
+```
+
+```ts
+import { prismy, Selector, res, querySelector } from 'prismy'
+
+// This selector picks search string from query.
+// If it is undefined, return empty string.
+const searchQuerySelector: Selector<string> = context => {
+  const query = querySelector(context)
+  const { search } = query
+  // So this selector always returns string.
+  return search == null ? '' : Array.is(search) ? search[0] : search
+}
+
+export default prismy(
+  [searchQuerySelector],
+  // Typescript can infer `search` argument type via the given selector tuple.
+  // So you don't need to worry anymore.
+  search => {
+    await doSomethingWithSearch(search)
+    return res('Done!')
+  }
+)
+```
+
+### Redux style composable middleware
+
+Like Redux middleware, your middleware can do:
+
+- Something before executing handler(Session)
+- Something after executing handler(CORS, Session)
+- Something other than executing handler(Routing, Error handling)
+
+```ts
+const corsHandler = middleware([], next => () => {
+  const response = next()
+  response.headers['access-control-allow-origin'] = '*'
+  return response.hader
+})
+
+// Middleware also accepts selectors too for unit test
+const urlSelector = context => context.req.url
+
+const errorHandler = middleware([urlSelector], next => url => {
+  try {
+    return next()
+  } catch (error) {
+    return res(`Error from ${url} : ${error.message}`)
+  }
+})
+
+export default prismy(
+  [],
+  () => {
+    throw new Error('Bang!')
+  },
+  [corsHandler, errorHandler]
+)
+```
+
+### APIs
+
+TBD
 
 ## License
 
