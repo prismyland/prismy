@@ -1,68 +1,12 @@
-import { IncomingMessage, ServerResponse, IncomingHttpHeaders } from 'http'
+import { IncomingMessage, ServerResponse } from 'http'
 import { send } from 'micro'
-import { ResponseObject } from './response'
-
-export interface Context {
-  req: IncomingMessage
-}
-
-export type Selector<T> = (context: Context) => T
-
-export type Selectors<T> = { [P in keyof T]: Selector<T[P]> }
-
-export interface ResponseObject<B> {
-  body?: B
-  statusCode: number
-  headers: IncomingHttpHeaders
-}
-
-export function res<B = unknown>(
-  body: B,
-  statusCode: number = 200,
-  headers: IncomingHttpHeaders = {}
-): ResponseObject<B> {
-  return {
-    body,
-    statusCode,
-    headers
-  }
-}
-
-interface PrismyRequestListener<A extends any[]> {
-  (req: IncomingMessage, res: ServerResponse): void
-  handler(...args: A): any
-  selectors: Selectors<A>
-}
-
-function compileHandler<A extends any[], R>(
-  selectors: Selectors<A>,
-  handler: (...args: A) => R
-): (context: Context) => R {
-  return (context: Context) => handler(...useSelectors(context, selectors))
-}
-
-function useSelectors<A extends any[]>(
-  context: Context,
-  selectors: Selectors<A>
-): A {
-  return selectors.map(selector => selector(context)) as A
-}
-
-export function middleware<A extends any[]>(
-  selectors: Selectors<A>,
-  mhandler: (
-    next: () => ResponseObject<any>
-  ) => (...args: A) => ResponseObject<any>
-): Middleware {
-  return (context: Context) => (next: () => ResponseObject<any>) => {
-    const compiled = compileHandler(selectors, mhandler(next))
-    return compiled(context)
-  }
-}
-
-export type Middleware = (
-  context: Context
-) => (next: () => ResponseObject<any>) => ResponseObject<any>
+import {
+  ResponseObject,
+  Selectors,
+  Middleware,
+  PrismyRequestListener
+} from './types'
+import { res, compileHandler } from './utils'
 
 export function prismy<A extends any[]>(
   selectors: Selectors<A>,
