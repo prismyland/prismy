@@ -1,12 +1,14 @@
 import http from 'http'
 import listen from 'test-listen'
-import { prismy, HandlerClass } from '..'
+import { RequestHandler } from 'micro'
 
-export async function testServer(
-  handlerClass: HandlerClass,
-  testCallback: (url: string) => any
+export type TestCallback = (url: string) => void
+
+export async function testHandler(
+  handler: RequestHandler,
+  testCallback: TestCallback
 ): Promise<void> {
-  const server = new http.Server(prismy(handlerClass))
+  const server = new http.Server(handler)
 
   const url = await listen(server)
   try {

@@ -1,54 +1,24 @@
 import got from 'got'
-import { prismy, createInjectDecorators, TextBody } from '..'
-import { testServer } from './testServer'
-import http from 'http'
-import listen from 'test-listen'
-import { Method } from '../selectors'
-console.error = jest.fn()
-console.warn = jest.fn()
+import { prismy, res, Selector, Middleware, middleware, testHandler } from '..'
 
 describe('prismy', () => {
   it('returns node.js request handler', async () => {
-    class MyHandler {
-      handle() {
-        return 'Hello, World'
-      }
-    }
+    const handler = prismy([], () => res('Hello, World!'))
 
-    await testServer(MyHandler, async url => {
+    await testHandler(handler, async url => {
       const response = await got(url)
       expect(response).toMatchObject({
         statusCode: 200,
-        body: 'Hello, World'
+        body: 'Hello, World!'
       })
     })
   })
 
-  it('responses 204 if result is null', async () => {
-    class MyHandler {
-      handle() {
-        return null
-      }
-    }
+  it('selects value from context via selector', async () => {
+    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const handler = prismy([rawUrlSelector], url => res(url))
 
-    await testServer(MyHandler, async url => {
-      const response = await got(url)
-      expect(response).toMatchObject({
-        statusCode: 204,
-        body: ''
-      })
-    })
-  })
-
-  it('injects via a selector', async () => {
-    const StringUrl = createInjectDecorators(({ req }) => req.url)
-    class MyHandler {
-      handle(@StringUrl url: string) {
-        return url
-      }
-    }
-
-    await testServer(MyHandler, async url => {
+    await testHandler(handler, async url => {
       const response = await got(url)
       expect(response).toMatchObject({
         statusCode: 200,
@@ -57,163 +27,128 @@ describe('prismy', () => {
     })
   })
 
-  it('injects via multiple selectors', async () => {
-    const StringUrl = createInjectDecorators(({ req }) => req.url)
-    class MyHandler {
-      handle(@StringUrl url: string, @TextBody() textBody: string) {
-        return {
-          url,
-          textBody
+  it('expose raw prismy handler to help unit tests', () => {
+    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const handler = prismy([rawUrlSelector], url => res(url))
+
+    const result = handler.handler('Hello, World!')
+
+    expect(result).toEqual({
+      body: 'Hello, World!',
+      headers: {},
+      statusCode: 200
+    })
+  })
+
+  it('applys middleware', async () => {
+    const errorMiddleware: Middleware = context => next => {
+      try {
+        return next()
+      } catch (error) {
+        return res(error.message, 500)
+      }
+    }
+    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const handler = prismy(
+      [rawUrlSelector],
+      url => {
+        throw new Error('Hey!')
+      },
+      [errorMiddleware]
+    )
+
+    await testHandler(handler, async url => {
+      const response = await got(url, {
+        throwHttpErrors: false
+      })
+      expect(response).toMatchObject({
+        statusCode: 500,
+        body: 'Hey!'
+      })
+    })
+  })
+
+  it('applys middleware orderly', async () => {
+    const problematicMiddleware: Middleware = context => next => {
+      throw new Error('Hey!')
+    }
+    const errorMiddleware: Middleware = context => next => {
+      try {
+        return next()
+      } catch (error) {
+        return res(error.message, 500)
+      }
+    }
+    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const handler = prismy(
+      [rawUrlSelector],
+      url => {
+        return res(url)
+      },
+      [problematicMiddleware, errorMiddleware]
+    )
+
+    await testHandler(handler, async url => {
+      const response = await got(url, {
+        throwHttpErrors: false
+      })
+      expect(response).toMatchObject({
+        statusCode: 500,
+        body: 'Hey!'
+      })
+    })
+  })
+
+  it('handles unhandled errors', async () => {
+    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const handler = prismy(
+      [rawUrlSelector],
+      url => {
+        throw new Error('Hey!')
+      },
+      []
+    )
+    await testHandler(handler, async url => {
+      const response = await got(url, {
+        throwHttpErrors: false
+      })
+      expect(response).toMatchObject({
+        statusCode: 500,
+        body: 'Unhandled Error: Hey!'
+      })
+    })
+  })
+})
+
+describe('middleware', () => {
+  it('creates Middleware via selectors and middleware handler', async () => {
+    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const errorMiddleware: Middleware = middleware(
+      [rawUrlSelector],
+      next => url => {
+        try {
+          return next()
+        } catch (error) {
+          return res(`${url} : ${error.message}`, 500)
         }
       }
-    }
+    )
+    const handler = prismy(
+      [],
+      () => {
+        throw new Error('Hey!')
+      },
+      [errorMiddleware]
+    )
 
-    await testServer(MyHandler, async url => {
-      const response = await got.post(url, {
-        body: 'Hello, World!'
-      })
-      expect(response).toMatchObject({
-        statusCode: 200
-      })
-      expect(JSON.parse(response.body)).toEqual({
-        url: '/',
-        textBody: 'Hello, World!'
-      })
-    })
-  })
-
-  it('handles error throwing', async () => {
-    class MyHandler {
-      handle() {
-        throw new Error()
-      }
-    }
-
-    await testServer(MyHandler, async url => {
+    await testHandler(handler, async url => {
       const response = await got(url, {
         throwHttpErrors: false
       })
       expect(response).toMatchObject({
         statusCode: 500,
-        body: 'Internal Server Error'
+        body: '/ : Hey!'
       })
     })
-  })
-
-  it('throws when a handler is returning undefined', async () => {
-    class MyHandler {
-      handle() {}
-    }
-
-    await testServer(MyHandler, async url => {
-      const response = await got(url, {
-        throwHttpErrors: false
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: 'Internal Server Error'
-      })
-    })
-  })
-
-  it('handles errors with onError', async () => {
-    class MyHandler {
-      handle() {
-        throw new Error('Hello, World!')
-      }
-    }
-    class MyErrorHandler {
-      handle(error: Error) {
-        return error.message
-      }
-    }
-
-    const server = new http.Server(
-      prismy(MyHandler, {
-        onError: MyErrorHandler
-      })
-    )
-
-    const url = await listen(server)
-    try {
-      const response = await got(url)
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'Hello, World!'
-      })
-    } catch (error) {
-      throw error
-    } finally {
-      server.close()
-    }
-  })
-
-  it('handles errors with onError with injected args', async () => {
-    const StringUrl = createInjectDecorators(({ req }) => req.url)
-    class MyHandler {
-      handle() {
-        throw new Error('Hello, World!')
-      }
-    }
-    class MyErrorHandler {
-      handle(error: Error, @Method() method: string, @StringUrl url: string) {
-        return `${method} ${url} - ${error.message}`
-      }
-    }
-
-    const server = new http.Server(
-      prismy(MyHandler, {
-        onError: MyErrorHandler
-      })
-    )
-
-    const url = await listen(server)
-    try {
-      const response = await got(url)
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'GET / - Hello, World!'
-      })
-    } catch (error) {
-      throw error
-    } finally {
-      server.close()
-    }
-  })
-
-  it('uses sendError of micro as a fallback for custom error handler', async () => {
-    const spy = (console.warn = jest.fn())
-    class MyHandler {
-      handle() {
-        throw new Error('Hello, World!')
-      }
-    }
-    class MyErrorHandler {
-      handle() {
-        throw new Error('Hello, Another World!')
-      }
-    }
-
-    const server = new http.Server(
-      prismy(MyHandler, {
-        onError: MyErrorHandler
-      })
-    )
-
-    const url = await listen(server)
-    try {
-      const response = await got(url, {
-        throwHttpErrors: false
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: 'Internal Server Error'
-      })
-      expect(spy).toBeCalled()
-    } catch (error) {
-      throw error
-    } finally {
-      server.close()
-    }
   })
 })
