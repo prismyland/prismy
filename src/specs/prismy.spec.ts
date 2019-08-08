@@ -1,5 +1,5 @@
 import got from 'got'
-import { prismy, res, Selector, Middleware, middleware, testHandler } from '..'
+import { prismy, res, Selector, Middleware, testHandler } from '..'
 
 describe('prismy', () => {
   it('returns node.js request handler', async () => {
@@ -27,7 +27,7 @@ describe('prismy', () => {
     })
   })
 
-  it('expose raw prismy handler to help unit tests', () => {
+  it('expose raw prismy handler for unit tests', () => {
     const rawUrlSelector: Selector<string> = context => context.req.url!
     const handler = prismy([rawUrlSelector], url => res(url))
 
@@ -115,39 +115,6 @@ describe('prismy', () => {
       expect(response).toMatchObject({
         statusCode: 500,
         body: 'Unhandled Error: Hey!'
-      })
-    })
-  })
-})
-
-describe('middleware', () => {
-  it('creates Middleware via selectors and middleware handler', async () => {
-    const rawUrlSelector: Selector<string> = context => context.req.url!
-    const errorMiddleware: Middleware = middleware(
-      [rawUrlSelector],
-      next => url => {
-        try {
-          return next()
-        } catch (error) {
-          return res(`${url} : ${error.message}`, 500)
-        }
-      }
-    )
-    const handler = prismy(
-      [],
-      () => {
-        throw new Error('Hey!')
-      },
-      [errorMiddleware]
-    )
-
-    await testHandler(handler, async url => {
-      const response = await got(url, {
-        throwHttpErrors: false
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: '/ : Hey!'
       })
     })
   })
