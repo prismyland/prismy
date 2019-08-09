@@ -1,7 +1,7 @@
 import { json, createError } from 'micro'
 import { Selector } from '../types'
-import { createInjectDecorators } from '../createInjectDecorators'
-import { createHeaderSelector } from './header'
+import { headersSelector } from './headers'
+import { IncomingHttpHeaders } from 'http'
 
 export interface JsonBodySelectorOptions {
   skipContentTypeCheck?: boolean
@@ -11,12 +11,14 @@ export interface JsonBodySelectorOptions {
 
 export function createJsonBodySelector(
   options?: JsonBodySelectorOptions
-): Selector<Promise<any>> {
+): Selector<any> {
   return context => {
     const { skipContentTypeCheck = false } = options || {}
     if (!skipContentTypeCheck) {
-      const contentType = createHeaderSelector('content-type')(context)
-      if (!isContentTypeIsApplicationJSON(contentType as string | undefined)) {
+      const contentType = (headersSelector(context) as IncomingHttpHeaders)[
+        'content-type'
+      ]
+      if (!isContentTypeIsApplicationJSON(contentType)) {
         throw createError(
           400,
           `Content type must be application/json. (Current: ${contentType})`
@@ -25,10 +27,6 @@ export function createJsonBodySelector(
     }
     return json(context.req, options)
   }
-}
-
-export function JsonBody(options?: JsonBodySelectorOptions) {
-  return createInjectDecorators(createJsonBodySelector(options))
 }
 
 function isContentTypeIsApplicationJSON(contentType: string | undefined) {

@@ -1,17 +1,13 @@
 import got from 'got'
-import { Query } from '../..'
-import { testServer } from '../testServer'
-import { ParsedUrlQuery } from 'querystring'
+import { querySelector, prismy, res, testHandler } from '../..'
 
-describe('Query', () => {
-  it('injects query', async () => {
-    class MyHandler {
-      handle(@Query() query: any) {
-        return query
-      }
-    }
+describe('querySelector', () => {
+  it('selects query', async () => {
+    const handler = prismy([querySelector], query => {
+      return res(query)
+    })
 
-    await testServer(MyHandler, async url => {
+    await testHandler(handler, async url => {
       const response = await got(url, {
         query: { message: 'Hello, World!' },
         json: true
@@ -25,13 +21,11 @@ describe('Query', () => {
   })
 
   it('reuses parsed query', async () => {
-    class MyHandler {
-      handle(@Query() query: ParsedUrlQuery, @Query() query2: ParsedUrlQuery) {
-        return JSON.stringify(query === query2)
-      }
-    }
+    const handler = prismy([querySelector, querySelector], (query, query2) => {
+      return res(JSON.stringify(query === query2))
+    })
 
-    await testServer(MyHandler, async url => {
+    await testHandler(handler, async url => {
       const response = await got(url)
 
       expect(response).toMatchObject({

@@ -1,7 +1,6 @@
 import { text, createError } from 'micro'
 import { ParsedUrlQuery, parse } from 'querystring'
 import { Selector } from '../types'
-import { createInjectDecorators } from '../createInjectDecorators'
 
 export interface UrlEncodedBodySelectorOptions {
   limit?: string | number
@@ -20,8 +19,4 @@ export function createUrlEncodedBodySelector(
       throw createError(400, 'Invalid url-encoded body', error)
     }
   }
-}
-
-export function UrlEncodedBody(options?: UrlEncodedBodySelectorOptions) {
-  return createInjectDecorators(createUrlEncodedBodySelector(options))
 }
