@@ -1,7 +1,6 @@
 import { json } from 'micro'
-import { IncomingHttpHeaders } from 'http'
 import { createError } from '../error'
-import { Selector } from '../types'
+import { AsyncSelector } from '../types'
 import { headersSelector } from './headers'
 
 export interface JsonBodySelectorOptions {
@@ -12,14 +11,12 @@ export interface JsonBodySelectorOptions {
 
 export function createJsonBodySelector(
   options?: JsonBodySelectorOptions
-): Selector<any> {
+): AsyncSelector<any> {
   return context => {
     const { skipContentTypeCheck = false } = options || {}
     if (!skipContentTypeCheck) {
-      const contentType = (headersSelector(context) as IncomingHttpHeaders)[
-        'content-type'
-      ]
-      if (!isContentTypeIsApplicationJSON(contentType as string | undefined)) {
+      const contentType = headersSelector(context)['content-type']
+      if (!isContentTypeIsApplicationJSON(contentType)) {
         throw createError(
           400,
           `Content type must be application/json. (Current: ${contentType})`

@@ -1,6 +1,6 @@
 import { text, createError } from 'micro'
 import { ParsedUrlQuery, parse } from 'querystring'
-import { Selector } from '../types'
+import { AsyncSelector } from '../types'
 
 export interface UrlEncodedBodySelectorOptions {
   limit?: string | number
@@ -9,7 +9,7 @@ export interface UrlEncodedBodySelectorOptions {
 
 export function createUrlEncodedBodySelector(
   options?: UrlEncodedBodySelectorOptions
-): Selector<Promise<ParsedUrlQuery>> {
+): AsyncSelector<ParsedUrlQuery> {
   return async ({ req }) => {
     const textBody = await text(req, options)
     try {
