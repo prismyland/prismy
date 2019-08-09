@@ -11,13 +11,12 @@
 
 ## Features
 
-- Extremely small(No Expressjs)
+- Very small(No Expressjs, the only deps are micro and tslib)
 - Async/Await friendly
-- Type-safe(Written in typescript)
-- Highly testable(Request handlers can be tested without mocking request or sending actual http requests)
-- Better DX
-  - Argument injection without decorators(Reselect style)
-  - Composable middleware(Redux middleware style)
+- Argument injection without decorators(Reselect style)
+  - Completely **TYPE-SAFE**
+  - Highly testable(Request handlers can be tested without mocking request or sending actual http requests)
+- Composable middleware(Redux middleware style)
 
 ## Usage
 
