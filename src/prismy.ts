@@ -10,7 +10,7 @@ import { res, compileHandler } from './utils'
 
 export function prismy<A extends any[]>(
   selectors: Selectors<A>,
-  handler: (...args: A) => ResponseObject<any>,
+  handler: (...args: A) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList: Middleware[] = []
 ): PrismyRequestListener<A> {
   async function requestListener(
@@ -20,7 +20,7 @@ export function prismy<A extends any[]>(
     const context = {
       req
     }
-    const next = () => compileHandler(selectors, handler)(context)
+    const next = async () => compileHandler(selectors, handler)(context)
 
     const pipe = middlewareList.reduce((next, middleware) => {
       return () => middleware(context)(next)
