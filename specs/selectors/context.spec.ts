@@ -1,9 +1,9 @@
 import got from 'got'
-import { contextSelector, prismy, res, testHandler } from '../..'
-import { headersSelector } from '../../selectors'
+import { contextSelector, prismy, res, testHandler } from '../../src'
+import { headersSelector } from '../../src/selectors'
 
-describe('headersSelector', () => {
-  it('select headers', async () => {
+describe('contextSelector', () => {
+  it('select context', async () => {
     const handler = prismy([contextSelector], async context => {
       const headers = await headersSelector(context)
       return res(headers['x-test'])

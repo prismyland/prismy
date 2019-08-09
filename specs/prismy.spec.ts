@@ -1,5 +1,5 @@
 import got from 'got'
-import { prismy, res, Selector, Middleware, testHandler } from '..'
+import { prismy, res, Selector, Middleware, testHandler } from '../src'
 
 describe('prismy', () => {
   it('returns node.js request handler', async () => {

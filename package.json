@@ -10,22 +10,22 @@
     "API",
     "now"
   ],
-  "author": "Junyoung Choi <fluke8259@gmail.com>",
-  "homepage": "https://github.com/BoostIO/prismy",
+  "author": "Junyoung Choi <rokt33r.choi@gmail.com>",
+  "homepage": "https://github.com/prismyland/prismy",
   "license": "MIT",
-  "main": "dist",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "dist/**/*",
-    "!dist/specs/**/*"
+    "dist/**/*"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BoostIO/prismy.git"
+    "url": "git+https://github.com/prismyland/prismy.git"
   },
   "scripts": {
-    "build": "rimraf dist && tsc",
-    "lint": "prettier --check src/**/*.ts examples/*/src/**/*.ts",
-    "format": "prettier --write src/**/*.ts examples/*/src/**/*.ts",
+    "build": "rimraf dist && tsc -P tsconfig.build.json",
+    "lint": "prettier --check src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",
+    "format": "prettier --write src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",
     "test": "jest",
     "test-type": "tsc --noEmit",
     "test-ci": "jest --coverage",
@@ -33,7 +33,7 @@
     "prepublishOnly": "npm run lint && npm test && npm run build"
   },
   "bugs": {
-    "url": "https://github.com/BoostIO/prismy/issues"
+    "url": "https://github.com/prismyland/prismy/issues"
   },
   "devDependencies": {
     "@types/got": "^9.4.4",

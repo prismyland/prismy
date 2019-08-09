@@ -1,6 +1,10 @@
 import got from 'got'
-import { prismy, createWithErrorHandler, testHandler } from '..'
-import { createError } from 'micro'
+import {
+  prismy,
+  createWithErrorHandler,
+  testHandler,
+  createError
+} from '../src'
 
 describe('createWithErrorHandler', () => {
   it('creates withErrorHandler middleware', async () => {

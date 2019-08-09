@@ -1,12 +1,17 @@
 import got from 'got'
-import { prismy, res, Selector, Middleware, middleware, testHandler } from '..'
 import {
+  prismy,
+  res,
+  Selector,
+  Middleware,
+  middleware,
+  testHandler,
   redirect,
   setBody,
   setStatusCode,
   updateHeaders,
   setHeaders
-} from '../utils'
+} from '../src'
 
 describe('middleware', () => {
   it('creates Middleware via selectors and middleware handler', async () => {

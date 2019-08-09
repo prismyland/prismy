@@ -1,5 +1,10 @@
 import got from 'got'
-import { createUrlEncodedBodySelector, prismy, res, testHandler } from '../..'
+import {
+  createUrlEncodedBodySelector,
+  prismy,
+  res,
+  testHandler
+} from '../../src'
 
 describe('URLEncodedBody', () => {
   it('injects parsed url encoded body', async () => {
