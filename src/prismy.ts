@@ -34,6 +34,7 @@ export function prismy<A extends any[]>(
     }
 
     Object.entries(resObject.headers).forEach(([key, value]) => {
+      /* istanbul ignore if */
       if (value == null) {
         return
       }
