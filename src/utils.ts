@@ -18,14 +18,10 @@ export function redirect(
   statusCode: number = 302,
   extraHeaders: OutgoingHttpHeaders = {}
 ): ResponseObject<null> {
-  return {
-    body: null,
-    statusCode,
-    headers: {
-      location,
-      ...extraHeaders
-    }
-  }
+  return res(null, statusCode, {
+    location,
+    ...extraHeaders
+  })
 }
 
 export function setBody<B1, B2>(
