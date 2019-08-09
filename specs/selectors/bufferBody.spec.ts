@@ -1,5 +1,6 @@
 import got from 'got'
-import { createBufferBodySelector, prismy, res, testHandler } from '../../src'
+import { testHandler } from '../testHandler'
+import { createBufferBodySelector, prismy, res } from '../../src'
 
 describe('createBufferBodySelector', () => {
   it('creates buffer body selector', async () => {

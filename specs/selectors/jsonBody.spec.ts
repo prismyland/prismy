@@ -1,5 +1,6 @@
 import got from 'got'
-import { createJsonBodySelector, prismy, testHandler, res } from '../../src'
+import { testHandler } from '../testHandler'
+import { createJsonBodySelector, prismy, res } from '../../src'
 
 describe('createJsonBodySelector', () => {
   it('creates json body selector', async () => {

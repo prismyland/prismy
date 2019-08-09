@@ -1,6 +1,6 @@
 import got from 'got'
-import { contextSelector, prismy, res, testHandler } from '../../src'
-import { headersSelector } from '../../src/selectors'
+import { testHandler } from '../testHandler'
+import { contextSelector, prismy, res, headersSelector } from '../../src'
 
 describe('contextSelector', () => {
   it('select context', async () => {
