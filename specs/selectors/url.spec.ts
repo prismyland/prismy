@@ -1,5 +1,5 @@
 import got from 'got'
-import { urlSelector, prismy, res, testHandler } from '../..'
+import { urlSelector, prismy, res, testHandler } from '../../src'
 
 describe('urlSelector', () => {
   it('selects url', async () => {

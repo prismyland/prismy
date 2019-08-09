@@ -1,8 +1,5 @@
 import got from 'got'
-import { headersSelector } from '../../selectors'
-import { testHandler } from '../../testHandler'
-import { prismy } from '../../prismy'
-import { res } from '../../utils'
+import { headersSelector, prismy, res, testHandler } from '../../src'
 
 describe('headersSelector', () => {
   it('select headers', async () => {

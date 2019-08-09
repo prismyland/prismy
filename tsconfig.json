@@ -1,10 +1,11 @@
 {
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "specs/**/*.ts"],
   "compilerOptions": {
     "target": "es2018",
     "lib": ["es2018"],
     "module": "commonjs",
     "moduleResolution": "node",
+    "importHelpers": true,
     "esModuleInterop": true,
     "jsx": "react",
     "declaration": true,

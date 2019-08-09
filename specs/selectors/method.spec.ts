@@ -1,6 +1,5 @@
 import got from 'got'
-import { methodSelector, prismy, testHandler } from '../..'
-import { res } from '../../utils'
+import { methodSelector, prismy, res, testHandler } from '../../src'
 
 describe('methodSelector', () => {
   it('selects method', async () => {
