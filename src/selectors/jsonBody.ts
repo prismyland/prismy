@@ -1,7 +1,8 @@
-import { json, createError } from 'micro'
+import { json } from 'micro'
+import { IncomingHttpHeaders } from 'http'
+import { createError } from '../error'
 import { Selector } from '../types'
 import { headersSelector } from './headers'
-import { IncomingHttpHeaders } from 'http'
 
 export interface JsonBodySelectorOptions {
   skipContentTypeCheck?: boolean
@@ -18,7 +19,7 @@ export function createJsonBodySelector(
       const contentType = (headersSelector(context) as IncomingHttpHeaders)[
         'content-type'
       ]
-      if (!isContentTypeIsApplicationJSON(contentType)) {
+      if (!isContentTypeIsApplicationJSON(contentType as string | undefined)) {
         throw createError(
           400,
           `Content type must be application/json. (Current: ${contentType})`
