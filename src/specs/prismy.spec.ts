@@ -113,12 +113,33 @@ describe('prismy', () => {
     })
   })
 
-  it('handles unhandled errors', async () => {
-    const rawUrlSelector: Selector<string> = context => context.req.url!
+  it('handles unhandled errors from handlers', async () => {
+    const handler = prismy(
+      [],
+      () => {
+        throw new Error('Hey!')
+      },
+      []
+    )
+    await testHandler(handler, async url => {
+      const response = await got(url, {
+        throwHttpErrors: false
+      })
+      expect(response).toMatchObject({
+        statusCode: 500,
+        body: 'Unhandled Error: Hey!'
+      })
+    })
+  })
+
+  it('handles unhandled errors from selectors', async () => {
+    const rawUrlSelector: Selector<string> = context => {
+      throw new Error('Hey!')
+    }
     const handler = prismy(
       [rawUrlSelector],
       url => {
-        throw new Error('Hey!')
+        return res(url)
       },
       []
     )
