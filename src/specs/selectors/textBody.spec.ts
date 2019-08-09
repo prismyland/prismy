@@ -1,25 +1,21 @@
 import got from 'got'
-import { TextBody } from '../..'
-import { testServer } from '../testServer'
+import { createTextBodySelector, prismy, res } from '../..'
+import { testHandler } from '../../testHandler'
 
-describe('TextBody', () => {
-  it('injects parsed text body', async () => {
-    let parsedBody: string
-    class MyHandler {
-      handle(@TextBody() body: string) {
-        parsedBody = body
-        return body
-      }
-    }
+describe('createTextBodySelector', () => {
+  it('creates buffer body selector', async () => {
+    const textBodySelector = createTextBodySelector()
+    const handler = prismy([textBodySelector], body => {
+      return res(`${body.constructor.name}: ${body}`)
+    })
 
-    await testServer(MyHandler, async url => {
+    await testHandler(handler, async url => {
       const response = await got(url, { body: 'Hello, World!' })
 
       expect(response).toMatchObject({
         statusCode: 200,
-        body: 'Hello, World!'
+        body: 'String: Hello, World!'
       })
-      expect(parsedBody).toBe('Hello, World!')
     })
   })
 })

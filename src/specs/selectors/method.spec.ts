@@ -1,16 +1,14 @@
 import got from 'got'
-import { Method } from '../..'
-import { testServer } from '../testServer'
+import { methodSelector, prismy, testHandler } from '../..'
+import { res } from '../../utils'
 
-describe('Method', () => {
-  it('injects method', async () => {
-    class MyHandler {
-      handle(@Method() method: string) {
-        return method
-      }
-    }
+describe('methodSelector', () => {
+  it('selects method', async () => {
+    const handler = prismy([methodSelector], method => {
+      return res(method)
+    })
 
-    await testServer(MyHandler, async url => {
+    await testHandler(handler, async url => {
       const response = await got(url)
 
       expect(response).toMatchObject({
