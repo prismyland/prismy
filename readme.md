@@ -58,6 +58,7 @@ server.listen(8000)
 ```
 
 ```ts
+import got from 'got'
 import handler from './handler'
 
 describe('handler', () => {
@@ -76,8 +77,12 @@ describe('handler', () => {
   })
 
   it('unit test', () => {
-    // Prismy handler exposes its original handler function so you can determine what to put manually.
-    // It is very useful for unit testing because you don't need to prepare mockup requests or to send actual http requests either.
+    /**
+     * Prismy handler exposes its original handler function so you can determine
+     * what to put manually. It is very useful for unit testing because you
+     * don't need to prepare mockup requests or to send actual http requests
+     * either.
+     * */
     const result = handler.handler({
       ... // JSON data
     })
@@ -109,8 +114,10 @@ This might looks good but have several pitfalls.
 ```ts
 function createController() {
   class GeneratedController {
-    // "Decorators are not valid here" compiler error thrown.
-    // https://github.com/microsoft/TypeScript/issues/7342
+    /**
+     * "Decorators are not valid here" compiler error thrown.
+     * https://github.com/microsoft/TypeScript/issues/7342
+     * */
     run(
       // Argument types must be declared carefully because Typescript cannot infer it.
       @Query() query: QueryParams
@@ -175,7 +182,7 @@ Like Redux middleware, your middleware can do:
 ```ts
 import { prismy, Selector, res, middleware } from 'prismy'
 
-const corsHandler = middleware([], next => async () => {
+const withCors = middleware([], next => async () => {
   const response = await next()
   response.headers['access-control-allow-origin'] = '*'
   return response.hader
@@ -183,7 +190,7 @@ const corsHandler = middleware([], next => async () => {
 
 // Middleware also accepts selectors too for unit test
 const urlSelector: Selector<string> = context => context.req.url!
-const errorHandler = middleware([urlSelector], next => async url => {
+const withErrorHandler = middleware([urlSelector], next => async url => {
   try {
     return await next()
   } catch (error) {
@@ -196,13 +203,35 @@ export default prismy(
   () => {
     throw new Error('Bang!')
   },
-  [corsHandler, errorHandler]
+  /**
+   * Next middleware manage previous middleware or the original handler.
+   * withCors manages the original handler. It can decide to execute the handler
+   * or not. Also, it can manipulate result of the handler. But, withCors is
+   * also managed by withErrorHandler.
+   * */
+  [withCors, withErrorHandler]
 )
 ```
+
+### Context
+
+`context` is a simple plain object which containing native node.js's request instance, `IncomingMessage`.
+
+```ts
+interface Context {
+  req: IncomingMessage
+}
+```
+
+Prismy introduce this object for memoization value or communication between selectors in different middleware and its handler.
+
+<!-- TODO provide some examples -->
 
 ## APIs
 
 TBD
+
+<!-- TODO add api docs -->
 
 ## License
 
