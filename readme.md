@@ -15,6 +15,7 @@
 - Async/Await friendly
 - Argument injection without decorators(Reselect style)
   - Completely **TYPE-SAFE**
+  - No more class
   - Highly testable(Request handlers can be tested without mocking request or sending actual http requests)
 - Composable middleware(Redux middleware style)
 
@@ -97,9 +98,9 @@ describe('handler', () => {
 
 ## Concepts
 
-1. Asynchronously pick required values of a handler from context(which having HTTP Request obejct: IncomingMessage).
-2. Asynchronously Execute the handler with picked values.
-3. PROFIT!!
+1. _Asynchronously_ pick required values of a handler from context(which having HTTP Request obejct: IncomingMessage).
+2. _Asynchronously_ execute the handler with the picked values.
+3. **PROFIT!!**
 
 ### Reselect style argument injection
 
@@ -110,11 +111,14 @@ This might looks good but have several pitfalls.
 - Controllers must be declared as class.(But not class expressions)
 - Argument injection via the decorators is not type-safe.
 
+Other libary like(nestjs)
+
 ```ts
 function createController() {
   class GeneratedController {
     /**
-     * "Decorators are not valid here" compiler error thrown.
+     * Using decorators in class expression is not allowed yet.
+     * So compiler will throw an error.
      * https://github.com/microsoft/TypeScript/issues/7342
      * */
     run(
@@ -127,6 +131,8 @@ function createController() {
   return GeneratedController
 }
 ```
+
+Prismy
 
 ```ts
 import { prismy, Selector, res, querySelector } from 'prismy'
@@ -151,8 +157,8 @@ export default prismy(
 )
 ```
 
-Moreover, you can use Async selector!
-Prismy understands async selector out of the box.
+Moreover, you can use Async selectors!
+Prismy understands async selectors out of the box.
 It will resolve all selectors right before executing handler.
 
 ```ts
