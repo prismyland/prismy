@@ -51,7 +51,7 @@ export default prismy([jsonBodySelector], async body => {
 ```ts
 import handler from './handler'
 
-const server = new http.Server(prismy(handler))
+const server = new http.Server(handler)
 
 server.listen(8000)
 ```
