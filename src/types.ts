@@ -4,7 +4,9 @@ export interface Context {
   req: IncomingMessage
 }
 
-export type Selector<T> = (context: Context) => T | Promise<T>
+export type SyncSelector<T> = (context: Context) => T
+export type AsyncSelector<T> = (context: Context) => Promise<T>
+export type Selector<T> = SyncSelector<T> | AsyncSelector<T>
 
 export type Selectors<T> = { [P in keyof T]: Selector<T[P]> }
 

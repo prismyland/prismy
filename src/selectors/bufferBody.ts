@@ -1,5 +1,5 @@
 import { buffer } from 'micro'
-import { Selector } from '../types'
+import { AsyncSelector } from '../types'
 
 export interface BufferBodySelectorOptions {
   limit?: string | number
@@ -8,7 +8,7 @@ export interface BufferBodySelectorOptions {
 
 export function createBufferBodySelector(
   options?: BufferBodySelectorOptions
-): Selector<string | Buffer> {
+): AsyncSelector<string | Buffer> {
   return ({ req }) => {
     return buffer(req, options)
   }

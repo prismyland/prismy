@@ -1,5 +1,5 @@
 import { text } from 'micro'
-import { Selector } from '../types'
+import { AsyncSelector } from '../types'
 
 export interface TextBodySelectorOptions {
   limit?: string | number
@@ -8,7 +8,7 @@ export interface TextBodySelectorOptions {
 
 export function createTextBodySelector(
   options?: TextBodySelectorOptions
-): Selector<string> {
+): AsyncSelector<string> {
   return ({ req }) => {
     return text(req, options)
   }

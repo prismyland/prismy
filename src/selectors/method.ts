@@ -1,5 +1,5 @@
-import { Selector } from '../types'
+import { SyncSelector } from '../types'
 
-export const methodSelector: Selector<string | undefined> = ({ req }) => {
+export const methodSelector: SyncSelector<string | undefined> = ({ req }) => {
   return req.method
 }

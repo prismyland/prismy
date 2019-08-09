@@ -1,9 +1,9 @@
 import { UrlWithStringQuery, parse } from 'url'
-import { Selector } from '../types'
+import { SyncSelector } from '../types'
 
 const urlSymbol = Symbol('prismy-url')
 
-export const urlSelector: Selector<UrlWithStringQuery> = context => {
+export const urlSelector: SyncSelector<UrlWithStringQuery> = context => {
   let url: UrlWithStringQuery | undefined = context[urlSymbol]
   if (url == null) {
     const { req } = context

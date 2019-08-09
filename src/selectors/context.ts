@@ -1,3 +1,3 @@
-import { Selector, Context } from '../types'
+import { Context, SyncSelector } from '../types'
 
-export const contextSelector: Selector<Context> = context => context
+export const contextSelector: SyncSelector<Context> = context => context
