@@ -1,11 +1,11 @@
 import got from 'got'
+import { testHandler } from './testHandler'
 import {
   prismy,
   res,
   Selector,
   Middleware,
   middleware,
-  testHandler,
   redirect,
   setBody,
   setStatusCode,

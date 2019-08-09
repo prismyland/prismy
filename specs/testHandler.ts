@@ -1,11 +1,11 @@
 import http from 'http'
 import listen from 'test-listen'
-import { RequestHandler } from 'micro'
+import { RequestListener } from 'http'
 
 export type TestCallback = (url: string) => void
 
 export async function testHandler(
-  handler: RequestHandler,
+  handler: RequestListener,
   testCallback: TestCallback
 ): Promise<void> {
   const server = new http.Server(handler)

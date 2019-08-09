@@ -1,10 +1,6 @@
 import got from 'got'
-import {
-  prismy,
-  createWithErrorHandler,
-  testHandler,
-  createError
-} from '../src'
+import { testHandler } from './testHandler'
+import { prismy, createWithErrorHandler, createError } from '../src'
 
 describe('createWithErrorHandler', () => {
   it('creates withErrorHandler middleware', async () => {

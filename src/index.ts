@@ -1,6 +1,5 @@
 export * from './types'
 export * from './utils'
 export * from './prismy'
-export * from './testHandler'
 export * from './selectors'
 export * from './error'
