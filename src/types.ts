@@ -10,6 +10,8 @@ export type Selector<T> = SyncSelector<T> | AsyncSelector<T>
 
 export type Selectors<T> = { [P in keyof T]: Selector<T[P]> }
 
+export type Unpromise<T> = T extends Promise<infer U> ? U : T
+
 export interface ResponseObject<B> {
   body?: B
   statusCode: number
@@ -23,5 +25,4 @@ export type Middleware = (
 export interface PrismyRequestListener<A extends any[]> {
   (req: IncomingMessage, res: ServerResponse): void
   handler(...args: A): ResponseObject<any> | Promise<ResponseObject<any>>
-  selectors: Selectors<A>
 }

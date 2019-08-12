@@ -5,6 +5,7 @@ import {
   Selector,
   Selectors,
   Middleware,
+  Unpromise,
   PrismyRequestListener
 } from './types'
 import { res, compileHandler } from './utils'
@@ -46,7 +47,6 @@ export function prismyx<A extends any[]>(
   }
 
   requestListener.handler = handler
-  requestListener.selectors = selectors
 
   return requestListener
 }
@@ -58,36 +58,40 @@ export function prismy(
 ): PrismyRequestListener<[]>
 export function prismy<A1>(
   selectors: [Selector<A1>],
-  handler: (arg1: A1) => ResponseObject<any> | Promise<ResponseObject<any>>,
+  handler: (
+    arg1: Unpromise<A1>
+  ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1]>
+): PrismyRequestListener<[Unpromise<A1>]>
 export function prismy<A1, A2>(
   selectors: [Selector<A1>, Selector<A2>],
   handler: (
-    arg1: A1,
-    arg2: A2
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2]>
+): PrismyRequestListener<[Unpromise<A1>, Unpromise<A2>]>
 export function prismy<A1, A2, A3>(
   selectors: [Selector<A1>, Selector<A2>, Selector<A3>],
   handler: (
-    arg1: A1,
-    arg2: A2,
-    arg3: A3
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>,
+    arg3: Unpromise<A3>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2, A3]>
+): PrismyRequestListener<[Unpromise<A1>, Unpromise<A2>, Unpromise<A3>]>
 export function prismy<A1, A2, A3, A4>(
   selectors: [Selector<A1>, Selector<A2>, Selector<A3>, Selector<A4>],
   handler: (
-    arg1: A1,
-    arg2: A2,
-    arg3: A3,
-    arg4: A4
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>,
+    arg3: Unpromise<A3>,
+    arg4: Unpromise<A4>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2, A3, A4]>
+): PrismyRequestListener<
+  [Unpromise<A1>, Unpromise<A2>, Unpromise<A3>, Unpromise<A4>]
+>
 export function prismy<A1, A2, A3, A4, A5>(
   selectors: [
     Selector<A1>,
@@ -97,14 +101,16 @@ export function prismy<A1, A2, A3, A4, A5>(
     Selector<A5>
   ],
   handler: (
-    arg1: A1,
-    arg2: A2,
-    arg3: A3,
-    arg4: A4,
-    arg5: A5
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>,
+    arg3: Unpromise<A3>,
+    arg4: Unpromise<A4>,
+    arg5: Unpromise<A5>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2, A3, A4, A5]>
+): PrismyRequestListener<
+  [Unpromise<A1>, Unpromise<A2>, Unpromise<A3>, Unpromise<A4>, Unpromise<A5>]
+>
 export function prismy<A1, A2, A3, A4, A5, A6>(
   selectors: [
     Selector<A1>,
@@ -115,15 +121,24 @@ export function prismy<A1, A2, A3, A4, A5, A6>(
     Selector<A6>
   ],
   handler: (
-    arg1: A1,
-    arg2: A2,
-    arg3: A3,
-    arg4: A4,
-    arg5: A5,
-    arg6: A6
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>,
+    arg3: Unpromise<A3>,
+    arg4: Unpromise<A4>,
+    arg5: Unpromise<A5>,
+    arg6: Unpromise<A6>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2, A3, A4, A5, A6]>
+): PrismyRequestListener<
+  [
+    Unpromise<A1>,
+    Unpromise<A2>,
+    Unpromise<A3>,
+    Unpromise<A4>,
+    Unpromise<A5>,
+    Unpromise<A6>
+  ]
+>
 export function prismy<A1, A2, A3, A4, A5, A6, A7>(
   selectors: [
     Selector<A1>,
@@ -135,16 +150,26 @@ export function prismy<A1, A2, A3, A4, A5, A6, A7>(
     Selector<A7>
   ],
   handler: (
-    arg1: A1,
-    arg2: A2,
-    arg3: A3,
-    arg4: A4,
-    arg5: A5,
-    arg6: A6,
-    arg7: A7
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>,
+    arg3: Unpromise<A3>,
+    arg4: Unpromise<A4>,
+    arg5: Unpromise<A5>,
+    arg6: Unpromise<A6>,
+    arg7: Unpromise<A7>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2, A3, A4, A5, A6, A7]>
+): PrismyRequestListener<
+  [
+    Unpromise<A1>,
+    Unpromise<A2>,
+    Unpromise<A3>,
+    Unpromise<A4>,
+    Unpromise<A5>,
+    Unpromise<A6>,
+    Unpromise<A7>
+  ]
+>
 export function prismy<A1, A2, A3, A4, A5, A6, A7, A8>(
   selectors: [
     Selector<A1>,
@@ -157,17 +182,28 @@ export function prismy<A1, A2, A3, A4, A5, A6, A7, A8>(
     Selector<A8>
   ],
   handler: (
-    arg1: A1,
-    arg2: A2,
-    arg3: A3,
-    arg4: A4,
-    arg5: A5,
-    arg6: A6,
-    arg7: A7,
-    arg8: A8
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>,
+    arg3: Unpromise<A3>,
+    arg4: Unpromise<A4>,
+    arg5: Unpromise<A5>,
+    arg6: Unpromise<A6>,
+    arg7: Unpromise<A7>,
+    arg8: Unpromise<A8>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2, A3, A4, A5, A6, A7, A8]>
+): PrismyRequestListener<
+  [
+    Unpromise<A1>,
+    Unpromise<A2>,
+    Unpromise<A3>,
+    Unpromise<A4>,
+    Unpromise<A5>,
+    Unpromise<A6>,
+    Unpromise<A7>,
+    Unpromise<A8>
+  ]
+>
 export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9>(
   selectors: [
     Selector<A1>,
@@ -181,18 +217,30 @@ export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9>(
     Selector<A9>
   ],
   handler: (
-    arg1: A1,
-    arg2: A2,
-    arg3: A3,
-    arg4: A4,
-    arg5: A5,
-    arg6: A6,
-    arg7: A7,
-    arg8: A8,
-    arg9: A9
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>,
+    arg3: Unpromise<A3>,
+    arg4: Unpromise<A4>,
+    arg5: Unpromise<A5>,
+    arg6: Unpromise<A6>,
+    arg7: Unpromise<A7>,
+    arg8: Unpromise<A8>,
+    arg9: Unpromise<A9>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2, A3, A4, A5, A6, A7, A8, A9]>
+): PrismyRequestListener<
+  [
+    Unpromise<A1>,
+    Unpromise<A2>,
+    Unpromise<A3>,
+    Unpromise<A4>,
+    Unpromise<A5>,
+    Unpromise<A6>,
+    Unpromise<A7>,
+    Unpromise<A8>,
+    Unpromise<A9>
+  ]
+>
 export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10>(
   selectors: [
     Selector<A1>,
@@ -207,19 +255,32 @@ export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10>(
     Selector<A10>
   ],
   handler: (
-    arg1: A1,
-    arg2: A2,
-    arg3: A3,
-    arg4: A4,
-    arg5: A5,
-    arg6: A6,
-    arg7: A7,
-    arg8: A8,
-    arg9: A9,
-    arg10: A10
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>,
+    arg3: Unpromise<A3>,
+    arg4: Unpromise<A4>,
+    arg5: Unpromise<A5>,
+    arg6: Unpromise<A6>,
+    arg7: Unpromise<A7>,
+    arg8: Unpromise<A8>,
+    arg9: Unpromise<A9>,
+    arg10: Unpromise<A10>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10]>
+): PrismyRequestListener<
+  [
+    Unpromise<A1>,
+    Unpromise<A2>,
+    Unpromise<A3>,
+    Unpromise<A4>,
+    Unpromise<A5>,
+    Unpromise<A6>,
+    Unpromise<A7>,
+    Unpromise<A8>,
+    Unpromise<A9>,
+    Unpromise<A10>
+  ]
+>
 export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11>(
   selectors: [
     Selector<A1>,
@@ -235,20 +296,34 @@ export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11>(
     Selector<A11>
   ],
   handler: (
-    arg1: A1,
-    arg2: A2,
-    arg3: A3,
-    arg4: A4,
-    arg5: A5,
-    arg6: A6,
-    arg7: A7,
-    arg8: A8,
-    arg9: A9,
-    arg10: A10,
-    arg11: A11
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>,
+    arg3: Unpromise<A3>,
+    arg4: Unpromise<A4>,
+    arg5: Unpromise<A5>,
+    arg6: Unpromise<A6>,
+    arg7: Unpromise<A7>,
+    arg8: Unpromise<A8>,
+    arg9: Unpromise<A9>,
+    arg10: Unpromise<A10>,
+    arg11: Unpromise<A11>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11]>
+): PrismyRequestListener<
+  [
+    Unpromise<A1>,
+    Unpromise<A2>,
+    Unpromise<A3>,
+    Unpromise<A4>,
+    Unpromise<A5>,
+    Unpromise<A6>,
+    Unpromise<A7>,
+    Unpromise<A8>,
+    Unpromise<A9>,
+    Unpromise<A10>,
+    Unpromise<A11>
+  ]
+>
 export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12>(
   selectors: [
     Selector<A1>,
@@ -265,21 +340,36 @@ export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12>(
     Selector<A12>
   ],
   handler: (
-    arg1: A1,
-    arg2: A2,
-    arg3: A3,
-    arg4: A4,
-    arg5: A5,
-    arg6: A6,
-    arg7: A7,
-    arg8: A8,
-    arg9: A9,
-    arg10: A10,
-    arg11: A11,
-    arg12: A12
+    arg1: Unpromise<A1>,
+    arg2: Unpromise<A2>,
+    arg3: Unpromise<A3>,
+    arg4: Unpromise<A4>,
+    arg5: Unpromise<A5>,
+    arg6: Unpromise<A6>,
+    arg7: Unpromise<A7>,
+    arg8: Unpromise<A8>,
+    arg9: Unpromise<A9>,
+    arg10: Unpromise<A10>,
+    arg11: Unpromise<A11>,
+    arg12: Unpromise<A12>
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
   middlewareList?: Middleware[]
-): PrismyRequestListener<[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12]>
+): PrismyRequestListener<
+  [
+    Unpromise<A1>,
+    Unpromise<A2>,
+    Unpromise<A3>,
+    Unpromise<A4>,
+    Unpromise<A5>,
+    Unpromise<A6>,
+    Unpromise<A7>,
+    Unpromise<A8>,
+    Unpromise<A9>,
+    Unpromise<A10>,
+    Unpromise<A11>,
+    Unpromise<A12>
+  ]
+>
 export function prismy(
   selectors: Selector<any>[],
   handler: (
