@@ -13,7 +13,7 @@ import { UrlWithStringQuery } from 'url'
 const asyncUrlSelector: AsyncSelector<UrlWithStringQuery> = async context =>
   urlSelector(context)
 
-const handler = prismy(
+const handler1 = prismy(
   [urlSelector, methodSelector, asyncUrlSelector],
   (url, method, url2) => {
     expectType<UrlWithStringQuery>(url)
@@ -29,7 +29,7 @@ expectType<
     method: string | undefined,
     url2: UrlWithStringQuery
   ) => ResponseObject<any> | Promise<ResponseObject<any>>
->(handler.handler)
+>(handler1.handler)
 
 const handler2 = prismyx<
   [UrlWithStringQuery, string | undefined, UrlWithStringQuery]
