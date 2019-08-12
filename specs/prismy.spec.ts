@@ -1,5 +1,5 @@
 import got from 'got'
-import { testHandler } from './testHandler'
+import { testHandler } from './helpers'
 import { prismy, res, Selector, PrismyPureMiddleware } from '../src'
 
 describe('prismy', () => {

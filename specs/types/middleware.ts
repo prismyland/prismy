@@ -7,9 +7,9 @@ import {
   ResponseObject,
   prismy,
   res
-} from '../src'
-import { expectType } from 'tsd'
+} from '../../src'
 import { UrlWithStringQuery } from 'url'
+import { expectType } from '../helpers'
 
 const asyncUrlSelector: AsyncSelector<UrlWithStringQuery> = async context =>
   urlSelector(context)

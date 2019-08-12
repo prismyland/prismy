@@ -1,5 +1,5 @@
 import got from 'got'
-import { testHandler } from '../testHandler'
+import { testHandler } from '../helpers'
 import { querySelector, prismy, res } from '../../src'
 
 describe('querySelector', () => {

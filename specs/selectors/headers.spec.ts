@@ -1,5 +1,5 @@
 import got from 'got'
-import { testHandler } from '../testHandler'
+import { testHandler } from '../helpers'
 import { headersSelector, prismy, res } from '../../src'
 
 describe('headersSelector', () => {
