@@ -22,6 +22,6 @@ export type Middleware = (
 
 export interface PrismyRequestListener<A extends any[]> {
   (req: IncomingMessage, res: ServerResponse): void
-  handler(...args: A): any
+  handler(...args: A): ResponseObject<any> | Promise<ResponseObject<any>>
   selectors: Selectors<A>
 }
