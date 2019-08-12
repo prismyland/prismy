@@ -27,11 +27,12 @@
     "build": "rimraf dist && tsc -P tsconfig.build.json",
     "lint": "prettier --check src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",
     "format": "prettier --write src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",
-    "test": "jest",
+    "test": "npm run lint && npm run test-type && npm run test-coverage",
+    "test-api": "jest",
     "test-type": "tsc --noEmit && tsd",
-    "test-ci": "jest --coverage",
+    "test-coverage": "jest --coverage",
     "codecov": "codecov -f coverage/*.json",
-    "prepublishOnly": "npm run lint && npm test && npm run build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "bugs": {
     "url": "https://github.com/prismyland/prismy/issues"
