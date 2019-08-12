@@ -1,6 +1,6 @@
 import got from 'got'
 import { testHandler } from './testHandler'
-import { prismy, res, Selector, Middleware } from '../src'
+import { prismy, res, Selector, PrismyPureMiddleware } from '../src'
 
 describe('prismy', () => {
   it('returns node.js request handler', async () => {
@@ -56,7 +56,7 @@ describe('prismy', () => {
   })
 
   it('applys middleware', async () => {
-    const errorMiddleware: Middleware = context => async next => {
+    const errorMiddleware: PrismyPureMiddleware = context => async next => {
       try {
         return await next()
       } catch (error) {
@@ -84,10 +84,10 @@ describe('prismy', () => {
   })
 
   it('applys middleware orderly', async () => {
-    const problematicMiddleware: Middleware = context => async next => {
+    const problematicMiddleware: PrismyPureMiddleware = context => async next => {
       throw new Error('Hey!')
     }
-    const errorMiddleware: Middleware = context => async next => {
+    const errorMiddleware: PrismyPureMiddleware = context => async next => {
       try {
         return await next()
       } catch (error) {

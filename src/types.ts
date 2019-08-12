@@ -18,9 +18,18 @@ export interface ResponseObject<B> {
   headers: OutgoingHttpHeaders
 }
 
-export type Middleware = (
-  context: Context
-) => (next: () => Promise<ResponseObject<any>>) => Promise<ResponseObject<any>>
+export interface PrismyPureMiddleware {
+  (context: Context): (
+    next: () => Promise<ResponseObject<any>>
+  ) => Promise<ResponseObject<any>>
+}
+
+export interface PrismyMiddleware<A extends any[]>
+  extends PrismyPureMiddleware {
+  mhandler(
+    next: () => Promise<ResponseObject<any>>
+  ): (...args: A) => Promise<ResponseObject<any>>
+}
 
 export interface PrismyRequestListener<A extends any[]> {
   (req: IncomingMessage, res: ServerResponse): void

@@ -4,19 +4,20 @@ import {
   prismy,
   res,
   Selector,
-  Middleware,
+  PrismyPureMiddleware,
   middleware,
   redirect,
   setBody,
   setStatusCode,
   updateHeaders,
-  setHeaders
+  setHeaders,
+  AsyncSelector
 } from '../src'
 
 describe('middleware', () => {
   it('creates Middleware via selectors and middleware handler', async () => {
     const rawUrlSelector: Selector<string> = context => context.req.url!
-    const errorMiddleware: Middleware = middleware(
+    const errorMiddleware: PrismyPureMiddleware = middleware(
       [rawUrlSelector],
       next => async url => {
         try {
@@ -46,9 +47,9 @@ describe('middleware', () => {
   })
 
   it('accepts async selectors', async () => {
-    const asyncRawUrlSelector: Selector<string> = async context =>
+    const asyncRawUrlSelector: AsyncSelector<string> = async context =>
       context.req.url!
-    const errorMiddleware: Middleware = middleware(
+    const errorMiddleware = middleware(
       [asyncRawUrlSelector],
       next => async url => {
         try {

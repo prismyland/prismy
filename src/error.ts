@@ -1,5 +1,6 @@
-import { Middleware } from './types'
-import { middleware, res } from './utils'
+import { PrismyPureMiddleware } from './types'
+import { middleware } from './middleware'
+import { res } from './utils'
 
 export { createError } from 'micro'
 
@@ -11,7 +12,7 @@ interface WithErrorHandlerOptions {
 export function createWithErrorHandler({
   dev = false,
   json = false
-}: WithErrorHandlerOptions = {}): Middleware {
+}: WithErrorHandlerOptions = {}): PrismyPureMiddleware {
   return middleware([], next => async () => {
     try {
       return await next()
