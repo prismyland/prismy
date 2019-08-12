@@ -1,5 +1,5 @@
 import { OutgoingHttpHeaders } from 'http'
-import { ResponseObject, Selectors, Context, Middleware } from './types'
+import { ResponseObject, Selectors, Context } from './types'
 
 export function res<B = unknown>(
   body: B,
@@ -81,14 +81,4 @@ export function resolveSelectors<A extends any[]>(
   selectors: Selectors<A>
 ): Promise<A> {
   return Promise.all(selectors.map(selector => selector(context))) as Promise<A>
-}
-
-export function middleware<A extends any[]>(
-  selectors: Selectors<A>,
-  mhandler: (
-    next: () => Promise<ResponseObject<any>>
-  ) => (...args: A) => Promise<ResponseObject<any>>
-): Middleware {
-  return context => async next =>
-    compileHandler(selectors, mhandler(next))(context)
 }
