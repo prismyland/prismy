@@ -20,3 +20,5 @@ export async function testHandler(
     server.close()
   }
 }
+
+export function expectType<T>(value: T): void {}

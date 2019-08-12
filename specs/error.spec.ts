@@ -1,5 +1,5 @@
 import got from 'got'
-import { testHandler } from './testHandler'
+import { testHandler } from './helpers'
 import { prismy, createWithErrorHandler, createError } from '../src'
 
 describe('createWithErrorHandler', () => {
