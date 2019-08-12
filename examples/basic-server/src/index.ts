@@ -1,9 +1,5 @@
-import { prismy, Query } from 'prismy'
+import { prismy, querySelector, res } from 'prismy'
 
-export class MyHandler {
-  async handle(@Query() query: any) {
-    return query
-  }
-}
-
-export default prismy(MyHandler)
+export default prismy([querySelector], query => {
+  return res(query)
+})

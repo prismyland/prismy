@@ -5,7 +5,7 @@ import {
   redirect,
   res
 } from 'prismy'
-import createSession, { Session } from 'prismy-session'
+import createSession from 'prismy-session'
 import JWTCookieStrategy from 'prismy-session-strategy-jwt-cookie'
 
 const { sessionSelector, sessionMiddleware } = createSession(
@@ -16,7 +16,7 @@ const { sessionSelector, sessionMiddleware } = createSession(
 
 const urlEncodedBodySelector = createUrlEncodedBodySelector()
 
-export default prismy<[string | undefined, Session<any>, any]>(
+export default prismy(
   [methodSelector, sessionSelector, urlEncodedBodySelector],
   (method, session, body) => {
     if (method === 'POST') {
@@ -28,7 +28,7 @@ export default prismy<[string | undefined, Session<any>, any]>(
         [
           '<!DOCTYPE html>',
           '<body>',
-          `<p>Message: ${data != null ? data.message : 'NULL'}</p>`,
+          `<p>Message: ${data != null ? (data as any).message : 'NULL'}</p>`,
           '<form action="/" method="post">',
           '<input name="message">',
           '<button type="submit">Send</button>',
