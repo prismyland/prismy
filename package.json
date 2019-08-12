@@ -16,6 +16,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
+    "dist/index.d.ts",
     "dist/**/*"
   ],
   "repository": {
@@ -27,7 +28,7 @@
     "lint": "prettier --check src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",
     "format": "prettier --write src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",
     "test": "jest",
-    "test-type": "tsc --noEmit",
+    "test-type": "tsc --noEmit && tsd",
     "test-ci": "jest --coverage",
     "codecov": "codecov -f coverage/*.json",
     "prepublishOnly": "npm run lint && npm test && npm run build"
@@ -47,6 +48,7 @@
     "rimraf": "^2.6.3",
     "test-listen": "^1.1.0",
     "ts-jest": "^24.0.2",
+    "tsd": "^0.7.4",
     "typescript": "^3.4.5"
   },
   "jest": {
