@@ -375,7 +375,7 @@ export function prismy(
   handler: (
     ...args: any[]
   ) => ResponseObject<any> | Promise<ResponseObject<any>>,
-  middlewareList: PrismyPureMiddleware[] = []
+  middlewareList?: PrismyPureMiddleware[]
 ): PrismyRequestListener<any[]> {
   return prismyx(selectors, handler, middlewareList)
 }
