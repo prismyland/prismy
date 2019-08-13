@@ -185,12 +185,14 @@ Like Redux middleware, your middleware can do:
 - Something other than executing handler(Routing, Error handling)
 
 ```ts
-import { prismy, Selector, res, middleware } from 'prismy'
+import { prismy, Selector, res, middleware, updateHeaders } from 'prismy'
 
 const withCors = middleware([], next => async () => {
-  const response = await next()
-  response.headers['access-control-allow-origin'] = '*'
-  return response.hader
+  const resObject = await next()
+
+  return updateHeaders(resObject, {
+    'access-control-allow-origin': '*'
+  })
 })
 
 // Middleware also accepts selectors too for unit test
