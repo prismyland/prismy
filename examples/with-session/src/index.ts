@@ -1,10 +1,5 @@
-import {
-  prismy,
-  methodSelector,
-  createUrlEncodedBodySelector,
-  redirect,
-  res
-} from 'prismy'
+import { prismy, createUrlEncodedBodySelector, redirect, res } from 'prismy'
+import { methodRouter } from 'prismy-method-router'
 import createSession from 'prismy-session'
 import JWTCookieStrategy from 'prismy-session-strategy-jwt-cookie'
 
@@ -16,13 +11,9 @@ const { sessionSelector, sessionMiddleware } = createSession(
 
 const urlEncodedBodySelector = createUrlEncodedBodySelector()
 
-export default prismy(
-  [methodSelector, sessionSelector, urlEncodedBodySelector],
-  (method, session, body) => {
-    if (method === 'POST') {
-      session.data = { message: body.message }
-      return redirect('/')
-    } else {
+export default methodRouter(
+  {
+    get: prismy([sessionSelector], session => {
       const { data } = session
       return res(
         [
@@ -36,7 +27,11 @@ export default prismy(
           '</body>'
         ].join('')
       )
-    }
+    }),
+    post: prismy([sessionSelector, urlEncodedBodySelector], (session, body) => {
+      session.data = { message: body.message }
+      return redirect('/')
+    })
   },
   [sessionMiddleware]
 )
