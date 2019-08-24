@@ -6,22 +6,19 @@ import {
   Selectors,
   PrismyPureMiddleware,
   Unpromise,
+  Promisable,
+  Context,
+  ContextHandler,
   PrismyRequestListener
 } from './types'
 import { res, compileHandler } from './utils'
 
 export function prismyx<A extends any[]>(
   selectors: Selectors<A>,
-  handler: (...args: A) => ResponseObject<any> | Promise<ResponseObject<any>>,
+  handler: (...args: A) => Promisable<ResponseObject<any>>,
   middlewareList: PrismyPureMiddleware[] = []
 ): PrismyRequestListener<A> {
-  async function requestListener(
-    req: IncomingMessage,
-    response: ServerResponse
-  ) {
-    const context = {
-      req
-    }
+  const contextHandler: ContextHandler = async (context: Context) => {
     const next = async () => compileHandler(selectors, handler)(context)
 
     const pipe = middlewareList.reduce((next, middleware) => {
@@ -35,6 +32,19 @@ export function prismyx<A extends any[]>(
       resObject = res(`Unhandled Error: ${error.message}`, 500)
     }
 
+    return resObject
+  }
+
+  async function requestListener(
+    req: IncomingMessage,
+    response: ServerResponse
+  ) {
+    const context = {
+      req
+    }
+
+    const resObject = await contextHandler(context)
+
     Object.entries(resObject.headers).forEach(([key, value]) => {
       /* istanbul ignore if */
       if (value == null) {
@@ -47,6 +57,7 @@ export function prismyx<A extends any[]>(
   }
 
   requestListener.handler = handler
+  requestListener.contextHandler = contextHandler
 
   return requestListener
 }
@@ -372,9 +383,7 @@ export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12>(
 >
 export function prismy(
   selectors: Selector<any>[],
-  handler: (
-    ...args: any[]
-  ) => ResponseObject<any> | Promise<ResponseObject<any>>,
+  handler: (...args: any[]) => Promisable<ResponseObject<any>>,
   middlewareList?: PrismyPureMiddleware[]
 ): PrismyRequestListener<any[]> {
   return prismyx(selectors, handler, middlewareList)
