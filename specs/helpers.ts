@@ -4,6 +4,7 @@ import { RequestListener } from 'http'
 
 export type TestCallback = (url: string) => void
 
+/* istanbul ignore next */
 export async function testHandler(
   handler: RequestListener,
   testCallback: TestCallback
@@ -14,11 +15,11 @@ export async function testHandler(
   try {
     await testCallback(url)
   } catch (error) {
-    /* istanbul ignore next */
     throw error
   } finally {
     server.close()
   }
 }
 
+/* istanbul ignore next */
 export function expectType<T>(value: T): void {}
