@@ -3,7 +3,11 @@ import { methodRouter } from 'prismy-method-router'
 import createSession from 'prismy-session'
 import JWTCookieStrategy from 'prismy-session-strategy-jwt-cookie'
 
-const { sessionSelector, sessionMiddleware } = createSession(
+interface SessionData {
+  message?: string
+}
+
+const { sessionSelector, sessionMiddleware } = createSession<SessionData>(
   new JWTCookieStrategy({
     secret: 'RANDOM_HASH'
   })
@@ -19,7 +23,7 @@ export default methodRouter(
         [
           '<!DOCTYPE html>',
           '<body>',
-          `<p>Message: ${data != null ? (data as any).message : 'NULL'}</p>`,
+          `<p>Message: ${data != null ? data.message : 'NULL'}</p>`,
           '<form action="/" method="post">',
           '<input name="message">',
           '<button type="submit">Send</button>',
@@ -29,7 +33,8 @@ export default methodRouter(
       )
     }),
     post: prismy([sessionSelector, urlEncodedBodySelector], (session, body) => {
-      session.data = { message: body.message }
+      session.data =
+        typeof body.message === 'string' ? { message: body.message } : null
       return redirect('/')
     })
   },
