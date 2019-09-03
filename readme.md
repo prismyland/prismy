@@ -9,6 +9,23 @@
 [![NPM download](https://img.shields.io/npm/dm/prismy.svg)](https://www.npmjs.com/package/prismy)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/prismyland/prismy.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/prismyland/prismy/context:javascript)
 
+## Index
+
+- [Getting Started](#getting-started)
+  - [Installation](#installation)
+  - [Hello World](#hello-world)
+- [Guide](#guide)
+  - [Context](#context)
+  - [Selectors](#selectors)
+  - [Middleware](#middleware)
+  - [Session](#session)
+  - [Cookies](#cookies)
+  - [Method Routing](#method-routing)
+- [Testing](#writing-tests)
+- [Gotchas](#gotchas-and-troubleshooting)
+- [API](#api)
+
+
 ## Concepts
 
 1. _Asynchronously_ pick required values of a handler from context(which having HTTP Request obejct: IncomingMessage).
@@ -39,6 +56,18 @@ Install prismy
 
 ```sh
 npm install prismy --save
+```
+
+Make sure typescript strict setting is on if using typescript
+
+`tsconfig.json`
+
+```json
+
+{
+  'strict': true
+}
+
 ```
 
 ### Hello World
@@ -84,8 +113,6 @@ interface Context {
 ```
 
 Prismy introduces this object to assist memoization or communication between selectors in different middleware and its handler.
-
-Examples!!
 
 ### Selectors
 
@@ -222,7 +249,7 @@ export default prismy(
 
 ```
 
-For other helper selectors please refer to the API Documentation
+For other helper selectors please refer to the [API Documentation](#api)
 
 
 ### Middleware
@@ -360,7 +387,7 @@ export default methodRouter(
 ### Simple Example
 
 ```ts
-import { prismy, res, Selector, middleware, querySelector } from 'prismy'
+import { prismy, res, Selector, middleware, querySelector, redirect } from 'prismy'
 import { methodRouter } from 'prismy-method-router'
 import createSession from 'prismy-session'
 import JWTSessionStrategy from 'prismy-session-strategy-jwt-cookie'
@@ -385,7 +412,7 @@ const authSelector: Selector<User> = async context => {
 
 const authMiddleware = middleware([authSelector], next => async user => {
   if (!isAuthorized(user)) {
-    throw new Error('Unauthorized')
+    return redirect('/login')
   }
   return next()
 })
@@ -427,12 +454,15 @@ export default methodRouter({
 
 ### Writing Tests
 
+Prismy is designed to be easily testable. To furthur ease testing `prismy-test` exposes the `testHandler` function to create quick and easy end to end tests.
+
 #### E2E Tests
 
 End to end tests are very simple
 
 ```ts
 import got from 'got'
+import { testHandler } from "prismy-test"
 import handler from './handler'
 
 describe('handler', () => {
@@ -454,19 +484,19 @@ describe('handler', () => {
 
 #### Unit Tests
 
-Unit tests...
+Thanks to Prismy's simple, function based architecture unit testing in Prismy is extremely simple.  
+Prismy handler exposes its original handler function so you can directly unit test the handler function even if it is an anonymous function argument to `prismy` without needing to mock http requests.
 
 ```ts
+import handler from './handler'
+
 decribe('handler', () => {
   it('unit test', () => {
     /**
-     * Prismy handler exposes its original handler function so you can determine
-     * what to put manually. It is very useful for unit testing because you
-     * don't need to prepare mockup requests or to send actual http requests
-     * either.
+     * Access the original handler function
      * */
     const result = handler.handler({
-      ... // JSON data
+      ... // whatever arguments you want to test with
     })
 
     expect(result).toEqual({
@@ -480,11 +510,24 @@ decribe('handler', () => {
 
 ### Gotchas and Troubleshooting
 
-- middleware stack
-- weird type error
-- middleware async
 
-## APIs
+#### Long `type is not assignable to [Selector<unknown> ...` error when creating Prismy handler
+- Selectors must be written directly into the array argument in the function call. This is due to a limitation of Typescript type inference. Prismy relies on knowning the tuple type of the array, e.g `[string, number]`. Dynamicly creating the array will infer as `string|number[]` which means Prismy cannot infer the positional types for the handler arguments.
+
+```ts
+const selectors = [selector1, selector2]
+prismy(selectors, handler) // will give type error
+
+prismy([selector1, selector2], handler) // Ok!
+
+```
+
+
+#### Long `type is not assignable to [Selector<unknown> ...` error when creating middleware
+- mhandler argument must be of `type next => async () => T`. Remember the async.
+- If using Typescript, `'strict'` compiler option MUST be `true`. This can be set in tsconfig.json.
+
+## API
 
 TBD
 
