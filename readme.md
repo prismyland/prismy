@@ -23,7 +23,6 @@
   - [Method Routing](#method-routing)
 - [Testing](#writing-tests)
 - [Gotchas](#gotchas-and-troubleshooting)
-- [API](#api)
 
 
 ## Concepts
@@ -526,10 +525,6 @@ prismy([selector1, selector2], handler) // Ok!
 #### Long `type is not assignable to [Selector<unknown> ...` error when creating middleware
 - mhandler argument must be of `type next => async () => T`. Remember the async.
 - If using Typescript, `'strict'` compiler option MUST be `true`. This can be set in tsconfig.json.
-
-## API
-
-TBD
 
 <!-- TODO add api docs -->
 
