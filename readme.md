@@ -21,6 +21,7 @@
   - [Session](#session)
   - [Cookies](#cookies)
   - [Method Routing](#method-routing)
+- [Example](#simple-example)
 - [Testing](#writing-tests)
 - [Gotchas](#gotchas-and-troubleshooting)
 
@@ -74,10 +75,12 @@ Make sure typescript strict setting is on if using typescript
 `handler.ts`
 
 ```ts
-import { prismy, res } from 'prismy'
+import { prismy, res, Selector } from 'prismy'
 
-export default prismy([], async () => {
-  return res('Done!')
+const worldSelector: Selector<string> = () => "world"! 
+
+export default prismy([ worldSelector ], async world => {
+  return res(`Hello ${world}!`) // Hello world!
 })
 ```
 
@@ -97,7 +100,7 @@ const server = new http.Server(handler)
 server.listen(8000)
 ```
 
-For more indepth application see Application Example
+For more indepth application see the more indepth [Example](#simple-example)
 
 ## Guide
 
@@ -383,7 +386,7 @@ export default methodRouter(
 `methodRouter` supports all HTTP verbs.  
 
 
-### Simple Example
+## Simple Example
 
 ```ts
 import { prismy, res, Selector, middleware, querySelector, redirect } from 'prismy'
@@ -451,11 +454,11 @@ export default methodRouter({
 
 ```
 
-### Writing Tests
+## Writing Tests
 
 Prismy is designed to be easily testable. To furthur ease testing `prismy-test` exposes the `testHandler` function to create quick and easy end to end tests.
 
-#### E2E Tests
+### E2E Tests
 
 End to end tests are very simple
 
@@ -481,7 +484,7 @@ describe('handler', () => {
 })
 ```
 
-#### Unit Tests
+### Unit Tests
 
 Thanks to Prismy's simple, function based architecture unit testing in Prismy is extremely simple.  
 Prismy handler exposes its original handler function so you can directly unit test the handler function even if it is an anonymous function argument to `prismy` without needing to mock http requests.
@@ -507,10 +510,10 @@ decribe('handler', () => {
 })
 ```
 
-### Gotchas and Troubleshooting
+## Gotchas and Troubleshooting
 
 
-#### Long `type is not assignable to [Selector<unknown> ...` error when creating Prismy handler
+### Long `type is not assignable to [Selector<unknown> ...` error when creating Prismy handler
 - Selectors must be written directly into the array argument in the function call. This is due to a limitation of Typescript type inference. Prismy relies on knowning the tuple type of the array, e.g `[string, number]`. Dynamicly creating the array will infer as `string|number[]` which means Prismy cannot infer the positional types for the handler arguments.
 
 ```ts
@@ -522,7 +525,7 @@ prismy([selector1, selector2], handler) // Ok!
 ```
 
 
-#### Long `type is not assignable to [Selector<unknown> ...` error when creating middleware
+### Long `type is not assignable to [Selector<unknown> ...` error when creating middleware
 - mhandler argument must be of `type next => async () => T`. Remember the async.
 - If using Typescript, `'strict'` compiler option MUST be `true`. This can be set in tsconfig.json.
 
