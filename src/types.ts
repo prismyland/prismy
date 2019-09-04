@@ -29,12 +29,12 @@ export type AsyncSelector<T> = (context: Context) => Promise<T>
 export type Selector<T> = SyncSelector<T> | AsyncSelector<T>
 
 /**
- * @internal
+ * @public
  */
 export type Selectors<T> = { [P in keyof T]: Selector<T[P]> }
 
 /**
- * @internal
+ * @public
  */
 export type Unpromise<T> = T extends Promise<infer U> ? U : T
 export type Promisable<T> = T | Promise<T>
@@ -53,7 +53,7 @@ export interface ResponseObject<B> {
 /**
  * prismy compaticble middleware
  * 
- * @internal
+ * @public
  */
 export interface PrismyPureMiddleware {
   (context: Context): (
@@ -63,7 +63,7 @@ export interface PrismyPureMiddleware {
 /**
  * prismy compaticble middleware
  * 
- * @internal
+ * @public
  */
 export interface PrismyMiddleware<A extends any[]>
   extends PrismyPureMiddleware {
@@ -75,7 +75,7 @@ export interface PrismyMiddleware<A extends any[]>
 export type ContextHandler = (context: Context) => Promise<ResponseObject<any>>
 
 /**
- * @internal
+ * @public
  */
 export interface PrismyRequestListener<A extends any[]> {
   (req: IncomingMessage, res: ServerResponse): void
