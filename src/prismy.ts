@@ -62,14 +62,6 @@ export function prismyx<A extends any[]>(
   return requestListener
 }
 
-/**
- * Generates a handler to be used with node http.Server
- * 
- * @param selectors 
- * @param handler 
- * @param middlewareList
- * @returns handler for node http.Server
- */
 export function prismy(
   selectors: [],
   handler: () => ResponseObject<any> | Promise<ResponseObject<any>>,

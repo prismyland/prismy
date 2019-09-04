@@ -21,6 +21,7 @@
   - [Session](#session)
   - [Cookies](#cookies)
   - [Method Routing](#method-routing)
+  - [Prsimyx](#prismyx)
 - [Example](#simple-example)
 - [Testing](#writing-tests)
 - [Gotchas](#gotchas-and-troubleshooting)
@@ -384,6 +385,34 @@ export default methodRouter(
 
 ```
 `methodRouter` supports all HTTP verbs.  
+
+### Prismyx
+
+`prismy` typing limits it to a max of 12 [argument selectors](#selectors), more than 12 will cause type errors.
+It should be uncommon to require more than 12 Selectors but in the event that it is `prismyx` is 
+exposed.
+
+```ts
+
+// Use the generic type to keep strong typing
+default export prismyx<[string, number, .../* types */, User, Cake]>(
+  [stringSelector, numberSelector, .../* many selectors */, userSelector, cakeSelector],
+  (string, number, .../* args */, user, cake) => {
+    ...
+  }
+)
+
+```
+
+`prismyx` can also be used in the event a custom prismy function is needed.
+
+```ts
+export const p: typeof prismy = (
+  selectors: any,
+  handler: any,
+  middleware: any = []
+) => prismyx(selectors, handler, middleware)
+```
 
 
 ## Simple Example

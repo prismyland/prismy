@@ -1,5 +1,6 @@
 node_modules
 dist
 coverage
+temp
 package-lock.json
 .DS_Store
