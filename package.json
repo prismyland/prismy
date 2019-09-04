@@ -33,7 +33,7 @@
     "test-coverage": "jest --coverage",
     "codecov": "codecov -f coverage/*.json",
     "prepublishOnly": "npm test && npm run build",
-    "generate-docs": "typedoc --out out src && sh scripts/generate-docs.sh"
+    "generate-docs": "typedoc --out out/docs src && sh scripts/generate-docs.sh"
   },
   "bugs": {
     "url": "https://github.com/prismyland/prismy/issues"

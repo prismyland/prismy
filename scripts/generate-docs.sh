@@ -7,6 +7,7 @@ fi
 
 cd $DIR
 git init
+touch .nojekyll
 git checkout -b gh-pages
 git add -A
 git commit -a -m "Deployed at $(date)"
