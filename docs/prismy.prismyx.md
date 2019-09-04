@@ -26,5 +26,5 @@ export declare function prismyx<A extends any[]>(selectors: Selectors<A>, handle
 
 ## Remarks
 
-For most cases use . Use this function if you require more than 12 selectors or need to write a custom prismy function.
+For most cases use `prismy` Use this function if you require more than 12 selectors or need to write a custom prismy function.
 

@@ -17,7 +17,7 @@ import { res, compileHandler } from './utils'
  * Generates a handler to be used by http.Server
  * 
  * @remarks
- * For most cases use {@link prismy#prismy}.
+ * For most cases use `prismy`
  * Use this function if you require more than 12 selectors or need to 
  * write a custom prismy function.
  * 
@@ -372,7 +372,6 @@ export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11>(
  * 
  * @public
  * 
- * {@label 1}
  */
 export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12>(
   selectors: [
