@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-handler(...args: A): ResponseObject<any> | Promise<ResponseObject<any>>;
+handler(...args: A): Promisable<ResponseObject<any>>;
 ```
 
 ## Parameters
@@ -18,5 +18,5 @@ handler(...args: A): ResponseObject<any> | Promise<ResponseObject<any>>;
 
 <b>Returns:</b>
 
-`ResponseObject<any> | Promise<ResponseObject<any>>`
+`Promisable<ResponseObject<any>>`
 
