@@ -3,11 +3,11 @@ import { SyncSelector } from '../types'
 
 /**
  * A selector to extract the headers of a request
- * 
+ *
  * @example
  * Simple example
  * ```ts
- * 
+ *
  * const prismyHandler = prismy(
  *  [headerSelector],
  *  headers => {
@@ -15,10 +15,10 @@ import { SyncSelector } from '../types'
  *  }
  * )
  * ```
- * 
+ *
  * @param context - The request context
  * @returns The request headers
- * 
+ *
  * @public
  */
 export const headersSelector: SyncSelector<IncomingHttpHeaders> = context =>

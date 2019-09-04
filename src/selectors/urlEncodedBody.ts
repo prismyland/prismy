@@ -4,7 +4,7 @@ import { AsyncSelector } from '../types'
 
 /**
  * Options for {@link createUrlEncodedBodySelector}
- * 
+ *
  * @public
  */
 export interface UrlEncodedBodySelectorOptions {
@@ -13,30 +13,30 @@ export interface UrlEncodedBodySelectorOptions {
 }
 /**
  * Factory function to create a selector to extract the url encoded body from a request
- * 
+ *
  * @example
  * Simple example
  * ```ts
- * 
+ *
  * const urlEncodedBodySelector = createUrlEncodedBodySelector({
  *  limit: "1mb"
  * })
- * 
+ *
  * const prismyHandler = prismy(
  *  [urlEncodedBodySelector],
  *  body => {
  *    ...
  *  }
  * )
- * 
+ *
  * ```
- * 
+ *
  * @param options - {@link UrlEncodedBodySelectorOptions | Options} for the body parser
  * @returns selector for url encoded request bodies
- * 
+ *
  * @throws
  * Throws an Error with 400 code if parsing fails
- * 
+ *
  * @public
  */
 export function createUrlEncodedBodySelector(

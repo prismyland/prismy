@@ -5,11 +5,11 @@ const urlSymbol = Symbol('prismy-url')
 
 /**
  * Selector for extracting the requested URL
- * 
+ *
  * @example
  * Simple example
  * ```ts
- * 
+ *
  * const prismyHandler = prismy(
  *  [urlSelector],
  *  url => {
@@ -17,10 +17,10 @@ const urlSymbol = Symbol('prismy-url')
  *  }
  * )
  * ```
- * 
+ *
  * @param context - Request context
  * @returns The url of the request
- * 
+ *
  * @public
  */
 export const urlSelector: SyncSelector<UrlWithStringQuery> = context => {
