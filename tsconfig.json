@@ -9,7 +9,6 @@
     "esModuleInterop": true,
     "jsx": "react",
     "declaration": true,
-    "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
     "noEmitOnError": true,
