@@ -1,9 +1,11 @@
-if ! [ -d "docs" ]; then
+DIR="out"
+
+if ! [ -d $DIR ]; then
     echo "\n[Error!] Docs directory does not exist\n\n"
     exit 2
 fi
 
-cd docs
+cd $DIR
 git init
 git checkout -b gh-pages
 git add -A

@@ -1,6 +1,6 @@
 node_modules
 dist
-docs
+out
 .env
 coverage
 package-lock.json
