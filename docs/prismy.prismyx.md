@@ -9,7 +9,7 @@ Generates a handler to be used by http.Server
 <b>Signature:</b>
 
 ```typescript
-export declare function prismyx<A extends any[]>(selectors: Selectors<A>, handler: (...args: A) => ResponseObject<any> | Promise<ResponseObject<any>>, middlewareList?: PrismyPureMiddleware[]): PrismyRequestListener<A>;
+export declare function prismyx<A extends any[]>(selectors: Selectors<A>, handler: (...args: A) => Promisable<ResponseObject<any>>, middlewareList?: PrismyPureMiddleware[]): PrismyRequestListener<A>;
 ```
 
 ## Parameters
@@ -17,7 +17,7 @@ export declare function prismyx<A extends any[]>(selectors: Selectors<A>, handle
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  selectors | <code>Selectors&lt;A&gt;</code> | Tuple of Selectors to generate arguments for handler |
-|  handler | <code>(...args: A) =&gt; ResponseObject&lt;any&gt; &#124; Promise&lt;ResponseObject&lt;any&gt;&gt;</code> | Business logic handling the request |
+|  handler | <code>(...args: A) =&gt; Promisable&lt;ResponseObject&lt;any&gt;&gt;</code> | Business logic handling the request |
 |  middlewareList | <code>PrismyPureMiddleware[]</code> | Middleware to pass request and response through |
 
 <b>Returns:</b>

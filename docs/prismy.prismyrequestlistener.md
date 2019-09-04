@@ -11,6 +11,12 @@
 export interface PrismyRequestListener<A extends any[]> 
 ```
 
+## Properties
+
+|  Property | Type | Description |
+|  --- | --- | --- |
+|  [contextHandler](./prismy.prismyrequestlistener.contexthandler.md) | <code>ContextHandler</code> |  |
+
 ## Methods
 
 |  Method | Description |

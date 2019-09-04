@@ -4,7 +4,7 @@
 
 ## PrismyMiddleware interface
 
-prismy compaticble middleware
+prismy compatible middleware
 
 <b>Signature:</b>
 

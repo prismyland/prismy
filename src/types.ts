@@ -37,6 +37,9 @@ export type Selectors<T> = { [P in keyof T]: Selector<T[P]> }
  * @public
  */
 export type Unpromise<T> = T extends Promise<infer U> ? U : T
+/**
+ * @public
+ */
 export type Promisable<T> = T | Promise<T>
 
 /**
@@ -61,7 +64,7 @@ export interface PrismyPureMiddleware {
   ) => Promise<ResponseObject<any>>
 }
 /**
- * prismy compaticble middleware
+ * prismy compatible middleware
  * 
  * @public
  */
@@ -72,6 +75,9 @@ export interface PrismyMiddleware<A extends any[]>
   ): (...args: A) => Promise<ResponseObject<any>>
 }
 
+/**
+ * @public
+ */
 export type ContextHandler = (context: Context) => Promise<ResponseObject<any>>
 
 /**

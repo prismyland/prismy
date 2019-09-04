@@ -54,7 +54,7 @@
 |  [BufferBodySelectorOptions](./prismy.bufferbodyselectoroptions.md) | Options for [createBufferBodySelector()](./prismy.createbufferbodyselector.md) |
 |  [Context](./prismy.context.md) | Request context used in selectors |
 |  [JsonBodySelectorOptions](./prismy.jsonbodyselectoroptions.md) | Options for [createJsonBodySelector()](./prismy.createjsonbodyselector.md) |
-|  [PrismyMiddleware](./prismy.prismymiddleware.md) | prismy compaticble middleware |
+|  [PrismyMiddleware](./prismy.prismymiddleware.md) | prismy compatible middleware |
 |  [PrismyPureMiddleware](./prismy.prismypuremiddleware.md) | prismy compaticble middleware |
 |  [PrismyRequestListener](./prismy.prismyrequestlistener.md) |  |
 |  [ResponseObject](./prismy.responseobject.md) | prismy's representation of a response |
@@ -76,6 +76,8 @@
 |  Type Alias | Description |
 |  --- | --- |
 |  [AsyncSelector](./prismy.asyncselector.md) | An asynchronous argument selector |
+|  [ContextHandler](./prismy.contexthandler.md) |  |
+|  [Promisable](./prismy.promisable.md) |  |
 |  [Selector](./prismy.selector.md) | An argument selector to extract arguments for the handler |
 |  [Selectors](./prismy.selectors.md) |  |
 |  [SyncSelector](./prismy.syncselector.md) | A Synchronous argument selector |
