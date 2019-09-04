@@ -31,6 +31,41 @@ export function middlewarex<A extends any[]>(
   return middleware
 }
 
+/**
+ * Factory function to create a prismy compatible middleware. Accepts selectors to help with 
+ * testing, DI etc.
+ * 
+ * @example
+ * Simple Example
+ * ```ts
+ * 
+ * const withCors = middleware([], next => async () => {
+ *  const resObject = await next()
+ *
+ *  return updateHeaders(resObject, {
+ *    'access-control-allow-origin': '*'
+ *  })
+ * })
+ * 
+ * ```
+ * 
+ * @remarks
+ * Selectors must be a tuple (`[Selector<string>, Selector<number>]`) not an 
+ * array (`Selector<string>|Selector<number>[] `). Be careful when declaring the 
+ * array outside of the function call.
+ * 
+ * Be carefuly to remember the mhandler is a function which returns an _async_ function.
+ * Not returning an async function can lead to strange type error messages.
+ * 
+ * Another reason for long type error messages is not having `{"strict": true}` setting in
+ * tsconfig.json or not compiling with --strict.
+ * 
+ * @param selectors - Tuple of selectors
+ * @param mhandler - Middleware handler
+ * @returns A prismy compatible middleware
+ * 
+ * @public
+ */
 export function middleware(
   selectors: never[],
   mhandler: (
@@ -314,41 +349,6 @@ export function middleware<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11>(
     Unpromise<A11>
   ]
 >
-/**
- * Factory function to create a prismy compatible middleware. Accepts selectors to help with 
- * testing, DI etc.
- * 
- * @example
- * Simple Example
- * ```ts
- * 
- * const withCors = middleware([], next => async () => {
- *  const resObject = await next()
- *
- *  return updateHeaders(resObject, {
- *    'access-control-allow-origin': '*'
- *  })
- * })
- * 
- * ```
- * 
- * @remarks
- * Selectors must be a tuple (`[Selector<string>, Selector<number>]`) not an 
- * array (`Selector<string>|Selector<number>[] `). Be careful when declaring the 
- * array outside of the function call.
- * 
- * Be carefuly to remember the mhandler is a function which returns an _async_ function.
- * Not returning an async function can lead to strange type error messages.
- * 
- * Another reason for long type error messages is not having `{"strict": true}` setting in
- * tsconfig.json or not compiling with --strict.
- * 
- * @param selectors - Tuple of selectors
- * @param mhandler - Middleware handler
- * @returns A prismy compatible middleware
- * 
- * @public
- */
 export function middleware<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12>(
   selectors: [
     Selector<A1>,
