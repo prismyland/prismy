@@ -29,7 +29,7 @@ export interface UrlEncodedBodySelectorOptions {
  * @param options - options such as limit and encoding
  * @returns selector for url encoded request bodies
  * 
- * @throws {@link Error}
+ * @throws
  * Throws an Error with 400 code if parsing fails
  * 
  * @public

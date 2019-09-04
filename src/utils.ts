@@ -130,6 +130,8 @@ export function setHeaders<B>(
  * @param selectors - Selectors to gather handler arguments from
  * @param handler - Handler to be compiled
  * @returns compiled handler ready to be used
+ * 
+ * @internal
  */
 export function compileHandler<A extends any[], R>(
   selectors: Selectors<A>,
@@ -147,6 +149,8 @@ export function compileHandler<A extends any[], R>(
  * @param context - Context object to be passed to the selectors
  * @param selectors - array of selectos
  * @returns arguments for a handler
+ * 
+ * @internal
  */
 export function resolveSelectors<A extends any[]>(
   context: Context,

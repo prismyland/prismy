@@ -24,6 +24,8 @@ import { res, compileHandler } from './utils'
  * @param selectors - Tuple of Selectors to generate arguments for handler
  * @param handler - Business logic handling the request
  * @param middlewareList - Middleware to pass request and response through
+ * 
+ * @public
  */
 export function prismyx<A extends any[]>(
   selectors: Selectors<A>,
