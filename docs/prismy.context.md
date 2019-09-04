@@ -4,6 +4,8 @@
 
 ## Context interface
 
+Request context used in selectors
+
 <b>Signature:</b>
 
 ```typescript

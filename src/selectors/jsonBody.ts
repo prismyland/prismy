@@ -3,6 +3,12 @@ import { createError } from '../error'
 import { AsyncSelector } from '../types'
 import { headersSelector } from './headers'
 
+
+/**
+ * Options for {@link createJsonBodySelector}
+ * 
+ * @public
+ */
 export interface JsonBodySelectorOptions {
   skipContentTypeCheck?: boolean
   limit?: string | number
@@ -29,7 +35,7 @@ export interface JsonBodySelectorOptions {
   * 
   * ```
  * 
- * @param options - Options such as limit and encoding
+ * @param options - {@link JsonBodySelectorOptions | Options} for the body parsing
  * @returns A selector for JSON body requests
  * 
  * @throws

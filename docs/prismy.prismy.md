@@ -4,8 +4,6 @@
 
 ## prismy() function
 
-Generates a handler to be used by http.Server
-
 <b>Signature:</b>
 
 ```typescript
@@ -16,27 +14,11 @@ export declare function prismy(selectors: [], handler: () => ResponseObject<any>
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selectors | <code>[]</code> | Tuple of Selectors to generate arguments for handler |
-|  handler | <code>() =&gt; ResponseObject&lt;any&gt; &#124; Promise&lt;ResponseObject&lt;any&gt;&gt;</code> | Business logic handling the request |
-|  middlewareList | <code>PrismyPureMiddleware[]</code> | Middleware to pass request and response through |
+|  selectors | <code>[]</code> |  |
+|  handler | <code>() =&gt; ResponseObject&lt;any&gt; &#124; Promise&lt;ResponseObject&lt;any&gt;&gt;</code> |  |
+|  middlewareList | <code>PrismyPureMiddleware[]</code> |  |
 
 <b>Returns:</b>
 
 `PrismyRequestListener<[]>`
-
-## Remarks
-
-Selectors must be a tuple (`[Selector<string>, Selector<number>]`<!-- -->) not an array (`Selector<string>|Selector<number>[] `<!-- -->). Be careful when declaring the array outside of the function call.
-
-## Example
-
-
-```ts
-const worldSelector: Selector<string> = () => "world"!
-
-export default prismy([ worldSelector ], async world => {
- return res(`Hello ${world}!`) // Hello world!
-})
-
-```
 

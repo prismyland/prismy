@@ -8,17 +8,16 @@
 
 |  Function | Description |
 |  --- | --- |
-|  [compileHandler(selectors, handler)](./prismy.compilehandler.md) | Compile a handler into a runnable function by resolving selectors and injecting the arguments into the handler. |
 |  [createBufferBodySelector(options)](./prismy.createbufferbodyselector.md) | Factory function that creates a selector to extract the request body in a buffer |
 |  [createJsonBodySelector(options)](./prismy.createjsonbodyselector.md) | Factory function to create a selector to extract the JSON encoded body of a request |
 |  [createTextBodySelector(options)](./prismy.createtextbodyselector.md) | Factory function to create a selector to extract the text body from a request |
 |  [createUrlEncodedBodySelector(options)](./prismy.createurlencodedbodyselector.md) | Factory function to create a selector to extract the url encoded body from a request |
 |  [createWithErrorHandler({ dev, json })](./prismy.createwitherrorhandler.md) | Factory function to create a simple error handler middleware |
-|  [middleware(selectors, mhandler)](./prismy.middleware.md) | Factory function to create a prismy compatible middleware. Accepts selectors to help with testing, DI etc. |
+|  [middleware(selectors, mhandler)](./prismy.middleware.md) |  |
 |  [middleware(selectors, mhandler)](./prismy.middleware_9.md) |  |
 |  [middleware(selectors, mhandler)](./prismy.middleware_10.md) |  |
 |  [middleware(selectors, mhandler)](./prismy.middleware_11.md) |  |
-|  [middleware(selectors, mhandler)](./prismy.middleware_12.md) |  |
+|  [middleware(selectors, mhandler)](./prismy.middleware_12.md) | Factory function to create a prismy compatible middleware. Accepts selectors to help with testing, DI etc. |
 |  [middleware(selectors, mhandler)](./prismy.middleware_1.md) |  |
 |  [middleware(selectors, mhandler)](./prismy.middleware_2.md) |  |
 |  [middleware(selectors, mhandler)](./prismy.middleware_3.md) |  |
@@ -27,12 +26,11 @@
 |  [middleware(selectors, mhandler)](./prismy.middleware_6.md) |  |
 |  [middleware(selectors, mhandler)](./prismy.middleware_7.md) |  |
 |  [middleware(selectors, mhandler)](./prismy.middleware_8.md) |  |
-|  [middlewarex(selectors, mhandler)](./prismy.middlewarex.md) |  |
-|  [prismy(selectors, handler, middlewareList)](./prismy.prismy.md) | Generates a handler to be used by http.Server |
+|  [prismy(selectors, handler, middlewareList)](./prismy.prismy.md) |  |
 |  [prismy(selectors, handler, middlewareList)](./prismy.prismy_9.md) |  |
 |  [prismy(selectors, handler, middlewareList)](./prismy.prismy_10.md) |  |
 |  [prismy(selectors, handler, middlewareList)](./prismy.prismy_11.md) |  |
-|  [prismy(selectors, handler, middlewareList)](./prismy.prismy_12.md) |  |
+|  [prismy(selectors, handler, middlewareList)](./prismy.prismy_12.md) | Generates a handler to be used by http.Server |
 |  [prismy(selectors, handler, middlewareList)](./prismy.prismy_1.md) |  |
 |  [prismy(selectors, handler, middlewareList)](./prismy.prismy_2.md) |  |
 |  [prismy(selectors, handler, middlewareList)](./prismy.prismy_3.md) |  |
@@ -44,7 +42,6 @@
 |  [prismyx(selectors, handler, middlewareList)](./prismy.prismyx.md) | Generates a handler to be used by http.Server |
 |  [redirect(location, statusCode, extraHeaders)](./prismy.redirect.md) | Factory function for easily generating a redirect response |
 |  [res(body, statusCode, headers)](./prismy.res.md) | Factory function for creating http responses |
-|  [resolveSelectors(context, selectors)](./prismy.resolveselectors.md) | Executes the selectors and produces an array of args to be passed to a handler |
 |  [setBody(resObject, body)](./prismy.setbody.md) | Creates a new response with a new body |
 |  [setHeaders(resObject, headers)](./prismy.setheaders.md) | Creates a new response overriting all headers with new ones. |
 |  [setStatusCode(resObject, statusCode)](./prismy.setstatuscode.md) | Creates a new response with a new status code |
@@ -54,15 +51,12 @@
 
 |  Interface | Description |
 |  --- | --- |
-|  [BufferBodySelectorOptions](./prismy.bufferbodyselectoroptions.md) |  |
-|  [Context](./prismy.context.md) |  |
-|  [JsonBodySelectorOptions](./prismy.jsonbodyselectoroptions.md) |  |
-|  [PrismyMiddleware](./prismy.prismymiddleware.md) |  |
-|  [PrismyPureMiddleware](./prismy.prismypuremiddleware.md) |  |
-|  [PrismyRequestListener](./prismy.prismyrequestlistener.md) |  |
-|  [ResponseObject](./prismy.responseobject.md) |  |
-|  [TextBodySelectorOptions](./prismy.textbodyselectoroptions.md) |  |
-|  [UrlEncodedBodySelectorOptions](./prismy.urlencodedbodyselectoroptions.md) |  |
+|  [BufferBodySelectorOptions](./prismy.bufferbodyselectoroptions.md) | Options for [createBufferBodySelector()](./prismy.createbufferbodyselector.md) |
+|  [Context](./prismy.context.md) | Request context used in selectors |
+|  [JsonBodySelectorOptions](./prismy.jsonbodyselectoroptions.md) | Options for [createJsonBodySelector()](./prismy.createjsonbodyselector.md) |
+|  [ResponseObject](./prismy.responseobject.md) | prismy's representation of a response |
+|  [TextBodySelectorOptions](./prismy.textbodyselectoroptions.md) | Options for [createTextBodySelector()](./prismy.createtextbodyselector.md) |
+|  [UrlEncodedBodySelectorOptions](./prismy.urlencodedbodyselectoroptions.md) | Options for [createUrlEncodedBodySelector()](./prismy.createurlencodedbodyselector.md) |
 
 ## Variables
 
@@ -78,9 +72,7 @@
 
 |  Type Alias | Description |
 |  --- | --- |
-|  [AsyncSelector](./prismy.asyncselector.md) |  |
-|  [Selector](./prismy.selector.md) |  |
-|  [Selectors](./prismy.selectors.md) |  |
-|  [SyncSelector](./prismy.syncselector.md) |  |
-|  [Unpromise](./prismy.unpromise.md) |  |
+|  [AsyncSelector](./prismy.asyncselector.md) | An asynchronous argument selector |
+|  [Selector](./prismy.selector.md) | An argument selector to extract arguments for the handler |
+|  [SyncSelector](./prismy.syncselector.md) | A Synchronous argument selector |
 

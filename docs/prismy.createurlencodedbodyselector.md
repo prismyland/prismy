@@ -16,7 +16,7 @@ export declare function createUrlEncodedBodySelector(options?: UrlEncodedBodySel
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  options | <code>UrlEncodedBodySelectorOptions</code> | options such as limit and encoding |
+|  options | <code>UrlEncodedBodySelectorOptions</code> | [Options](./prismy.urlencodedbodyselectoroptions.md) for the body parser |
 
 <b>Returns:</b>
 

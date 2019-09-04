@@ -4,10 +4,12 @@
 
 ## JsonBodySelectorOptions interface
 
+Options for [createJsonBodySelector()](./prismy.createjsonbodyselector.md)
+
 <b>Signature:</b>
 
 ```typescript
-export declare interface JsonBodySelectorOptions 
+export interface JsonBodySelectorOptions 
 ```
 
 ## Properties

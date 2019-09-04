@@ -4,6 +4,8 @@
 
 ## SyncSelector type
 
+A Synchronous argument selector
+
 <b>Signature:</b>
 
 ```typescript

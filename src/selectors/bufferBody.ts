@@ -1,6 +1,11 @@
 import { buffer } from 'micro'
 import { AsyncSelector } from '../types'
 
+/**
+ * Options for {@link createBufferBodySelector}
+ * 
+ * @public
+ */
 export interface BufferBodySelectorOptions {
   limit?: string | number
   encoding?: string
@@ -26,7 +31,7 @@ export interface BufferBodySelectorOptions {
  * 
  * ```
  * 
- * @param options - Options such as limit and encoding
+ * @param options - {@link BufferBodySelectorOptions | Options} for the buffer
  * @returns A selector for extracting request body in a buffer
  * 
  * @public
