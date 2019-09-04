@@ -32,7 +32,7 @@ export interface JsonBodySelectorOptions {
  * @param options - Options such as limit and encoding
  * @returns A selector for JSON body requests
  * 
- * @throws {@link Error}
+ * @throws
  * Throws an Error with 400 if content type is not application/json
  * 
  * @public

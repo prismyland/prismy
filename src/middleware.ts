@@ -8,6 +8,15 @@ import {
 } from './types'
 import { compileHandler } from './utils'
 
+/**
+ * Factory function to create a prismy compatible middleware. Accepts selectors to help with 
+ * testing, DI etc.
+ * 
+ * @param selectors - Tuple of selectors
+ * @param mhandler - Middleware handler
+ * 
+ * @internal
+ */
 export function middlewarex<A extends any[]>(
   selectors: Selectors<A>,
   mhandler: (

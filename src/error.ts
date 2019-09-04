@@ -20,6 +20,8 @@ interface WithErrorHandlerOptions {
  * 
  * @param options - Options
  * @returns A prismy compatible middleware error handler
+ * 
+ * @public
  */
 export function createWithErrorHandler({
   dev = false,
