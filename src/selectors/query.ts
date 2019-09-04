@@ -6,11 +6,11 @@ const querySymbol = Symbol('prismy-query')
 
 /**
  * Selector to extract the parsed query from the request URL
- * 
+ *
  * @example
  * Simple example
  * ```ts
- * 
+ *
  * const prismyHandler = prismy(
  *  [querySelector],
  *  query => {
@@ -18,10 +18,10 @@ const querySymbol = Symbol('prismy-query')
  *  }
  * )
  * ```
- * 
+ *
  * @param context - Request context
  * @returns a selector for the url query
- * 
+ *
  * @public
  */
 export const querySelector: SyncSelector<ParsedUrlQuery> = context => {

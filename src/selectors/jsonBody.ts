@@ -3,10 +3,9 @@ import { createError } from '../error'
 import { AsyncSelector } from '../types'
 import { headersSelector } from './headers'
 
-
 /**
  * Options for {@link createJsonBodySelector}
- * 
+ *
  * @public
  */
 export interface JsonBodySelectorOptions {
@@ -17,30 +16,30 @@ export interface JsonBodySelectorOptions {
 
 /**
  * Factory function to create a selector to extract the JSON encoded body of a request
- * 
+ *
  * @example
-  * Simple example
-  * ```ts
-  * 
-  * const jsonBodySelector = createJsonBodySelector({
-  *  limit: "1mb"
-  * })
-  * 
-  * const prismyHandler = prismy(
-  *  [jsonBodySelector],
-  *  body => {
-  *    ...
-  *  }
-  * )
-  * 
-  * ```
- * 
+ * Simple example
+ * ```ts
+ *
+ * const jsonBodySelector = createJsonBodySelector({
+ *  limit: "1mb"
+ * })
+ *
+ * const prismyHandler = prismy(
+ *  [jsonBodySelector],
+ *  body => {
+ *    ...
+ *  }
+ * )
+ *
+ * ```
+ *
  * @param options - {@link JsonBodySelectorOptions | Options} for the body parsing
  * @returns A selector for JSON body requests
- * 
+ *
  * @throws
  * Throws an Error with 400 if content type is not application/json
- * 
+ *
  * @public
  */
 export function createJsonBodySelector(

@@ -2,11 +2,11 @@ import { SyncSelector } from '../types'
 
 /**
  * Selector to extract the HTTP method from the request
- * 
+ *
  * @example
  * Simple example
  * ```ts
- * 
+ *
  * const prismyHandler = prismy(
  *  [methodSelector],
  *  method => {
@@ -16,10 +16,10 @@ import { SyncSelector } from '../types'
  *  }
  * )
  * ```
- * 
+ *
  * @param context - The request context
  * @returns the http request method
- * 
+ *
  * @public
  */
 export const methodSelector: SyncSelector<string | undefined> = ({ req }) => {
