@@ -553,6 +553,22 @@ prismy([selector1, selector2], handler) // Ok!
 
 ```
 
+- This weird type error may also occur if the handler does not return a `ResponseObject`. Use `res(..)` to generate a `ResponseObject` easily.
+
+```ts
+
+// Will show crazy error.
+prismy([selector1, selector2], (one, two) => {
+  return "Not a ResponseObject"
+})
+
+// Ok!
+prismy([selector1, selector2], (one, two) => {
+  return res("Is a ResponseObject")
+})
+
+```
+
 
 ### Long `type is not assignable to [Selector<unknown> ...` error when creating middleware
 - mhandler argument must be of `type next => async () => T`. Remember the async.
