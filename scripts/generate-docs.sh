@@ -3,16 +3,11 @@ if ! [ -d "docs" ]; then
     exit 2
 fi
 
-if ! [ $GITHUB_BRANCH == 'master' ]; then
-    echo "\n[Error!] Are you sure you should be pushing docs to master?\n\n"
-    exit 2
-fi
-
 cd docs
 git init
-git checkout -b $GITHUB_BRANCH
+git checkout -b gh-pages
 git add -A
 git commit -a -m "Deployed at $(date)"
-git remote add origin $GITHUB_URL
-git push -f --dry-run origin $GITHUB_BRANCH
+git remote add origin https://github.com/prismyland/prismy.git
+git push -f origin gh-pages
 rm -Rf .git
