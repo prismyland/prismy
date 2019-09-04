@@ -4,10 +4,12 @@
 
 ## UrlEncodedBodySelectorOptions interface
 
+Options for [createUrlEncodedBodySelector()](./prismy.createurlencodedbodyselector.md)
+
 <b>Signature:</b>
 
 ```typescript
-export declare interface UrlEncodedBodySelectorOptions 
+export interface UrlEncodedBodySelectorOptions 
 ```
 
 ## Properties

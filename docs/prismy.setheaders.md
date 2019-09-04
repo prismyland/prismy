@@ -23,5 +23,5 @@ export declare function setHeaders<B>(resObject: ResponseObject<B>, headers: Out
 
 `ResponseObject<B>`
 
-New response with new headers set
+New [response](./prismy.responseobject.md) with new headers set
 

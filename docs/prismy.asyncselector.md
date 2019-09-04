@@ -4,6 +4,8 @@
 
 ## AsyncSelector type
 
+An asynchronous argument selector
+
 <b>Signature:</b>
 
 ```typescript

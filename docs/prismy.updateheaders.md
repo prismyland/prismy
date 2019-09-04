@@ -23,5 +23,5 @@ export declare function updateHeaders<B>(resObject: ResponseObject<B>, extraHead
 
 `ResponseObject<B>`
 
-New repsonse with the extra headers
+New [response](./prismy.responseobject.md) with the extra headers
 

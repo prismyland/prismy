@@ -18,7 +18,7 @@ interface WithErrorHandlerOptions {
  * Will display either the string error message or the full stack if 
  * `dev = true`
  * 
- * @param options - Options
+ * @param options - Options including whether to output json and if in dev mode
  * @returns A prismy compatible middleware error handler
  * 
  * @public

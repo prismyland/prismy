@@ -24,5 +24,5 @@ export declare function res<B = unknown>(body: B, statusCode?: number, headers?:
 
 `ResponseObject<B>`
 
-A response object containing necessary information
+A [response object](./prismy.responseobject.md) containing necessary information
 

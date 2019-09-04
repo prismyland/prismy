@@ -4,6 +4,8 @@
 
 ## ResponseObject interface
 
+prismy's representation of a response
+
 <b>Signature:</b>
 
 ```typescript

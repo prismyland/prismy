@@ -16,7 +16,7 @@ export declare function createJsonBodySelector(options?: JsonBodySelectorOptions
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  options | <code>JsonBodySelectorOptions</code> | Options such as limit and encoding |
+|  options | <code>JsonBodySelectorOptions</code> | [Options](./prismy.jsonbodyselectoroptions.md) for the body parsing |
 
 <b>Returns:</b>
 

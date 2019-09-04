@@ -4,10 +4,12 @@
 
 ## BufferBodySelectorOptions interface
 
+Options for [createBufferBodySelector()](./prismy.createbufferbodyselector.md)
+
 <b>Signature:</b>
 
 ```typescript
-export declare interface BufferBodySelectorOptions 
+export interface BufferBodySelectorOptions 
 ```
 
 ## Properties

@@ -4,6 +4,8 @@
 
 ## prismy() function
 
+Generates a handler to be used by http.Server
+
 <b>Signature:</b>
 
 ```typescript
@@ -14,11 +16,27 @@ export declare function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selectors | <code>[Selector&lt;A1&gt;, Selector&lt;A2&gt;, Selector&lt;A3&gt;, Selector&lt;A4&gt;, Selector&lt;A5&gt;, Selector&lt;A6&gt;, Selector&lt;A7&gt;, Selector&lt;A8&gt;, Selector&lt;A9&gt;, Selector&lt;A10&gt;, Selector&lt;A11&gt;, Selector&lt;A12&gt;]</code> |  |
-|  handler | <code>(arg1: Unpromise&lt;A1&gt;, arg2: Unpromise&lt;A2&gt;, arg3: Unpromise&lt;A3&gt;, arg4: Unpromise&lt;A4&gt;, arg5: Unpromise&lt;A5&gt;, arg6: Unpromise&lt;A6&gt;, arg7: Unpromise&lt;A7&gt;, arg8: Unpromise&lt;A8&gt;, arg9: Unpromise&lt;A9&gt;, arg10: Unpromise&lt;A10&gt;, arg11: Unpromise&lt;A11&gt;, arg12: Unpromise&lt;A12&gt;) =&gt; ResponseObject&lt;any&gt; &#124; Promise&lt;ResponseObject&lt;any&gt;&gt;</code> |  |
-|  middlewareList | <code>PrismyPureMiddleware[]</code> |  |
+|  selectors | <code>[Selector&lt;A1&gt;, Selector&lt;A2&gt;, Selector&lt;A3&gt;, Selector&lt;A4&gt;, Selector&lt;A5&gt;, Selector&lt;A6&gt;, Selector&lt;A7&gt;, Selector&lt;A8&gt;, Selector&lt;A9&gt;, Selector&lt;A10&gt;, Selector&lt;A11&gt;, Selector&lt;A12&gt;]</code> | Tuple of Selectors to generate arguments for handler |
+|  handler | <code>(arg1: Unpromise&lt;A1&gt;, arg2: Unpromise&lt;A2&gt;, arg3: Unpromise&lt;A3&gt;, arg4: Unpromise&lt;A4&gt;, arg5: Unpromise&lt;A5&gt;, arg6: Unpromise&lt;A6&gt;, arg7: Unpromise&lt;A7&gt;, arg8: Unpromise&lt;A8&gt;, arg9: Unpromise&lt;A9&gt;, arg10: Unpromise&lt;A10&gt;, arg11: Unpromise&lt;A11&gt;, arg12: Unpromise&lt;A12&gt;) =&gt; ResponseObject&lt;any&gt; &#124; Promise&lt;ResponseObject&lt;any&gt;&gt;</code> | Business logic handling the request |
+|  middlewareList | <code>PrismyPureMiddleware[]</code> | Middleware to pass request and response through |
 
 <b>Returns:</b>
 
 `PrismyRequestListener<[Unpromise<A1>, Unpromise<A2>, Unpromise<A3>, Unpromise<A4>, Unpromise<A5>, Unpromise<A6>, Unpromise<A7>, Unpromise<A8>, Unpromise<A9>, Unpromise<A10>, Unpromise<A11>, Unpromise<A12>]>`
+
+## Remarks
+
+Selectors must be a tuple (`[Selector<string>, Selector<number>]`<!-- -->) not an array (`Selector<string>|Selector<number>[] `<!-- -->). Be careful when declaring the array outside of the function call.
+
+## Example
+
+
+```ts
+const worldSelector: Selector<string> = () => "world"!
+
+export default prismy([ worldSelector ], async world => {
+ return res(`Hello ${world}!`) // Hello world!
+})
+
+```
 

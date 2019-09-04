@@ -23,5 +23,5 @@ export declare function setBody<B1, B2>(resObject: ResponseObject<B1>, body: B2)
 
 `ResponseObject<B2>`
 
-New response with the new body
+New [response](./prismy.responseobject.md) with the new body
 

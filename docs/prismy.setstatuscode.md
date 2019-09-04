@@ -23,5 +23,5 @@ export declare function setStatusCode<B>(resObject: ResponseObject<B>, statusCod
 
 `ResponseObject<B>`
 
-New response with the new statusCode
+New [response](./prismy.responseobject.md) with the new statusCode
 

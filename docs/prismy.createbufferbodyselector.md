@@ -16,7 +16,7 @@ export declare function createBufferBodySelector(options?: BufferBodySelectorOpt
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  options | <code>BufferBodySelectorOptions</code> | Options such as limit and encoding |
+|  options | <code>BufferBodySelectorOptions</code> | [Options](./prismy.bufferbodyselectoroptions.md) for the buffer |
 
 <b>Returns:</b>
 

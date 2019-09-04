@@ -7,7 +7,7 @@ import { ResponseObject, Selectors, Context } from './types'
  * @param body - Body of the response
  * @param statusCode - HTTP status code of the response
  * @param headers - HTTP headers for the response
- * @returns A response object containing necessary information
+ * @returns A {@link ResponseObject | response object} containing necessary information
  * 
  * @public
  */
@@ -29,7 +29,7 @@ export function res<B = unknown>(
  * @param location - URL to redirect to
  * @param statusCode - Status code for response. Defaults to 302
  * @param extraHeaders - Additional headers of the response
- * @returns A redirect response to location
+ * @returns A redirect {@link ResponseObject | response} to location
  * 
  * @public
  */
@@ -49,7 +49,7 @@ export function redirect(
  * 
  * @param resObject - The response to set the body on
  * @param body - Body to be set
- * @returns New response with the new body
+ * @returns New {@link ResponseObject | response}  with the new body
  * 
  * @public
  */
@@ -68,7 +68,7 @@ export function setBody<B1, B2>(
  * 
  * @param resObject - The response to set the code to
  * @param statusCode - HTTP status code
- * @returns New response with the new statusCode
+ * @returns New {@link ResponseObject | response} with the new statusCode
  * 
  * @public
  */
@@ -87,7 +87,7 @@ export function setStatusCode<B>(
  * 
  * @param resObject - The response to add the new headers to
  * @param extraHeaders - HTTP response headers
- * @returns New repsonse with the extra headers
+ * @returns New {@link ResponseObject | response} with the extra headers
  * 
  * @public
  */
@@ -109,7 +109,7 @@ export function updateHeaders<B>(
  * 
  * @param resObject - response to set new headers on
  * @param headers - HTTP response headers to set
- * @returns New response with new headers set
+ * @returns New {@link ResponseObject | response} with new headers set
  * 
  * @public
  */

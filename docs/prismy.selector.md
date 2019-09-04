@@ -4,6 +4,8 @@
 
 ## Selector type
 
+An argument selector to extract arguments for the handler
+
 <b>Signature:</b>
 
 ```typescript

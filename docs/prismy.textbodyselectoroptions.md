@@ -4,10 +4,12 @@
 
 ## TextBodySelectorOptions interface
 
+Options for [createTextBodySelector()](./prismy.createtextbodyselector.md)
+
 <b>Signature:</b>
 
 ```typescript
-export declare interface TextBodySelectorOptions 
+export interface TextBodySelectorOptions 
 ```
 
 ## Properties

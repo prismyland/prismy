@@ -17,7 +17,7 @@ import { res, compileHandler } from './utils'
  * Generates a handler to be used by http.Server
  * 
  * @remarks
- * For most cases use {@link prismy}.
+ * For most cases use {@link prismy#prismy}.
  * Use this function if you require more than 12 selectors or need to 
  * write a custom prismy function.
  * 
@@ -76,29 +76,6 @@ export function prismyx<A extends any[]>(
   return requestListener
 }
 
-/**
- * Generates a handler to be used by http.Server
- * 
- * @example
- * ```ts
- * const worldSelector: Selector<string> = () => "world"! 
- * 
- * export default prismy([ worldSelector ], async world => {
- *  return res(`Hello ${world}!`) // Hello world!
- * })
- * ```
- * 
- * @remarks
- * Selectors must be a tuple (`[Selector<string>, Selector<number>]`) not an 
- * array (`Selector<string>|Selector<number>[] `). Be careful when declaring the 
- * array outside of the function call.
- * 
- * @param selectors - Tuple of Selectors to generate arguments for handler
- * @param handler - Business logic handling the request
- * @param middlewareList - Middleware to pass request and response through
- * 
- * @public
- */
 export function prismy(
   selectors: [],
   handler: () => ResponseObject<any> | Promise<ResponseObject<any>>,
@@ -372,6 +349,31 @@ export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11>(
     Unpromise<A11>
   ]
 >
+/**
+ * Generates a handler to be used by http.Server
+ * 
+ * @example
+ * ```ts
+ * const worldSelector: Selector<string> = () => "world"! 
+ * 
+ * export default prismy([ worldSelector ], async world => {
+ *  return res(`Hello ${world}!`) // Hello world!
+ * })
+ * ```
+ * 
+ * @remarks
+ * Selectors must be a tuple (`[Selector<string>, Selector<number>]`) not an 
+ * array (`Selector<string>|Selector<number>[] `). Be careful when declaring the 
+ * array outside of the function call.
+ * 
+ * @param selectors - Tuple of Selectors to generate arguments for handler
+ * @param handler - Business logic handling the request
+ * @param middlewareList - Middleware to pass request and response through
+ * 
+ * @public
+ * 
+ * {@label 1}
+ */
 export function prismy<A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12>(
   selectors: [
     Selector<A1>,

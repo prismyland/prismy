@@ -2,6 +2,11 @@ import { text, createError } from 'micro'
 import { ParsedUrlQuery, parse } from 'querystring'
 import { AsyncSelector } from '../types'
 
+/**
+ * Options for {@link createUrlEncodedBodySelector}
+ * 
+ * @public
+ */
 export interface UrlEncodedBodySelectorOptions {
   limit?: string | number
   encoding?: string
@@ -26,7 +31,7 @@ export interface UrlEncodedBodySelectorOptions {
  * 
  * ```
  * 
- * @param options - options such as limit and encoding
+ * @param options - {@link UrlEncodedBodySelectorOptions | Options} for the body parser
  * @returns selector for url encoded request bodies
  * 
  * @throws

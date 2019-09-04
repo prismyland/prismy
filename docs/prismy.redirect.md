@@ -24,5 +24,5 @@ export declare function redirect(location: string, statusCode?: number, extraHea
 
 `ResponseObject<null>`
 
-A redirect response to location
+A redirect [response](./prismy.responseobject.md) to location
 

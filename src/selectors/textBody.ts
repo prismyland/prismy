@@ -1,6 +1,11 @@
 import { text } from 'micro'
 import { AsyncSelector } from '../types'
 
+/**
+ * Options for {@link createTextBodySelector}
+ * 
+ * @public
+ */
 export interface TextBodySelectorOptions {
   limit?: string | number
   encoding?: string
