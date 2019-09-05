@@ -9,6 +9,8 @@
 [![NPM download](https://img.shields.io/npm/dm/prismy.svg)](https://www.npmjs.com/package/prismy)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/prismyland/prismy.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/prismyland/prismy/context:javascript)
 
+[Full API Documentation](https://prismyland.github.io/prismy/globals.html)
+
 ## Index
 
 - [Getting Started](#getting-started)
@@ -115,7 +117,15 @@ interface Context {
 }
 ```
 
-Prismy introduces this object to assist memoization or communication between selectors in different middleware and its handler.
+Context is passed into all selectors and middleware. It can be used to assist memoization and communicate between linked selectors and middleware.  
+
+:exclamation: **It is highly recommended to use `Symbol('property-name')` in order to not have duplicate property names and end up overwriting something important.**  
+Read more about Symbols [here.](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol)
+
+This way of communicating via symbols on the context object is used in `prismy-session`.
+
+
+:exclamation: Due to how prismy resolves selectors, context should **NOT** be used to communicate between selectors. Due to their async nature resolution order can not be guaranteed.
 
 ### Selectors
 
