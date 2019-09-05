@@ -1,0 +1,791 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>prismy</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">prismy</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> prismy</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<img  width='240' src='resources/logo.svg' alt='prismy'>
+				<a href="#codeprismycode" id="codeprismycode" style="color: inherit; text-decoration: none;">
+					<h1><code>prismy</code></h1>
+				</a>
+				<p>:rainbow: Simple and fast type safe server library based on micro for now.sh v2.</p>
+				<p><a href="https://travis-ci.com/prismyland/prismy"><img src="https://travis-ci.com/prismyland/prismy.svg?branch=master" alt="Build Status"></a>
+					<a href="https://codecov.io/gh/prismyland/prismy"><img src="https://codecov.io/gh/prismyland/prismy/branch/master/graph/badge.svg" alt="codecov"></a>
+					<a href="https://www.npmjs.com/package/prismy"><img src="https://img.shields.io/npm/dm/prismy.svg" alt="NPM download"></a>
+				<a href="https://lgtm.com/projects/g/prismyland/prismy/context:javascript"><img src="https://img.shields.io/lgtm/grade/javascript/g/prismyland/prismy.svg?logo=lgtm&logoWidth=18" alt="Language grade: JavaScript"></a></p>
+				<p><a href="https://prismyland.github.io/prismy/globals.html">Full API Documentation</a></p>
+				<a href="#index" id="index" style="color: inherit; text-decoration: none;">
+					<h2>Index</h2>
+				</a>
+				<ul>
+					<li><a href="#getting-started">Getting Started</a><ul>
+							<li><a href="#installation">Installation</a></li>
+							<li><a href="#hello-world">Hello World</a></li>
+						</ul>
+					</li>
+					<li><a href="#guide">Guide</a><ul>
+							<li><a href="#context">Context</a></li>
+							<li><a href="#selectors">Selectors</a></li>
+							<li><a href="#middleware">Middleware</a></li>
+							<li><a href="#session">Session</a></li>
+							<li><a href="#cookies">Cookies</a></li>
+							<li><a href="#method-routing">Method Routing</a></li>
+							<li><a href="#prismyx">Prsimyx</a></li>
+						</ul>
+					</li>
+					<li><a href="#simple-example">Example</a></li>
+					<li><a href="#writing-tests">Testing</a></li>
+					<li><a href="#gotchas-and-troubleshooting">Gotchas</a></li>
+				</ul>
+				<a href="#concepts" id="concepts" style="color: inherit; text-decoration: none;">
+					<h2>Concepts</h2>
+				</a>
+				<ol>
+					<li><em>Asynchronously</em> pick required values of a handler from context(which having HTTP Request obejct: IncomingMessage).</li>
+					<li><em>Asynchronously</em> execute the handler with the picked values.</li>
+					<li><strong>PROFIT!!</strong></li>
+				</ol>
+				<a href="#features" id="features" style="color: inherit; text-decoration: none;">
+					<h2>Features</h2>
+				</a>
+				<ul>
+					<li>Very small (No Expressjs, the only deps are micro and tslib)</li>
+					<li>Takes advantage of the asynchronous nature of Javascript with full support for async / await</li>
+					<li>Simple and easy argument injection for handlers (Inpsired by Reselect)<ul>
+							<li>Completely <strong>TYPE-SAFE</strong></li>
+							<li>No more complicated classes / decorators, only simple functions</li>
+							<li>Highly testable (Request handlers can be tested without mocking request or sending actual http requests)</li>
+						</ul>
+					</li>
+					<li>Single pass (lambda) style composable middleware (Similar to Redux)</li>
+				</ul>
+				<a href="#getting-started" id="getting-started" style="color: inherit; text-decoration: none;">
+					<h2>Getting Started</h2>
+				</a>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h3>Installation</h3>
+				</a>
+				<p>Create an package.json file</p>
+				<pre><code class="language-sh">npm init</code></pre>
+				<p>Install prismy</p>
+				<pre><code class="language-sh">npm install prismy --save</code></pre>
+				<p>Make sure typescript strict setting is on if using typescript</p>
+				<p><code>tsconfig.json</code></p>
+				<pre><code class="language-json">
+{
+  &#39;strict&#39;: true
+}
+</code></pre>
+				<a href="#hello-world" id="hello-world" style="color: inherit; text-decoration: none;">
+					<h3>Hello World</h3>
+				</a>
+				<p><code>handler.ts</code></p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { prismy, res, Selector } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+
+<span class="hljs-keyword">const</span> worldSelector: Selector&lt;<span class="hljs-built_in">string</span>&gt; = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-string">"world"</span>! 
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> prismy([ worldSelector ], <span class="hljs-keyword">async</span> world =&gt; {
+  <span class="hljs-keyword">return</span> res(<span class="hljs-string">`Hello <span class="hljs-subst">${world}</span>!`</span>) <span class="hljs-comment">// Hello world!</span>
+})</code></pre>
+				<p>If you are using now.sh or next.js you can just put handlers in the <code>pages</code> directory and your done!
+				Simple, easy, no hassle.</p>
+				<p>Otherwise, serve your application using node.js http server.</p>
+				<p><code>serve.ts</code></p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> handler <span class="hljs-keyword">from</span> <span class="hljs-string">'./handler'</span>
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> http <span class="hljs-keyword">from</span> <span class="hljs-string">'http'</span>
+
+<span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> http.Server(handler)
+
+server.listen(<span class="hljs-number">8000</span>)</code></pre>
+				<p>For more indepth application see the more indepth <a href="#simple-example">Example</a></p>
+				<a href="#guide" id="guide" style="color: inherit; text-decoration: none;">
+					<h2>Guide</h2>
+				</a>
+				<a href="#context" id="context" style="color: inherit; text-decoration: none;">
+					<h3>Context</h3>
+				</a>
+				<p><code>context</code> is a simple plain object containing native node.js&#39;s request instance, <code>IncomingMessage</code>.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">interface</span> Context {
+  req: IncomingMessage
+}</code></pre>
+				<p>Context is passed into all selectors and middleware. It can be used to assist memoization and communicate between linked selectors and middleware.  </p>
+				<p>:exclamation: <strong>It is highly recommended to use <code>Symbol(&#39;property-name&#39;)</code> in order to not have duplicate property names and end up overwriting something important.</strong><br>Read more about Symbols <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol">here.</a></p>
+				<p>This way of communicating via symbols on the context object is used in <code>prismy-session</code>.</p>
+				<p>:exclamation: Due to how prismy resolves selectors, context should <strong>NOT</strong> be used to communicate between selectors. Due to their async nature resolution order can not be guaranteed.</p>
+				<a href="#selectors" id="selectors" style="color: inherit; text-decoration: none;">
+					<h3>Selectors</h3>
+				</a>
+				<p>Many other server libraries supporting argument injection through the use of
+				decorators e.g inversifyjs, nestjs and tachijs.<br>Decorators can seem nice and clean but have several pitfalls.</p>
+				<ul>
+					<li>Controllers must be declared as class.(But not class expressions)</li>
+					<li>Argument injection via the decorators is not type-safe.</li>
+				</ul>
+				<p>An example controller in nestjs:</p>
+				<pre><code class="language-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createController</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">class</span> GeneratedController {
+    <span class="hljs-comment">/**
+     * Using decorators in class expression is not allowed yet.
+     * So compiler will throw an error.
+     * https://github.com/microsoft/TypeScript/issues/7342
+     * */</span>
+    run(
+      <span class="hljs-comment">// Argument types must be declared carefully because Typescript cannot infer it.</span>
+      <span class="hljs-meta">@Query</span>() query: QueryParams
+    ): <span class="hljs-built_in">string</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-string">'Done!'</span>
+    }
+  }
+  <span class="hljs-keyword">return</span> GeneratedController
+}</code></pre>
+				<p>Prismy however uses <em>Selectors</em>, a pattern inspired by Reselectjs.<br>Selectors are simple functions used to generate the arguments for the handler. A Selector accepts a
+				single <code>context</code> argument or type <code>Context</code>.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { prismy, Selector, res } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+
+<span class="hljs-comment">// This selector picks the current url off the request object</span>
+<span class="hljs-keyword">const</span> urlSelector: Selector&lt;<span class="hljs-built_in">string</span>&gt; = <span class="hljs-function"><span class="hljs-params">context</span> =&gt;</span> {
+  <span class="hljs-keyword">const</span> url = context.req.url
+  <span class="hljs-comment">// So this selector always returns string.</span>
+  <span class="hljs-keyword">return</span> url != <span class="hljs-literal">null</span> ? url : <span class="hljs-string">''</span>
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> prismy(
+  [searchQuerySelector],
+  <span class="hljs-comment">// Typescript can infer `url` argument type via the given selector tuple</span>
+  <span class="hljs-comment">// making it type safe without having to worry about verbose typings.</span>
+  url =&gt; {
+    <span class="hljs-keyword">await</span> doSomethingWithUrl(url)
+    <span class="hljs-keyword">return</span> res(<span class="hljs-string">'Done!'</span>)
+  }
+)</code></pre>
+				<p>Async selectors are also fully supported out of the box!
+				It will resolve all selectors right before executing handler.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { prismy, Selector, res } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+
+<span class="hljs-keyword">const</span> asyncSelector: Selector&lt;<span class="hljs-built_in">string</span>&gt; = <span class="hljs-keyword">async</span> context =&gt; {
+  <span class="hljs-keyword">const</span> value = <span class="hljs-keyword">await</span> readValueFromFileSystem()
+  <span class="hljs-keyword">return</span> value
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> prismy(
+  [asyncSelector],
+  <span class="hljs-keyword">async</span> value =&gt; {
+    <span class="hljs-keyword">await</span> doSomething(value)
+    <span class="hljs-keyword">return</span> res(<span class="hljs-string">'Done!'</span>)
+  }
+)</code></pre>
+				<a href="#included-selectors" id="included-selectors" style="color: inherit; text-decoration: none;">
+					<h4>Included Selectors</h4>
+				</a>
+				<p>Prismy includes some helper selectors for common actions.
+				Some examples are:</p>
+				<ul>
+					<li><code>methodSelector</code></li>
+					<li><code>querySelector</code></li>
+				</ul>
+				<p>Others require configuration and so factory functions are exposed.</p>
+				<ul>
+					<li><code>createJsonBodySelector</code></li>
+					<li><code>createUrlEncodedBodySelector</code></li>
+				</ul>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { createJsonBodySelector } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+
+<span class="hljs-comment">// createJsonBodySelector returns an AsyncSelector&lt;any&gt;</span>
+<span class="hljs-keyword">const</span> jsonBodySelector = createJsonBodySelector({
+  limit: <span class="hljs-string">'1mb'</span>
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> prismy(
+  [jsonBodySelector],
+  <span class="hljs-keyword">async</span> jsonBody =&gt; {
+    <span class="hljs-keyword">await</span> doSomething(jsonBody)
+    <span class="hljs-keyword">return</span> res(<span class="hljs-string">'Done!'</span>)
+  }
+)
+</code></pre>
+				<p>These helper selectors can be composed to provide more solid typing and error handling.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Selector, createJsonBodySelector } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+
+<span class="hljs-keyword">interface</span> RequestBody {
+  data: <span class="hljs-built_in">string</span>
+  id?: <span class="hljs-built_in">number</span>
+}
+
+<span class="hljs-keyword">const</span> jsonBodySelector = createJsonBodySelector()
+
+<span class="hljs-keyword">const</span> requestBodySelector: Selector&lt;RequestBody&gt; = <span class="hljs-function"><span class="hljs-params">context</span> =&gt;</span> {
+  <span class="hljs-keyword">const</span> jsonBody = jsonBodySelector(context)
+  <span class="hljs-keyword">if</span> (!jsonBody.hasOwnProperty(<span class="hljs-string">"data"</span>)) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Query is required!'</span>)
+  }
+  <span class="hljs-keyword">return</span> jsonBody
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> prismy(
+  [requestBodySelector],
+  <span class="hljs-function"><span class="hljs-params">requestBody</span> =&gt;</span> {
+    <span class="hljs-keyword">return</span> res(<span class="hljs-string">`You're query was <span class="hljs-subst">${requestBody.json}</span>!`</span>)
+  }
+)
+</code></pre>
+				<p>For other helper selectors please refer to the <a href="#api">API Documentation</a></p>
+				<a href="#middleware" id="middleware" style="color: inherit; text-decoration: none;">
+					<h3>Middleware</h3>
+				</a>
+				<p>Middleware in Prismy works as a single pass pipeline of composed functions. The next middleware is
+					accepted as an argument to the previous middleware allowing the request to be progressed or returned
+				as desired.<br>The middleware stack is composed and so the response travels right to left across the array.</p>
+				<p>This pattern, much like Redux middleware, allows you to:</p>
+				<ul>
+					<li>Do something before executing handler (e.g Session)</li>
+					<li>Do something after executing handler (e.g CORS, Session)</li>
+					<li>Do something other than executing handler (e.g Routing, Error handling)</li>
+				</ul>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { prismy, Selector, res, middleware, updateHeaders } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+
+<span class="hljs-keyword">const</span> withCors = middleware([], <span class="hljs-function"><span class="hljs-params">next</span> =&gt;</span> <span class="hljs-keyword">async</span> () =&gt; {
+  <span class="hljs-keyword">const</span> resObject = <span class="hljs-keyword">await</span> next()
+
+  <span class="hljs-keyword">return</span> updateHeaders(resObject, {
+    <span class="hljs-string">'access-control-allow-origin'</span>: <span class="hljs-string">'*'</span>
+  })
+})
+
+<span class="hljs-comment">// Middleware also accepts selectors which can be used for DI and unit testing</span>
+<span class="hljs-keyword">const</span> urlSelector: Selector&lt;<span class="hljs-built_in">string</span>&gt; = <span class="hljs-function"><span class="hljs-params">context</span> =&gt;</span> context.req.url!
+<span class="hljs-keyword">const</span> withErrorHandler = middleware([urlSelector], <span class="hljs-function"><span class="hljs-params">next</span> =&gt;</span> <span class="hljs-keyword">async</span> url =&gt; {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> next()
+  } <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-keyword">return</span> res(<span class="hljs-string">`Error from <span class="hljs-subst">${url}</span> : <span class="hljs-subst">${error.message}</span>`</span>)
+  }
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> prismy(
+  [],
+  <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Bang!'</span>)
+  },
+  <span class="hljs-comment">/**
+   * The request will progress through the middleware stack like so:
+   * withErrorHandler =&gt; withCors =&gt; handler =&gt; withCors =&gt; withErrorHandler
+   * */</span>
+  [withCors, withErrorHandler]
+)</code></pre>
+				<a href="#session" id="session" style="color: inherit; text-decoration: none;">
+					<h3>Session</h3>
+				</a>
+				<p>Although you can implement your own sessions using selectors and middleware, Prismy offers a
+				simple module to make it easy with <code>prismy-session</code>.</p>
+				<p>Install it using:</p>
+				<pre><code class="language-sh">npm install prismy-session --save </code></pre>
+				<p><code>prismy-session</code> exposes <code>createSession</code> which accepts a <code>SessionStrategy</code> instance and returns a
+				selector and middleware to give to prismy.<br>Official strategies include <code>prismy-session-strategy-jwt-cookie</code> and <code>prismy-session-strategy-signed-cookie</code>. Both available on npm.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { prismy, res } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+<span class="hljs-keyword">import</span> createSession <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy-session'</span>
+<span class="hljs-keyword">import</span> JWTSessionStrategy <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy-session-strategy'</span>
+
+<span class="hljs-keyword">const</span> { sessionSelector, sessionMiddleware } = createSession(
+  <span class="hljs-keyword">new</span> JWTSessionStrategy({
+    secret: <span class="hljs-string">'RANDOM_HASH'</span>
+  })
+)
+
+<span class="hljs-keyword">default</span> <span class="hljs-keyword">export</span> prismy(
+  [sessionSelector],
+  <span class="hljs-keyword">async</span> session =&gt; {
+    <span class="hljs-keyword">const</span> { data } = session
+    <span class="hljs-keyword">await</span> doSomething(data)
+    <span class="hljs-keyword">return</span> res(<span class="hljs-string">'Done'</span>)
+  },
+  [sessionMiddleware]
+)
+</code></pre>
+				<a href="#cookies" id="cookies" style="color: inherit; text-decoration: none;">
+					<h3>Cookies</h3>
+				</a>
+				<p>Prismy also offers a selector for cookies in the <code>prismy-cookie</code> package.  </p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { prismy, res } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+<span class="hljs-keyword">import</span> { createCookiesSelector, appendCookie } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy-cookie'</span>
+
+<span class="hljs-keyword">const</span> cookiesSelector = createCookiesSelector()
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> prismy(
+  [cookiesSelector],
+  <span class="hljs-keyword">async</span> cookies =&gt; {
+
+    <span class="hljs-comment">/** appendCookie is a helper function that takes a response object and 
+     * a string key, value tuple returning a new response object with the
+     * cookie appended.
+    */</span>
+    <span class="hljs-keyword">return</span> appendCookie(res(<span class="hljs-string">'Cookie added!'</span>), [<span class="hljs-string">'key'</span>, <span class="hljs-string">'value'</span>])
+  }
+)
+</code></pre>
+				<a href="#method-routing" id="method-routing" style="color: inherit; text-decoration: none;">
+					<h3>Method Routing</h3>
+				</a>
+				<p>Dealing with the different HTTP methods using just a methodSelector can get arduous. As such <code>prismy-method-router</code> is available to make it easier and smoother.  </p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { prismy, res } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+<span class="hljs-keyword">import</span> { methodRouter } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy-method-router'</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> methodRouter(
+  {
+    <span class="hljs-keyword">get</span>: prismy([], <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+      <span class="hljs-keyword">return</span> res(<span class="hljs-string">'Got something!'</span>)
+    }),
+    post: prismy([], <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+      <span class="hljs-keyword">return</span> res(<span class="hljs-string">'Posted something!'</span>)
+    })
+  },
+  [<span class="hljs-comment">/* common middleware can be past in here */</span> ]
+)
+</code></pre>
+				<p><code>methodRouter</code> supports all HTTP verbs.  </p>
+				<a href="#prismyx" id="prismyx" style="color: inherit; text-decoration: none;">
+					<h3>Prismyx</h3>
+				</a>
+				<p><code>prismy</code> typing limits it to a max of 12 <a href="#selectors">argument selectors</a>, more than 12 will cause type errors.
+					It should be uncommon to require more than 12 Selectors but in the event that it is <code>prismyx</code> is
+				exposed.</p>
+				<pre><code class="language-ts">
+<span class="hljs-comment">// Use the generic type to keep strong typing</span>
+<span class="hljs-keyword">default</span> <span class="hljs-keyword">export</span> prismyx&lt;[<span class="hljs-built_in">string</span>, <span class="hljs-built_in">number</span>, ...<span class="hljs-comment">/* types */</span>, User, Cake]&gt;(
+  [stringSelector, numberSelector, ...<span class="hljs-comment">/* many selectors */</span>, userSelector, cakeSelector],
+  <span class="hljs-function">(<span class="hljs-params"><span class="hljs-built_in">string</span>, <span class="hljs-built_in">number</span>, ...<span class="hljs-comment">/* args */</span>, user, cake</span>) =&gt;</span> {
+    ...
+  }
+)
+</code></pre>
+				<p><code>prismyx</code> can also be used in the event a custom prismy function is needed.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> p: <span class="hljs-keyword">typeof</span> prismy = (
+  selectors: <span class="hljs-built_in">any</span>,
+  handler: <span class="hljs-built_in">any</span>,
+  middleware: <span class="hljs-built_in">any</span> = []
+) =&gt; prismyx(selectors, handler, middleware)</code></pre>
+				<a href="#simple-example" id="simple-example" style="color: inherit; text-decoration: none;">
+					<h2>Simple Example</h2>
+				</a>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { prismy, res, Selector, middleware, querySelector, redirect } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+<span class="hljs-keyword">import</span> { methodRouter } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy-method-router'</span>
+<span class="hljs-keyword">import</span> createSession <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy-session'</span>
+<span class="hljs-keyword">import</span> JWTSessionStrategy <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy-session-strategy-jwt-cookie'</span>
+<span class="hljs-keyword">import</span> { createJsonBodySelector } <span class="hljs-keyword">from</span> <span class="hljs-string">'prismy'</span>
+
+
+<span class="hljs-keyword">const</span> jsonBodySelector = createJsonBodySelector({
+  limit: <span class="hljs-string">'1mb'</span>
+})
+
+<span class="hljs-keyword">const</span> { sessionSelector, sessionMiddleware } = createSession(
+  <span class="hljs-keyword">new</span> JWTSessionStrategy({
+    secret: <span class="hljs-string">'RANDOM_HASH'</span>
+  })
+)
+
+<span class="hljs-keyword">const</span> authSelector: Selector&lt;User&gt; = <span class="hljs-keyword">async</span> context =&gt; {
+  <span class="hljs-keyword">const</span> { data } = <span class="hljs-keyword">await</span> sessionSelector(context)
+  <span class="hljs-keyword">const</span> user = <span class="hljs-keyword">await</span> getUser(data.user_id)
+  <span class="hljs-keyword">return</span> user
+}
+
+<span class="hljs-keyword">const</span> authMiddleware = middleware([authSelector], <span class="hljs-function"><span class="hljs-params">next</span> =&gt;</span> <span class="hljs-keyword">async</span> user =&gt; {
+  <span class="hljs-keyword">if</span> (!isAuthorized(user)) {
+    <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">'/login'</span>)
+  }
+  <span class="hljs-keyword">return</span> next()
+})
+
+<span class="hljs-keyword">const</span> todoIdSelector: Selector&lt;<span class="hljs-built_in">string</span>&gt; = <span class="hljs-keyword">async</span> context =&gt; {
+  <span class="hljs-keyword">const</span> query = <span class="hljs-keyword">await</span> querySelector(context)
+  <span class="hljs-keyword">const</span> { id } = query
+  <span class="hljs-keyword">if</span> (id == <span class="hljs-literal">null</span>) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Id is required!'</span>)
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Array</span>.isArray(id) ? id[<span class="hljs-number">0</span>] : id
+}
+
+<span class="hljs-keyword">const</span> contentSelector: Selector&lt;<span class="hljs-built_in">string</span>&gt; = <span class="hljs-keyword">async</span> context =&gt; {
+  <span class="hljs-keyword">const</span> jsonBody = <span class="hljs-keyword">await</span> jsonBodySelector(context)
+  <span class="hljs-keyword">const</span> { content } = jsonBody
+  <span class="hljs-keyword">if</span> (content == <span class="hljs-literal">null</span>) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'content is required!'</span>)
+  }
+  <span class="hljs-keyword">return</span> jsonBody.content
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> methodRouter({
+  <span class="hljs-keyword">get</span>: prismy([], <span class="hljs-keyword">async</span> () =&gt; {
+    <span class="hljs-keyword">const</span> todos = <span class="hljs-keyword">await</span> getTodos()
+    <span class="hljs-keyword">return</span> res({ todos })
+  }),
+  post: prismy([ contentSelector ], <span class="hljs-keyword">async</span> content =&gt; {
+    <span class="hljs-keyword">const</span> todo = <span class="hljs-keyword">await</span> createTodo(content)
+    <span class="hljs-keyword">return</span> res({ todo })
+  }),
+  <span class="hljs-keyword">delete</span>: prismy([ todoIdSelector ], <span class="hljs-keyword">async</span> id =&gt; {
+    <span class="hljs-keyword">await</span> deleteTodo(id)
+    <span class="hljs-keyword">return</span> res(<span class="hljs-string">'Deleted'</span>)
+  })
+}, [ authMiddleware, sessionMiddleware ])
+</code></pre>
+				<a href="#writing-tests" id="writing-tests" style="color: inherit; text-decoration: none;">
+					<h2>Writing Tests</h2>
+				</a>
+				<p>Prismy is designed to be easily testable. To furthur ease testing <code>prismy-test</code> exposes the <code>testHandler</code> function to create quick and easy end to end tests.</p>
+				<a href="#e2e-tests" id="e2e-tests" style="color: inherit; text-decoration: none;">
+					<h3>E2E Tests</h3>
+				</a>
+				<p>End to end tests are very simple</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> got <span class="hljs-keyword">from</span> <span class="hljs-string">'got'</span>
+<span class="hljs-keyword">import</span> { testHandler } <span class="hljs-keyword">from</span> <span class="hljs-string">"prismy-test"</span>
+<span class="hljs-keyword">import</span> handler <span class="hljs-keyword">from</span> <span class="hljs-string">'./handler'</span>
+
+describe(<span class="hljs-string">'handler'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+  it(<span class="hljs-string">'e2e test'</span>, <span class="hljs-keyword">async</span> () =&gt; {
+    <span class="hljs-keyword">await</span> testHandler(handler, <span class="hljs-keyword">async</span> url =&gt; {
+      <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> got.post(url, {
+        body: {
+          ... <span class="hljs-comment">// JSON data</span>
+        }
+      })
+      expect(response).toMatchObject({
+        statusCode: <span class="hljs-number">200</span>,
+        body: <span class="hljs-string">'/'</span>
+      })
+    })
+  })
+})</code></pre>
+				<a href="#unit-tests" id="unit-tests" style="color: inherit; text-decoration: none;">
+					<h3>Unit Tests</h3>
+				</a>
+				<p>Thanks to Prismy&#39;s simple, function based architecture unit testing in Prismy is extremely simple.<br>Prismy handler exposes its original handler function so you can directly unit test the handler function even if it is an anonymous function argument to <code>prismy</code> without needing to mock http requests.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> handler <span class="hljs-keyword">from</span> <span class="hljs-string">'./handler'</span>
+
+decribe(<span class="hljs-string">'handler'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+  it(<span class="hljs-string">'unit test'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-comment">/**
+     * Access the original handler function
+     * */</span>
+    <span class="hljs-keyword">const</span> result = handler.handler({
+      ... <span class="hljs-comment">// whatever arguments you want to test with</span>
+    })
+
+    expect(result).toEqual({
+      body: <span class="hljs-string">'Done!'</span>,
+      headers: {},
+      statusCode: <span class="hljs-number">200</span>
+    })
+  })
+})</code></pre>
+				<a href="#gotchas-and-troubleshooting" id="gotchas-and-troubleshooting" style="color: inherit; text-decoration: none;">
+					<h2>Gotchas and Troubleshooting</h2>
+				</a>
+				<a href="#long-codetype-is-not-assignable-to-selectorltunknowngt-code-error-when-creating-prismy-handler" id="long-codetype-is-not-assignable-to-selectorltunknowngt-code-error-when-creating-prismy-handler" style="color: inherit; text-decoration: none;">
+					<h3>Long <code>type is not assignable to [Selector&lt;unknown&gt; ...</code> error when creating Prismy handler</h3>
+				</a>
+				<ul>
+					<li>Selectors must be written directly into the array argument in the function call. This is due to a limitation of Typescript type inference. Prismy relies on knowning the tuple type of the array, e.g <code>[string, number]</code>. Dynamicly creating the array will infer as <code>string|number[]</code> which means Prismy cannot infer the positional types for the handler arguments.</li>
+				</ul>
+				<pre><code class="language-ts"><span class="hljs-keyword">const</span> selectors = [selector1, selector2]
+prismy(selectors, handler) <span class="hljs-comment">// will give type error</span>
+
+prismy([selector1, selector2], handler) <span class="hljs-comment">// Ok!</span>
+</code></pre>
+				<ul>
+					<li>This weird type error may also occur if the handler does not return a <code>ResponseObject</code>. Use <code>res(..)</code> to generate a <code>ResponseObject</code> easily.</li>
+				</ul>
+				<pre><code class="language-ts">
+<span class="hljs-comment">// Will show crazy error.</span>
+prismy([selector1, selector2], <span class="hljs-function">(<span class="hljs-params">one, two</span>) =&gt;</span> {
+  <span class="hljs-keyword">return</span> <span class="hljs-string">"Not a ResponseObject"</span>
+})
+
+<span class="hljs-comment">// Ok!</span>
+prismy([selector1, selector2], <span class="hljs-function">(<span class="hljs-params">one, two</span>) =&gt;</span> {
+  <span class="hljs-keyword">return</span> res(<span class="hljs-string">"Is a ResponseObject"</span>)
+})
+</code></pre>
+				<a href="#long-codetype-is-not-assignable-to-selectorltunknowngt-code-error-when-creating-middleware" id="long-codetype-is-not-assignable-to-selectorltunknowngt-code-error-when-creating-middleware" style="color: inherit; text-decoration: none;">
+					<h3>Long <code>type is not assignable to [Selector&lt;unknown&gt; ...</code> error when creating middleware</h3>
+				</a>
+				<ul>
+					<li>mhandler argument must be of <code>type next =&gt; async () =&gt; T</code>. Remember the async.</li>
+					<li>If using Typescript, <code>&#39;strict&#39;</code> compiler option MUST be <code>true</code>. This can be set in tsconfig.json.</li>
+				</ul>
+				<!-- TODO add api docs -->
+				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+					<h2>License</h2>
+				</a>
+				<p>MIT</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/bufferbodyselectoroptions.html" class="tsd-kind-icon">Buffer<wbr>Body<wbr>Selector<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/context.html" class="tsd-kind-icon">Context</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/jsonbodyselectoroptions.html" class="tsd-kind-icon">Json<wbr>Body<wbr>Selector<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/prismymiddleware.html" class="tsd-kind-icon">Prismy<wbr>Middleware</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/prismypuremiddleware.html" class="tsd-kind-icon">Prismy<wbr>Pure<wbr>Middleware</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/prismyrequestlistener.html" class="tsd-kind-icon">Prismy<wbr>Request<wbr>Listener</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/responseobject.html" class="tsd-kind-icon">Response<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/textbodyselectoroptions.html" class="tsd-kind-icon">Text<wbr>Body<wbr>Selector<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/urlencodedbodyselectoroptions.html" class="tsd-kind-icon">Url<wbr>Encoded<wbr>Body<wbr>Selector<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/witherrorhandleroptions.html" class="tsd-kind-icon">With<wbr>Error<wbr>Handler<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#asyncselector" class="tsd-kind-icon">Async<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#contexthandler" class="tsd-kind-icon">Context<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#promisable" class="tsd-kind-icon">Promisable</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#selector" class="tsd-kind-icon">Selector</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#selectors" class="tsd-kind-icon">Selectors</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#syncselector" class="tsd-kind-icon">Sync<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#unpromise" class="tsd-kind-icon">Unpromise</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#querysymbol" class="tsd-kind-icon">query<wbr>Symbol</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#urlsymbol" class="tsd-kind-icon">url<wbr>Symbol</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#compilehandler" class="tsd-kind-icon">compile<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#contextselector" class="tsd-kind-icon">context<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#createbufferbodyselector" class="tsd-kind-icon">create<wbr>Buffer<wbr>Body<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#createjsonbodyselector" class="tsd-kind-icon">create<wbr>Json<wbr>Body<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#createtextbodyselector" class="tsd-kind-icon">create<wbr>Text<wbr>Body<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#createurlencodedbodyselector" class="tsd-kind-icon">create<wbr>Url<wbr>Encoded<wbr>Body<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#createwitherrorhandler" class="tsd-kind-icon">create<wbr>With<wbr>Error<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#headersselector" class="tsd-kind-icon">headers<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#iscontenttypeisapplicationjson" class="tsd-kind-icon">is<wbr>Content<wbr>Type<wbr>IsApplicationJSON</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#methodselector" class="tsd-kind-icon">method<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#middleware" class="tsd-kind-icon">middleware</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#middlewarex" class="tsd-kind-icon">middlewarex</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#prismy" class="tsd-kind-icon">prismy</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#prismyx" class="tsd-kind-icon">prismyx</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#queryselector" class="tsd-kind-icon">query<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#redirect" class="tsd-kind-icon">redirect</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#res" class="tsd-kind-icon">res</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#resolveselectors" class="tsd-kind-icon">resolve<wbr>Selectors</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#setbody" class="tsd-kind-icon">set<wbr>Body</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#setheaders" class="tsd-kind-icon">set<wbr>Headers</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#setstatuscode" class="tsd-kind-icon">set<wbr>Status<wbr>Code</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#updateheaders" class="tsd-kind-icon">update<wbr>Headers</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#urlselector" class="tsd-kind-icon">url<wbr>Selector</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
