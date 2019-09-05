@@ -27,19 +27,6 @@
   },
   "typedocOptions": {
     "out": "out",
-    "target": "es2018",
     "mode": "file",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "exclude": "specs/**/*.ts",
-    "includes": "src/**/*.ts",
-    "ignoreCompilerErrors": true,
-    "excludePrivate": true,
-    "excludeNotExported": true,
-    "stripInternal": true,
-    "suppressExcessPropertyErrors": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "hideGenerator": true,
-    "readme": "readme.md"
   }
 }
