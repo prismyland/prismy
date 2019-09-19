@@ -66,7 +66,9 @@ Make sure typescript strict setting is on if using typescript
 
 ```json
 {
-  "strict": true
+  "compilerOptions": {
+    "strict": true
+  }
 }
 ```
 
