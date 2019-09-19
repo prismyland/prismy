@@ -544,11 +544,17 @@ decribe('handler', () => {
 
 Now.sh v2 and API routes of Next.js parse request body and set it to `req.body` before executing request handler function. So prismy's body selectors can not parse request body anymore.
 
-To deak with this problem, you have two choice.
+To deal with this problem, you have two choices.
 
-#### Use `nowBodySelector`
+#### Introduce custom body selector
 
-`nowBodySelector` is a super simple api
+```ts
+import { SyncSelector } from 'prismy'
+
+const bodySelector: SyncSelector<any> = ({ req }) => (req as any).body
+
+export default prismy([bodySelector], body => ...)
+```
 
 #### Disable body parser of Now.sh v2 and API routes of Next.js
 
