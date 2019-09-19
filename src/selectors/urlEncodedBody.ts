@@ -1,7 +1,7 @@
-import { text } from '../utils'
 import { createError } from '../error'
 import { ParsedUrlQuery, parse } from 'querystring'
 import { AsyncSelector } from '../types'
+import { createTextBodySelector } from './textBody'
 
 /**
  * Options for {@link createUrlEncodedBodySelector}
@@ -43,8 +43,9 @@ export interface UrlEncodedBodySelectorOptions {
 export function createUrlEncodedBodySelector(
   options?: UrlEncodedBodySelectorOptions
 ): AsyncSelector<ParsedUrlQuery> {
-  return async ({ req }) => {
-    const textBody = await text(req, options)
+  const textBodySelector = createTextBodySelector(options)
+  return async context => {
+    const textBody = await textBodySelector(context)
     try {
       return parse(textBody)
     } catch (error) {

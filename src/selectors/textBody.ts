@@ -1,5 +1,5 @@
-import { text } from '../utils'
 import { AsyncSelector } from '../types'
+import { createBufferBodySelector } from './bufferBody'
 
 /**
  * Options for {@link createTextBodySelector}
@@ -37,9 +37,12 @@ export interface TextBodySelectorOptions {
  * @public
  */
 export function createTextBodySelector(
-  options?: TextBodySelectorOptions
+  options: TextBodySelectorOptions = {}
 ): AsyncSelector<string> {
-  return ({ req }) => {
-    return text(req, options)
+  const bufferBodySelector = createBufferBodySelector(options)
+  return async context => {
+    const buffer = await bufferBodySelector(context)
+
+    return buffer.toString(options.encoding)
   }
 }

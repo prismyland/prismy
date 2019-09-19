@@ -1,7 +1,7 @@
-import { json } from '../utils'
 import { createError } from '../error'
 import { AsyncSelector } from '../types'
 import { headersSelector } from './headers'
+import { createTextBodySelector } from './textBody'
 
 /**
  * Options for {@link createJsonBodySelector}
@@ -45,7 +45,8 @@ export interface JsonBodySelectorOptions {
 export function createJsonBodySelector(
   options?: JsonBodySelectorOptions
 ): AsyncSelector<any> {
-  return context => {
+  const textBodySelector = createTextBodySelector(options)
+  return async context => {
     const { skipContentTypeCheck = false } = options || {}
     if (!skipContentTypeCheck) {
       const contentType = headersSelector(context)['content-type']
@@ -56,7 +57,13 @@ export function createJsonBodySelector(
         )
       }
     }
-    return json(context.req, options)
+    const text = await textBodySelector(context)
+
+    try {
+      return JSON.parse(text)
+    } catch (error) {
+      throw createError(400, 'Invalid JSON', error)
+    }
   }
 }
 
