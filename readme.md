@@ -540,6 +540,53 @@ decribe('handler', () => {
 
 ## Gotchas and Troubleshooting
 
+### `Body has been parsed already` error when using body selectors in Now.sh v2 or API routes of Next.js
+
+Now.sh v2 and API routes of Next.js parse request body and set it to `req.body` before executing request handler function. So prismy's body selectors can not parse request body anymore.
+
+To deak with this problem, you have two choice.
+
+#### Use `nowBodySelector`
+
+`nowBodySelector` is a super simple api
+
+#### Disable body parser of Now.sh v2 and API routes of Next.js
+
+##### Now.sh v2
+
+Configure `now.json`.
+
+```json
+{
+  "builds": [
+    {
+      "src": "my-file.js",
+      "use": "@now/node",
+      "config": { "helpers": "false" }
+    }
+  ]
+}
+```
+
+> <https://zeit.co/docs/v2/advanced/builders#disabling-helpers-for-node.js>
+
+##### Next.js
+
+Export `config`.
+
+```js
+// ./pages/api/my-endpoint.js
+export default prismy(...)
+
+export const config = {
+  api: {
+    bodyParser: false,
+  }
+}
+```
+
+> <https://github.com/zeit/next.js#api-middlewares>
+
 ### Long `type is not assignable to [Selector<unknown> ...` error when creating Prismy handler
 
 - Selectors must be written directly into the array argument in the function call. This is due to a limitation of Typescript type inference. Prismy relies on knowning the tuple type of the array, e.g `[string, number]`. Dynamicly creating the array will infer as `string|number[]` which means Prismy cannot infer the positional types for the handler arguments.
