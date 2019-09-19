@@ -2,7 +2,7 @@
 
 # `prismy`
 
-:rainbow: Simple and fast type safe server library based on micro for now.sh v2.
+:rainbow: Simple and fast type safe server library for now.sh v2 and API routes of next.js.
 
 [![Build Status](https://travis-ci.com/prismyland/prismy.svg?branch=master)](https://travis-ci.com/prismyland/prismy)
 [![codecov](https://codecov.io/gh/prismyland/prismy/branch/master/graph/badge.svg)](https://codecov.io/gh/prismyland/prismy)
@@ -36,7 +36,7 @@
 
 ## Features
 
-- Very small (No Expressjs, the only deps are micro and tslib)
+- Very small (No Expressjs, the only deps are content-type, raw-body and tslib)
 - Takes advantage of the asynchronous nature of Javascript with full support for async / await
 - Simple and easy argument injection for handlers (Inpsired by Reselect)
   - Completely **TYPE-SAFE**
@@ -548,17 +548,26 @@ Now.sh v2 and API routes of Next.js parse request body and set it to `req.body` 
 
 To deal with this problem, you have two choices.
 
-#### Introduce custom body selector
+#### Use `bodySelector`
+
+`bodySelector` selects pre-parsed body,`req.body`. If `req.body` is not presented, the selector will parse it based on content type just like Now.sh v2 and Next.js do.
+
+- A string of text (`text/plain`)
+- A buffer (`application/octet-stream`)
+- A json object (`application/json`)
+- A form data query string (`application/x-www-form-urlencoded`)
 
 ```ts
-import { SyncSelector } from 'prismy'
+import { bodySelector, prismy } from 'prismy'
 
-const bodySelector: SyncSelector<any> = ({ req }) => (req as any).body
-
-export default prismy([bodySelector], body => ...)
+export default prismy([bodySelector], body => {
+  ...
+})
 ```
 
 #### Disable body parser of Now.sh v2 and API routes of Next.js
+
+If you want to use your custom body parser with Now.sh and Next.js, you need to disable the behavior of them.
 
 ##### Now.sh v2
 
@@ -576,7 +585,7 @@ Configure `now.json`.
 }
 ```
 
-> <https://zeit.co/docs/v2/advanced/builders#disabling-helpers-for-node.js>
+> To know more, check <https://zeit.co/docs/v2/advanced/builders#disabling-helpers-for-node.js>
 
 ##### Next.js
 
@@ -593,7 +602,7 @@ export const config = {
 }
 ```
 
-> <https://github.com/zeit/next.js#api-middlewares>
+> To know more, check <https://github.com/zeit/next.js#api-middlewares>
 
 ### Long `type is not assignable to [Selector<unknown> ...` error when creating Prismy handler
 
