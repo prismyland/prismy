@@ -1,5 +1,4 @@
 import { IncomingMessage, ServerResponse } from 'http'
-import { send } from 'micro'
 import {
   ResponseObject,
   Selector,
@@ -11,7 +10,7 @@ import {
   ContextHandler,
   PrismyRequestListener
 } from './types'
-import { res, compileHandler } from './utils'
+import { res, compileHandler, send } from './utils'
 
 /**
  * Generates a handler to be used by http.Server

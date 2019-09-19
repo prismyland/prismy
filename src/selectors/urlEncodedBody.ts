@@ -1,4 +1,5 @@
-import { text, createError } from 'micro'
+import { text } from '../utils'
+import { createError } from '../error'
 import { ParsedUrlQuery, parse } from 'querystring'
 import { AsyncSelector } from '../types'
 

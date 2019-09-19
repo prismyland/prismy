@@ -2,8 +2,6 @@ import { PrismyPureMiddleware } from './types'
 import { middleware } from './middleware'
 import { res } from './utils'
 
-export { createError } from 'micro'
-
 interface WithErrorHandlerOptions {
   dev?: boolean
   json?: boolean
@@ -41,4 +39,22 @@ export function createWithErrorHandler({
       return json ? res({ message }, statusCode) : res(message, statusCode)
     }
   })
+}
+
+class PrismyError extends Error {
+  statusCode?: number
+  originalError?: Error
+}
+
+export const createError = (
+  code?: number,
+  message?: string,
+  original?: Error
+) => {
+  const error = new PrismyError(message)
+
+  error.statusCode = code
+  error.originalError = original
+
+  return error
 }

@@ -1,4 +1,4 @@
-import { buffer } from 'micro'
+import { buffer } from '../utils'
 import { AsyncSelector } from '../types'
 
 /**

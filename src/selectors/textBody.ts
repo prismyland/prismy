@@ -1,4 +1,4 @@
-import { text } from 'micro'
+import { text } from '../utils'
 import { AsyncSelector } from '../types'
 
 /**
