@@ -54,6 +54,20 @@ export interface ResponseObject<B> {
 }
 
 /**
+ * shorter type alias for ResponseObject<B>
+ * 
+ * @public
+ */
+export type Res<B> = ResponseObject<B>
+
+/**
+ * alias for Promise<ResponseObject<B>> for user with async handlers
+ * 
+ * @public
+ */
+export type AsyncRes<B> = Promise<ResponseObject<B>>
+
+/**
  * prismy compaticble middleware
  * 
  * @public
