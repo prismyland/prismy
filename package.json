@@ -64,6 +64,6 @@
   },
   "dependencies": {
     "micro": "^9.3.5-canary.3",
-    "tslib": "^1.10.0"
+    "tslib": "^2.0.1"
   }
 }
