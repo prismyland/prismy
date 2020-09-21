@@ -3,6 +3,14 @@ import { testHandler } from './helpers'
 import { prismy, createWithErrorHandler, createError } from '../src'
 
 describe('createWithErrorHandler', () => {
+  beforeAll(() => {
+    console.error = jest.fn(console.error)
+  })
+
+  afterEach(() => {
+    ;(console.error as jest.Mock).mockClear()
+  })
+
   it('creates withErrorHandler middleware', async () => {
     const withErrorHandler = createWithErrorHandler()
     const handler = prismy(
@@ -105,6 +113,56 @@ describe('createWithErrorHandler', () => {
       expect(response.body).toEqual({
         message: 'Internal Server Error'
       })
+    })
+  })
+
+  it('logs error', async () => {
+    const withErrorHandler = createWithErrorHandler({
+      json: true
+    })
+
+    const error = new Error()
+    const handler = prismy(
+      [],
+      () => {
+        throw error
+      },
+      [withErrorHandler]
+    )
+
+    await testHandler(handler, async url => {
+      const response = await got(url, {
+        throwHttpErrors: false,
+        json: true
+      })
+
+      expect(response.statusCode).toBe(500)
+      expect(console.error).toBeCalledWith(error)
+    })
+  })
+
+  it('does not log error if silent is true', async () => {
+    const withErrorHandler = createWithErrorHandler({
+      json: true,
+      silent: true
+    })
+
+    const handler = prismy(
+      [],
+      () => {
+        throw new Error()
+      },
+      [withErrorHandler]
+    )
+
+    await testHandler(handler, async url => {
+      const response = await got(url, {
+        throwHttpErrors: false,
+        json: true
+      })
+
+      expect(response.statusCode).toBe(500)
+      expect(console.error).not.toBeCalled()
     })
   })
 })
