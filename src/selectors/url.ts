@@ -28,8 +28,7 @@ export const urlSelector: SyncSelector<UrlWithStringQuery> = context => {
   if (url == null) {
     const { req } = context
     /* istanbul ignore next */
-    context[urlSymbol] = url =
-      req.url != null ? parse(req.url, false) : { query: null }
+    url = context[urlSymbol] = parse(req.url == null ? '' : req.url)
   }
   return url
 }
