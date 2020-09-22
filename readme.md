@@ -23,11 +23,9 @@
   - [Session](#session)
   - [Cookies](#cookies)
   - [Method Routing](#method-routing)
-  - [Prsimyx](#prismyx)
 - [Example](#simple-example)
 - [Testing](#writing-tests)
 - [Gotchas](#gotchas-and-troubleshooting)
-
 
 ## Concepts
 
@@ -66,11 +64,9 @@ Make sure typescript strict setting is on if using typescript
 `tsconfig.json`
 
 ```json
-
 {
-  'strict': true
+  "strict": true
 }
-
 ```
 
 ### Hello World
@@ -80,14 +76,14 @@ Make sure typescript strict setting is on if using typescript
 ```ts
 import { prismy, res, Selector } from 'prismy'
 
-const worldSelector: Selector<string> = () => "world"! 
+const worldSelector: Selector<string> = () => 'world'!
 
-export default prismy([ worldSelector ], async world => {
+export default prismy([worldSelector], async world => {
   return res(`Hello ${world}!`) // Hello world!
 })
 ```
 
-If you are using now.sh or next.js you can just put handlers in the `pages` directory and your done!   
+If you are using now.sh or next.js you can just put handlers in the `pages` directory and your done!  
 Simple, easy, no hassle.
 
 Otherwise, serve your application using node.js http server.
@@ -117,13 +113,12 @@ interface Context {
 }
 ```
 
-Context is passed into all selectors and middleware. It can be used to assist memoization and communicate between linked selectors and middleware.  
+Context is passed into all selectors and middleware. It can be used to assist memoization and communicate between linked selectors and middleware.
 
 :exclamation: **It is highly recommended to use `Symbol('property-name')` in order to not have duplicate property names and end up overwriting something important.**  
 Read more about Symbols [here.](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol)
 
 This way of communicating via symbols on the context object is used in `prismy-session`.
-
 
 :exclamation: Due to how prismy resolves selectors, context should **NOT** be used to communicate between selectors. Due to their async nature resolution order can not be guaranteed.
 
@@ -157,8 +152,8 @@ function createController() {
 }
 ```
 
-Prismy however uses _Selectors_, a pattern inspired by Reselectjs.    
-Selectors are simple functions used to generate the arguments for the handler. A Selector accepts a 
+Prismy however uses _Selectors_, a pattern inspired by Reselectjs.  
+Selectors are simple functions used to generate the arguments for the handler. A Selector accepts a
 single `context` argument or type `Context`.
 
 ```ts
@@ -193,13 +188,10 @@ const asyncSelector: Selector<string> = async context => {
   return value
 }
 
-export default prismy(
-  [asyncSelector],
-  async value => {
-    await doSomething(value)
-    return res('Done!')
-  }
-)
+export default prismy([asyncSelector], async value => {
+  await doSomething(value)
+  return res('Done!')
+})
 ```
 
 #### Included Selectors
@@ -207,13 +199,13 @@ export default prismy(
 Prismy includes some helper selectors for common actions.
 Some examples are:
 
-  - `methodSelector`
-  - `querySelector`
+- `methodSelector`
+- `querySelector`
 
 Others require configuration and so factory functions are exposed.
 
-  - `createJsonBodySelector`
-  - `createUrlEncodedBodySelector`
+- `createJsonBodySelector`
+- `createUrlEncodedBodySelector`
 
 ```ts
 import { createJsonBodySelector } from 'prismy'
@@ -223,14 +215,10 @@ const jsonBodySelector = createJsonBodySelector({
   limit: '1mb'
 })
 
-export default prismy(
-  [jsonBodySelector],
-  async jsonBody => {
-    await doSomething(jsonBody)
-    return res('Done!')
-  }
-)
-
+export default prismy([jsonBodySelector], async jsonBody => {
+  await doSomething(jsonBody)
+  return res('Done!')
+})
 ```
 
 These helper selectors can be composed to provide more solid typing and error handling.
@@ -247,28 +235,23 @@ const jsonBodySelector = createJsonBodySelector()
 
 const requestBodySelector: Selector<RequestBody> = context => {
   const jsonBody = jsonBodySelector(context)
-  if (!jsonBody.hasOwnProperty("data")) {
+  if (!jsonBody.hasOwnProperty('data')) {
     throw new Error('Query is required!')
   }
   return jsonBody
 }
 
-export default prismy(
-  [requestBodySelector],
-  requestBody => {
-    return res(`You're query was ${requestBody.json}!`)
-  }
-)
-
+export default prismy([requestBodySelector], requestBody => {
+  return res(`You're query was ${requestBody.json}!`)
+})
 ```
 
 For other helper selectors please refer to the [API Documentation](#api)
 
-
 ### Middleware
 
-Middleware in Prismy works as a single pass pipeline of composed functions. The next middleware is 
-accepted as an argument to the previous middleware allowing the request to be progressed or returned 
+Middleware in Prismy works as a single pass pipeline of composed functions. The next middleware is
+accepted as an argument to the previous middleware allowing the request to be progressed or returned
 as desired.  
 The middleware stack is composed and so the response travels right to left across the array.
 
@@ -314,15 +297,16 @@ export default prismy(
 
 ### Session
 
-Although you can implement your own sessions using selectors and middleware, Prismy offers a 
+Although you can implement your own sessions using selectors and middleware, Prismy offers a
 simple module to make it easy with `prismy-session`.
 
 Install it using:
+
 ```sh
-npm install prismy-session --save 
+npm install prismy-session --save
 ```
 
-`prismy-session` exposes `createSession` which accepts a `SessionStrategy` instance and returns a 
+`prismy-session` exposes `createSession` which accepts a `SessionStrategy` instance and returns a
 selector and middleware to give to prismy.  
 Official strategies include `prismy-session-strategy-jwt-cookie` and `prismy-session-strategy-signed-cookie`. Both available on npm.
 
@@ -351,7 +335,7 @@ default export prismy(
 
 ### Cookies
 
-Prismy also offers a selector for cookies in the `prismy-cookie` package.  
+Prismy also offers a selector for cookies in the `prismy-cookie` package.
 
 ```ts
 import { prismy, res } from 'prismy'
@@ -359,23 +343,18 @@ import { createCookiesSelector, appendCookie } from 'prismy-cookie'
 
 const cookiesSelector = createCookiesSelector()
 
-export default prismy(
-  [cookiesSelector],
-  async cookies => {
-
-    /** appendCookie is a helper function that takes a response object and 
-     * a string key, value tuple returning a new response object with the
-     * cookie appended.
-    */
-    return appendCookie(res('Cookie added!'), ['key', 'value'])
-  }
-)
-
+export default prismy([cookiesSelector], async cookies => {
+  /** appendCookie is a helper function that takes a response object and
+   * a string key, value tuple returning a new response object with the
+   * cookie appended.
+   */
+  return appendCookie(res('Cookie added!'), ['key', 'value'])
+})
 ```
 
 ### Method Routing
 
-Dealing with the different HTTP methods using just a methodSelector can get arduous. As such `prismy-method-router` is available to make it easier and smoother.  
+Dealing with the different HTTP methods using just a methodSelector can get arduous. As such `prismy-method-router` is available to make it easier and smoother.
 
 ```ts
 import { prismy, res } from 'prismy'
@@ -390,50 +369,29 @@ export default methodRouter(
       return res('Posted something!')
     })
   },
-  [/* common middleware can be past in here */ ]
+  [
+    /* common middleware can be past in here */
+  ]
 )
-
-```
-`methodRouter` supports all HTTP verbs.  
-
-### Prismyx
-
-`prismy` typing limits it to a max of 12 [argument selectors](#selectors), more than 12 will cause type errors.
-It should be uncommon to require more than 12 Selectors but in the event that it is `prismyx` is 
-exposed.
-
-```ts
-
-// Use the generic type to keep strong typing
-default export prismyx<[string, number, .../* types */, User, Cake]>(
-  [stringSelector, numberSelector, .../* many selectors */, userSelector, cakeSelector],
-  (string, number, .../* args */, user, cake) => {
-    ...
-  }
-)
-
 ```
 
-`prismyx` can also be used in the event a custom prismy function is needed.
-
-```ts
-export const p: typeof prismy = (
-  selectors: any,
-  handler: any,
-  middleware: any = []
-) => prismyx(selectors, handler, middleware)
-```
-
+`methodRouter` supports all HTTP verbs.
 
 ## Simple Example
 
 ```ts
-import { prismy, res, Selector, middleware, querySelector, redirect } from 'prismy'
+import {
+  prismy,
+  res,
+  Selector,
+  middleware,
+  querySelector,
+  redirect
+} from 'prismy'
 import { methodRouter } from 'prismy-method-router'
 import createSession from 'prismy-session'
 import JWTSessionStrategy from 'prismy-session-strategy-jwt-cookie'
 import { createJsonBodySelector } from 'prismy'
-
 
 const jsonBodySelector = createJsonBodySelector({
   limit: '1mb'
@@ -476,21 +434,23 @@ const contentSelector: Selector<string> = async context => {
   return jsonBody.content
 }
 
-export default methodRouter({
-  get: prismy([], async () => {
-    const todos = await getTodos()
-    return res({ todos })
-  }),
-  post: prismy([ contentSelector ], async content => {
-    const todo = await createTodo(content)
-    return res({ todo })
-  }),
-  delete: prismy([ todoIdSelector ], async id => {
-    await deleteTodo(id)
-    return res('Deleted')
-  })
-}, [ authMiddleware, sessionMiddleware ])
-
+export default methodRouter(
+  {
+    get: prismy([], async () => {
+      const todos = await getTodos()
+      return res({ todos })
+    }),
+    post: prismy([contentSelector], async content => {
+      const todo = await createTodo(content)
+      return res({ todo })
+    }),
+    delete: prismy([todoIdSelector], async id => {
+      await deleteTodo(id)
+      return res('Deleted')
+    })
+  },
+  [authMiddleware, sessionMiddleware]
+)
 ```
 
 ## Writing Tests
@@ -551,8 +511,8 @@ decribe('handler', () => {
 
 ## Gotchas and Troubleshooting
 
-
 ### Long `type is not assignable to [Selector<unknown> ...` error when creating Prismy handler
+
 - Selectors must be written directly into the array argument in the function call. This is due to a limitation of Typescript type inference. Prismy relies on knowning the tuple type of the array, e.g `[string, number]`. Dynamicly creating the array will infer as `string|number[]` which means Prismy cannot infer the positional types for the handler arguments.
 
 ```ts
@@ -560,27 +520,24 @@ const selectors = [selector1, selector2]
 prismy(selectors, handler) // will give type error
 
 prismy([selector1, selector2], handler) // Ok!
-
 ```
 
 - This weird type error may also occur if the handler does not return a `ResponseObject`. Use `res(..)` to generate a `ResponseObject` easily.
 
 ```ts
-
 // Will show crazy error.
 prismy([selector1, selector2], (one, two) => {
-  return "Not a ResponseObject"
+  return 'Not a ResponseObject'
 })
 
 // Ok!
 prismy([selector1, selector2], (one, two) => {
-  return res("Is a ResponseObject")
+  return res('Is a ResponseObject')
 })
-
 ```
 
-
 ### Long `type is not assignable to [Selector<unknown> ...` error when creating middleware
+
 - mhandler argument must be of `type next => async () => T`. Remember the async.
 - If using Typescript, `'strict'` compiler option MUST be `true`. This can be set in tsconfig.json.
 
