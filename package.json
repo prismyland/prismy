@@ -45,13 +45,13 @@
     "@types/test-listen": "^1.1.0",
     "codecov": "^3.5.0",
     "got": "^9.6.0",
-    "jest": "^24.8.0",
+    "jest": "^26.4.2",
     "prettier": "^1.17.1",
     "rimraf": "^3.0.0",
     "test-listen": "^1.1.0",
-    "ts-jest": "^24.0.2",
+    "ts-jest": "^26.4.0",
     "typedoc": "^0.15.0",
-    "typescript": "^3.4.5"
+    "typescript": "^4.0.3"
   },
   "jest": {
     "preset": "ts-jest",
@@ -64,6 +64,6 @@
   },
   "dependencies": {
     "micro": "^9.3.5-canary.3",
-    "tslib": "^1.10.0"
+    "tslib": "^2.0.1"
   }
 }
