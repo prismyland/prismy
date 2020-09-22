@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse, OutgoingHttpHeaders } from 'http'
 
 /**
  * Request context used in selectors
- * 
+ *
  * @public
  */
 export interface Context {
@@ -11,32 +11,57 @@ export interface Context {
 
 /**
  * A Synchronous argument selector
- * 
+ *
  * @public
  */
 export type SyncSelector<T> = (context: Context) => T
 /**
  * An asynchronous argument selector
- * 
+ *
  * @public
  */
 export type AsyncSelector<T> = (context: Context) => Promise<T>
 /**
  * An argument selector to extract arguments for the handler
- * 
+ *
  * @public
  */
 export type Selector<T> = SyncSelector<T> | AsyncSelector<T>
 
 /**
+ * Get the return type array of Selectors
+ *
  * @public
  */
-export type Selectors<T> = { [P in keyof T]: Selector<T[P]> }
+export type SelectorTuple<SS extends unknown[]> = [
+  ...{
+    [I in keyof SS]: Selector<SS[I]>
+  }
+]
+
+/**
+ * Get the return type of a Selector
+ *
+ * @public
+ */
+export type SelectorReturnType<S> = S extends Selector<infer T> ? T : never
+
+/**
+ * Get the return type array of Selectors
+ *
+ * @public
+ */
+export type SelectorReturnTypeTuple<SS extends Selector<unknown>[]> = [
+  ...{
+    [I in keyof SS]: SelectorReturnType<SS[I]>
+  }
+]
 
 /**
  * @public
  */
-export type Unpromise<T> = T extends Promise<infer U> ? U : T
+export type PromiseResolve<T> = T extends Promise<infer U> ? U : T
+
 /**
  * @public
  */
@@ -44,7 +69,7 @@ export type Promisable<T> = T | Promise<T>
 
 /**
  * prismy's representation of a response
- * 
+ *
  * @public
  */
 export interface ResponseObject<B> {
@@ -55,21 +80,21 @@ export interface ResponseObject<B> {
 
 /**
  * shorter type alias for ResponseObject<B>
- * 
+ *
  * @public
  */
 export type Res<B> = ResponseObject<B>
 
 /**
  * alias for Promise<ResponseObject<B>> for user with async handlers
- * 
+ *
  * @public
  */
 export type AsyncRes<B> = Promise<ResponseObject<B>>
 
 /**
  * prismy compaticble middleware
- * 
+ *
  * @public
  */
 export interface PrismyPureMiddleware {
@@ -79,7 +104,7 @@ export interface PrismyPureMiddleware {
 }
 /**
  * prismy compatible middleware
- * 
+ *
  * @public
  */
 export interface PrismyMiddleware<A extends any[]>
