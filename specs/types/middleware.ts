@@ -1,6 +1,5 @@
 import {
   middleware,
-  middlewarex,
   urlSelector,
   methodSelector,
   AsyncSelector,
@@ -34,18 +33,6 @@ expectType<
   ) => ResponseObject<any> | Promise<ResponseObject<any>>
 >(middleware1.mhandler)
 
-const middleware2 = middlewarex<
-  [UrlWithStringQuery, string | undefined, UrlWithStringQuery]
->(
-  [urlSelector, methodSelector, asyncUrlSelector],
-  next => async (url, method, url2) => {
-    expectType<UrlWithStringQuery>(url)
-    expectType<string | undefined>(method)
-    expectType<UrlWithStringQuery>(url2)
-    return next()
-  }
-)
-
 expectType<
   (
     next: () => Promise<ResponseObject<any>>
@@ -54,6 +41,6 @@ expectType<
     method: string | undefined,
     url2: UrlWithStringQuery
   ) => ResponseObject<any> | Promise<ResponseObject<any>>
->(middleware2.mhandler)
+>(middleware1.mhandler)
 
-prismy([], () => res(''), [middleware1, middleware2])
+prismy([], () => res(''), [middleware1])
