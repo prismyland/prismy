@@ -1,9 +1,6 @@
-import contentType from 'content-type'
-import getRawBody from 'raw-body'
 import { AsyncSelector, Context } from '../types'
-import { createError } from '../error'
+import { buffer } from '../utils'
 
-const rawBodyMap = new WeakMap()
 /**
  * Options for {@link createBufferBodySelector}
  *
@@ -44,31 +41,6 @@ export function createBufferBodySelector(
 ): AsyncSelector<string | Buffer> {
   return async (context: Context) => {
     const { req } = context
-    const { limit = '1mb', encoding: encode } = options
-    const type = req.headers['content-type'] || 'text/plain'
-    const length = req.headers['content-length']
-
-    let encoding = encode
-
-    if (encoding === undefined) {
-      encoding = contentType.parse(type).parameters.charset
-    }
-
-    const body = rawBodyMap.get(req)
-    if (body) {
-      return body
-    }
-
-    return getRawBody(req, { length, limit, encoding })
-      .then(buf => {
-        rawBodyMap.set(req, buf)
-      })
-      .catch(err => {
-        if (err.type === 'entity.too.large') {
-          throw createError(413, `Body exceeded ${limit} limit`, err)
-        } else {
-          throw createError(400, 'Invalid body', err)
-        }
-      })
+    return buffer(req, options)
   }
 }

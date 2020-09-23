@@ -1,12 +1,16 @@
-import { OutgoingHttpHeaders, ServerResponse } from 'http'
+import { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from 'http'
 import { Stream } from 'stream'
 import { readable } from 'is-stream'
+import contentType from 'content-type'
+import getRawBody from 'raw-body'
 import {
+  BufferOption,
+  Context,
   ResponseObject,
   Selector,
-  SelectorReturnTypeTuple,
-  Context
+  SelectorReturnTypeTuple
 } from './types'
+import { createError } from './error'
 
 const { NODE_ENV } = process.env
 const DEV = NODE_ENV === 'development'
@@ -218,4 +222,39 @@ export async function send(
 
   res.setHeader('Content-Length', Buffer.byteLength(str))
   res.end(str)
+}
+
+const rawBodyMap = new WeakMap()
+
+export async function buffer(
+  req: IncomingMessage,
+  options: BufferOption
+): Promise<string | Buffer> {
+  const type = req.headers['content-type'] || 'text/plain'
+  const length = req.headers['content-length']
+
+  const { limit = '1mb', encoding: encode } = options
+  let encoding = encode
+
+  if (encode === undefined) {
+    encoding = contentType.parse(type).parameters.charset
+  }
+
+  const body = rawBodyMap.get(req)
+  if (body) {
+    return body
+  }
+
+  return getRawBody(req, { length, limit, encoding })
+    .then(buf => {
+      rawBodyMap.set(req, buf)
+      return buf
+    })
+    .catch(err => {
+      if (err.type === 'entity.too.large') {
+        throw createError(413, `Body exceeded ${limit} limit`, err)
+      } else {
+        throw createError(400, `Invalid body`, err)
+      }
+    })
 }
