@@ -1,5 +1,5 @@
-import { json } from 'micro'
 import { createError } from '../error'
+import { json } from '../utils'
 import { AsyncSelector } from '../types'
 import { headersSelector } from './headers'
 

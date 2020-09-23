@@ -1,6 +1,7 @@
-import { text, createError } from 'micro'
 import { ParsedUrlQuery, parse } from 'querystring'
 import { AsyncSelector } from '../types'
+import { text } from '../utils'
+import { createError } from '../error'
 
 /**
  * Options for {@link createUrlEncodedBodySelector}

@@ -1,5 +1,5 @@
-import { text } from 'micro'
 import { AsyncSelector } from '../types'
+import { text } from '../utils'
 
 /**
  * Options for {@link createTextBodySelector}
