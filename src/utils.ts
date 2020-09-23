@@ -15,6 +15,30 @@ import { createError } from './error'
 const { NODE_ENV } = process.env
 const DEV = NODE_ENV === 'development'
 
+export function parseBufferOption(
+  req: IncomingMessage,
+  options?: BufferOption
+) {
+  const type = req.headers['content-type'] || 'text/plain'
+  let { limit = '1mb', encoding } = options || {}
+  if (encoding === undefined) {
+    encoding = contentType.parse(type).parameters.charset
+  }
+
+  return {
+    limit,
+    encoding
+  }
+}
+
+export const parseJSON = (str: any) => {
+  try {
+    return JSON.parse(str)
+  } catch (err) {
+    throw createError(400, `Invalid JSON`, err)
+  }
+}
+
 /**
  * Factory function for creating http responses
  *
@@ -228,17 +252,10 @@ const rawBodyMap = new WeakMap()
 
 export async function buffer(
   req: IncomingMessage,
-  options: BufferOption
+  options?: BufferOption
 ): Promise<string | Buffer> {
-  const type = req.headers['content-type'] || 'text/plain'
   const length = req.headers['content-length']
-
-  const { limit = '1mb', encoding: encode } = options
-  let encoding = encode
-
-  if (encode === undefined) {
-    encoding = contentType.parse(type).parameters.charset
-  }
+  const { limit, encoding } = parseBufferOption(req, options)
 
   const body = rawBodyMap.get(req)
   if (body) {
