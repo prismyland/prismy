@@ -1,10 +1,15 @@
-import { OutgoingHttpHeaders } from 'http'
+import { OutgoingHttpHeaders, ServerResponse } from 'http'
+import { Stream } from 'stream'
+import { readable } from 'is-stream'
 import {
   ResponseObject,
   Selector,
   SelectorReturnTypeTuple,
   Context
 } from './types'
+
+const { NODE_ENV } = process.env
+const DEV = NODE_ENV === 'development'
 
 /**
  * Factory function for creating http responses
@@ -164,4 +169,53 @@ export function resolveSelectors<S extends Selector<unknown>[]>(
   return Promise.all(selectors.map(selector => selector(context))) as Promise<
     SelectorReturnTypeTuple<S>
   >
+}
+
+// Fix #33
+export async function send(
+  res: ServerResponse,
+  code: number,
+  data?: any
+): Promise<void> {
+  res.statusCode = code
+
+  if (data === null) {
+    res.end()
+    return
+  }
+
+  if (Buffer.isBuffer(data)) {
+    if (!res.getHeader('Content-Type')) {
+      res.setHeader('Content-Type', 'application/octet-stream')
+    }
+    res.setHeader('Content-Length', data.length)
+    res.end(data)
+    return
+  }
+
+  if (data instanceof Stream || readable(data)) {
+    if (!res.getHeader('Content-Type')) {
+      res.setHeader('Content-Type', 'application/octet-stream')
+    }
+
+    data.pipe(res)
+    return
+  }
+
+  let str = data
+
+  if (typeof data === 'object' || typeof data === 'number') {
+    if (DEV) {
+      str = JSON.stringify(data, null, 2)
+    } else {
+      str = JSON.stringify(data)
+    }
+
+    if (!res.getHeader('Content-Type')) {
+      res.setHeader('Content-Type', 'application/json;charset=utf-8')
+    }
+  }
+
+  res.setHeader('Content-Length', Buffer.byteLength(str))
+  res.end(str)
 }
