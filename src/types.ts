@@ -127,3 +127,11 @@ export interface PrismyRequestListener<A extends any[]> {
   handler(...args: A): Promisable<ResponseObject<any>>
   contextHandler: ContextHandler
 }
+
+/**
+ * @public
+ */
+export interface BufferOption {
+  limit?: string | number
+  encoding?: string
+}
