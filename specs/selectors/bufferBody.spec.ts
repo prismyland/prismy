@@ -4,7 +4,7 @@ import { createBufferBodySelector, prismy, res } from '../../src'
 
 describe('createBufferBodySelector', () => {
   it('creates buffer body selector', async () => {
-    const bufferBodySelector = createBufferBodySelector()
+    const bufferBodySelector = createBufferBodySelector({})
     const handler = prismy([bufferBodySelector], body => {
       return res(`${body.constructor.name}: ${body}`)
     })
