@@ -275,3 +275,19 @@ export async function buffer(
       }
     })
 }
+
+export async function text(
+  req: IncomingMessage,
+  options?: BufferOption
+): Promise<string> {
+  const { encoding } = parseBufferOption(req, options)
+
+  return buffer(req, options).then(body => body.toString(encoding))
+}
+
+export async function json(
+  req: IncomingMessage,
+  options?: BufferOption
+): Promise<object> {
+  return text(req, options).then(body => JSON.parse(body))
+}
