@@ -4,7 +4,7 @@ import { readable } from 'is-stream'
 import contentType from 'content-type'
 import getRawBody from 'raw-body'
 import {
-  BufferOption,
+  BufferOptions,
   Context,
   ResponseObject,
   Selector,
@@ -17,7 +17,7 @@ const DEV = NODE_ENV === 'development'
 
 export function parseBufferOption(
   req: IncomingMessage,
-  options?: BufferOption
+  options?: BufferOptions
 ) {
   const type = req.headers['content-type'] || 'text/plain'
   let { limit = '1mb', encoding } = options || {}
@@ -199,13 +199,22 @@ export function resolveSelectors<S extends Selector<unknown>[]>(
   >
 }
 
-// Fix #33
+/**
+ * Description of send
+ *
+ * @param res - The response to send
+ * @param statusCode - HTTP status code of the response
+ * @param data - Data to send
+ * @returns Promise<void>
+ *
+ * @public
+ */
 export async function send(
   res: ServerResponse,
-  code: number,
+  statusCode: number,
   data?: any
 ): Promise<void> {
-  res.statusCode = code
+  res.statusCode = statusCode
 
   if (data === null) {
     res.end()
@@ -250,10 +259,20 @@ export async function send(
 
 const rawBodyMap = new WeakMap()
 
+/**
+ * Description of buffer
+ *
+ *
+ * @param req - {@link IncomingMessage | request}
+ * @param options - HTTP status code of the response
+ * @returns Promise<string | Buffer>
+ *
+ * @public
+ */
 export async function buffer(
   req: IncomingMessage,
-  options?: BufferOption
-): Promise<string | Buffer> {
+  options?: BufferOptions
+): Promise<Buffer | string> {
   const length = req.headers['content-length']
   const { limit, encoding } = parseBufferOption(req, options)
 
@@ -278,7 +297,7 @@ export async function buffer(
 
 export async function text(
   req: IncomingMessage,
-  options?: BufferOption
+  options?: BufferOptions
 ): Promise<string> {
   const { encoding } = parseBufferOption(req, options)
 
@@ -287,7 +306,7 @@ export async function text(
 
 export async function json(
   req: IncomingMessage,
-  options?: BufferOption
+  options?: BufferOptions
 ): Promise<object> {
   return text(req, options).then(body => JSON.parse(body))
 }

@@ -131,7 +131,7 @@ export interface PrismyRequestListener<A extends any[]> {
 /**
  * @public
  */
-export interface BufferOption {
+export interface BufferOptions {
   limit?: string | number
   encoding?: string
 }

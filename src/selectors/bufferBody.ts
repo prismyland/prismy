@@ -1,4 +1,4 @@
-import { AsyncSelector, Context } from '../types'
+import { AsyncSelector, BufferOptions, Context } from '../types'
 import { buffer } from '../utils'
 
 /**
@@ -6,10 +6,7 @@ import { buffer } from '../utils'
  *
  * @public
  */
-export interface BufferBodySelectorOptions {
-  limit?: string | number
-  encoding?: string
-}
+export type BufferBodySelectorOptions = BufferOptions
 
 /**
  * Factory function that creates a selector to extract the request body in a buffer
