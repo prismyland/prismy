@@ -1,5 +1,5 @@
 import { AsyncSelector, BufferOptions, Context } from '../types'
-import { buffer } from '../utils'
+import { readBufferBody } from '../bodyReaders'
 
 /**
  * Options for {@link createBufferBodySelector}
@@ -38,6 +38,6 @@ export function createBufferBodySelector(
 ): AsyncSelector<string | Buffer> {
   return async (context: Context) => {
     const { req } = context
-    return buffer(req, options)
+    return readBufferBody(req, options)
   }
 }

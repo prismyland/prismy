@@ -1,5 +1,5 @@
 import { AsyncSelector } from '../types'
-import { text } from '../utils'
+import { readTextBody } from '../bodyReaders'
 
 /**
  * Options for {@link createTextBodySelector}
@@ -40,6 +40,6 @@ export function createTextBodySelector(
   options?: TextBodySelectorOptions
 ): AsyncSelector<string> {
   return ({ req }) => {
-    return text(req, options)
+    return readTextBody(req, options)
   }
 }

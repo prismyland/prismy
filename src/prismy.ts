@@ -9,7 +9,8 @@ import {
   PrismyRequestListener,
   SelectorReturnTypeTuple
 } from './types'
-import { res, compileHandler, send } from './utils'
+import { res, compileHandler } from './utils'
+import send from './send'
 
 /**
  * Generates a handler to be used by http.Server
