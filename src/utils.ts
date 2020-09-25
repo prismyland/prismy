@@ -200,9 +200,9 @@ export function resolveSelectors<S extends Selector<unknown>[]>(
 }
 
 /**
- * Description of send
+ * Tells server that all of the response headers and body have been sent
  *
- * @param res - The response to send
+ * @param res - {@link ServerResponse | response}
  * @param statusCode - HTTP status code of the response
  * @param data - Data to send
  * @returns Promise<void>
