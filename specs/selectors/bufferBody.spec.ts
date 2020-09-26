@@ -10,7 +10,10 @@ describe('createBufferBodySelector', () => {
     })
 
     await testHandler(handler, async url => {
-      const response = await got(url, { body: 'Hello, World!' })
+      const response = await got(url, {
+        method: 'POST',
+        body: 'Hello, World!'
+      })
 
       expect(response).toMatchObject({
         statusCode: 200,

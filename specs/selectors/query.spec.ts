@@ -10,8 +10,8 @@ describe('querySelector', () => {
 
     await testHandler(handler, async url => {
       const response = await got(url, {
-        query: { message: 'Hello, World!' },
-        json: true
+        searchParams: { message: 'Hello, World!' },
+        responseType: 'json'
       })
 
       expect(response).toMatchObject({
