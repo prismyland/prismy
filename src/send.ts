@@ -37,7 +37,6 @@ export default function send(
     if (!res.getHeader('Content-Type')) {
       res.setHeader('Content-Type', 'application/octet-stream')
     }
-
     body.pipe(res)
     return
   }
@@ -46,7 +45,6 @@ export default function send(
 
   if (typeof body === 'object' || typeof body === 'number') {
     str = JSON.stringify(body)
-
     if (!res.getHeader('Content-Type')) {
       res.setHeader('Content-Type', 'application/json;charset=utf-8')
     }

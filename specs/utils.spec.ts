@@ -7,8 +7,7 @@ import {
   setBody,
   setStatusCode,
   updateHeaders,
-  setHeaders,
-  send
+  setHeaders
 } from '../src'
 
 describe('redirect', () => {
@@ -136,26 +135,6 @@ describe('setHeaders', () => {
       headers: {
         'x-extra-message': 'Hola!'
       }
-    })
-  })
-})
-
-describe('send', () => {
-  it('sends string data', async () => {
-    const handler = prismy([], () => {
-      return res('Hello, World!')
-    })
-
-    await testHandler(handler, async url => {
-      const response = await got(url, { body: 'Hola' })
-
-      expect(response).toEqual({
-        body: null,
-        statusCode: 200,
-        headers: {
-          'x-extra-message': 'Hola!'
-        }
-      })
     })
   })
 })
