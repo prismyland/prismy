@@ -1,6 +1,6 @@
+import { parse as parseContentType } from 'content-type'
 import { IncomingMessage } from 'http'
 import getRawBody from 'raw-body'
-import { parse as parseContentType } from 'content-type'
 import { createError } from './error'
 import { BufferOptions } from './types'
 
