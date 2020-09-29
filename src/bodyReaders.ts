@@ -9,6 +9,7 @@ export function parseBufferOptions(
   options?: BufferOptions
 ) {
   const type = req.headers['content-type'] || 'text/plain'
+
   let { limit = '1mb', encoding } = options || {}
   if (encoding === undefined) {
     encoding = parseContentType(type).parameters.charset
