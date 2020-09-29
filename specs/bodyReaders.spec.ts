@@ -32,7 +32,7 @@ describe('readBufferBody', () => {
     })
   })
 
-  it('sends error message: Body exceeded 1byte limit', async () => {
+  it('throws 413 error: Body exceeded 1byte limit', async () => {
     const withErrorHandler = createWithErrorHandler({
       json: true,
       silent: true
@@ -52,12 +52,11 @@ describe('readBufferBody', () => {
     )
 
     await testHandler(handler, async url => {
-      const target = Buffer.from('Hello, World')
       const response = await got(url, {
         throwHttpErrors: false,
         responseType: 'json',
         method: 'POST',
-        body: target
+        body: Buffer.from('Form follows function.')
       })
 
       expect(response.statusCode).toBe(413)
@@ -67,26 +66,37 @@ describe('readBufferBody', () => {
     })
   })
 
-  it('sends error message: Invalid body', async () => {
+  it('throws 400 error: Invalid body', async () => {
+    const withErrorHandler = createWithErrorHandler({
+      json: true,
+      silent: true
+    })
     const bufferBodySelector = async (context: Context) => {
       const { req } = context
       const bufferBody = await readBufferBody(req)
       return bufferBody
     }
 
-    const handler = prismy([bufferBodySelector], async body => {
-      return res(body)
-    })
+    const handler = prismy(
+      [bufferBodySelector],
+      async body => {
+        return res(body)
+      },
+      [withErrorHandler]
+    )
 
     await testHandler(handler, async url => {
-      const target = Buffer.from('hi')
       const response = await got(url, {
         throwHttpErrors: false,
+        responseType: 'json',
         method: 'POST',
-        body: target
+        body: `????????`
       })
-      // expect(response.statusCode).toBe(500)
-      expect(response.body).toContain('Invalid body')
+
+      // expect(response.statusCode).toBe(400)
+      expect(response.body).toBe({
+        message: 'Invalid body'
+      })
     })
   })
 })
