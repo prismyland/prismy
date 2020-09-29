@@ -1,6 +1,6 @@
 import got from 'got'
 import { Context } from 'vm'
-import { prismy, res } from '../src'
+import { createWithErrorHandler, prismy, res } from '../src'
 import { readBufferBody, readTextBody, readJsonBody } from '../src/bodyReaders'
 import { testHandler } from './helpers'
 
@@ -33,25 +33,37 @@ describe('readBufferBody', () => {
   })
 
   it('sends error message: Body exceeded 1byte limit', async () => {
+    const withErrorHandler = createWithErrorHandler({
+      json: true,
+      silent: true
+    })
     const bufferBodySelector = async (context: Context) => {
       const { req } = context
       const bufferBody = await readBufferBody(req, { limit: '1byte' })
       return bufferBody
     }
 
-    const handler = prismy([bufferBodySelector], async body => {
-      return res(body)
-    })
+    const handler = prismy(
+      [bufferBodySelector],
+      async body => {
+        return res(body)
+      },
+      [withErrorHandler]
+    )
 
     await testHandler(handler, async url => {
       const target = Buffer.from('Hello, World')
       const response = await got(url, {
         throwHttpErrors: false,
+        responseType: 'json',
         method: 'POST',
         body: target
       })
-      expect(response.statusCode).toBe(500)
-      expect(response.body).toContain('Body exceeded 1byte limit')
+
+      expect(response.statusCode).toBe(413)
+      expect(response.body).toEqual({
+        message: 'Body exceeded 1byte limit'
+      })
     })
   })
 
