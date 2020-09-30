@@ -4,39 +4,13 @@ import getRawBody from 'raw-body'
 import { createError } from './error'
 import { BufferOptions } from './types'
 
-export function parseBufferOptions(
-  req: IncomingMessage,
-  options?: BufferOptions
-) {
-  const type = req.headers['content-type'] || 'text/plain'
-
-  let { limit = '1mb', encoding } = options || {}
-  if (encoding === undefined) {
-    encoding = parseContentType(type).parameters.charset
-  }
-
-  return {
-    limit,
-    encoding
-  }
-}
-
-export const parseJSON = (str: any) => {
-  try {
-    return JSON.parse(str)
-  } catch (err) {
-    throw createError(400, `Invalid JSON`, err)
-  }
-}
-
 const rawBodyMap = new WeakMap()
-
 /**
  * Description of buffer
  *
  *
- * @param req - {@link IncomingMessage | request}
- * @param options - HTTP status code of the response
+ * @param req {@link IncomingMessage}
+ * @param options HTTP status code of the response
  * @returns Promise<string | Buffer>
  *
  * @public
@@ -46,7 +20,7 @@ export async function readBufferBody(
   options?: BufferOptions
 ): Promise<Buffer | string> {
   const length = req.headers['content-length']
-  const { limit, encoding } = parseBufferOptions(req, options)
+  const { limit, encoding } = resolveBufferOptions(req, options)
 
   const body = rawBodyMap.get(req)
   if (body) {
@@ -70,7 +44,7 @@ export async function readTextBody(
   req: IncomingMessage,
   options?: BufferOptions
 ): Promise<string> {
-  const { encoding } = parseBufferOptions(req, options)
+  const { encoding } = resolveBufferOptions(req, options)
 
   const buffer = await readBufferBody(req, options)
   return buffer.toString(encoding)
@@ -82,4 +56,26 @@ export async function readJsonBody(
 ): Promise<object> {
   const body = await readTextBody(req, options)
   return parseJSON(body)
+}
+
+function resolveBufferOptions(req: IncomingMessage, options?: BufferOptions) {
+  const type = req.headers['content-type'] || 'text/plain'
+
+  let { limit = '1mb', encoding } = options || {}
+  if (encoding === undefined) {
+    encoding = parseContentType(type).parameters.charset
+  }
+
+  return {
+    limit,
+    encoding
+  }
+}
+
+function parseJSON(str: any) {
+  try {
+    return JSON.parse(str)
+  } catch (err) {
+    throw createError(400, `Invalid JSON`, err)
+  }
 }
