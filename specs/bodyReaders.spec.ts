@@ -1,6 +1,5 @@
 import got from 'got'
-import { Context } from 'vm'
-import { createWithErrorHandler, prismy, res } from '../src'
+import { Context, createWithErrorHandler, prismy, res } from '../src'
 import { readBufferBody, readTextBody, readJsonBody } from '../src/bodyReaders'
 import { testHandler } from './helpers'
 
@@ -19,8 +18,11 @@ describe('readBufferBody', () => {
     })
 
     await testHandler(handler, async url => {
-      const target = Buffer.from('Hello')
-      const responsePromise = got(url, { method: 'POST', body: target })
+      const target = Buffer.from('Hello, World')
+      const responsePromise = got(url, {
+        method: 'POST',
+        body: target
+      })
       const bufferPromise = responsePromise.buffer()
       const [response, buffer] = await Promise.all([
         responsePromise,
@@ -88,15 +90,12 @@ describe('readBufferBody', () => {
     await testHandler(handler, async url => {
       const response = await got(url, {
         throwHttpErrors: false,
-        responseType: 'json',
         method: 'POST',
-        body: `????????`
+        body: Buffer.from('')
       })
 
-      // expect(response.statusCode).toBe(400)
-      expect(response.body).toBe({
-        message: 'Invalid body'
-      })
+      expect(response.statusCode).toBe(400)
+      // expect(response.body).toContain('Invalid body')
     })
   })
 })
@@ -140,18 +139,18 @@ describe('readJsonBody', () => {
     })
 
     await testHandler(handler, async url => {
-      const jsonObject = {
+      const targetObject = {
         foo: 'bar'
       }
 
       const response = await got(url, {
+        responseType: 'json',
         method: 'POST',
-        json: jsonObject,
-        responseType: 'json'
+        json: targetObject
       })
-      expect(response.body).toMatchObject(jsonObject)
+      expect(response.body).toMatchObject(targetObject)
       expect(response.headers['content-length']).toBe(
-        JSON.stringify(jsonObject).length.toString()
+        JSON.stringify(targetObject).length.toString()
       )
     })
   })
