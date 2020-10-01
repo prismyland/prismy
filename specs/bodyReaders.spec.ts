@@ -4,7 +4,7 @@ import { readBufferBody, readTextBody, readJsonBody } from '../src/bodyReaders'
 import { testHandler } from './helpers'
 
 describe('readBufferBody', () => {
-  it('responds with buffer', async () => {
+  it('responds with buffer body', async () => {
     expect.hasAssertions()
 
     const bufferBodySelector = async (context: Context) => {
@@ -34,7 +34,7 @@ describe('readBufferBody', () => {
     })
   })
 
-  it('responds with stored buffer', async () => {
+  it('responds with cached buffer body', async () => {
     expect.hasAssertions()
 
     const bufferBodySelector = async (context: Context) => {
@@ -89,7 +89,7 @@ describe('readBufferBody', () => {
         throwHttpErrors: false,
         responseType: 'json',
         method: 'POST',
-        body: Buffer.from('Form follows function.')
+        body: Buffer.from('Peter Piper picked a peck of pickled peppers.')
       })
 
       expect(response.statusCode).toBe(413)
@@ -106,7 +106,7 @@ describe('readBufferBody', () => {
     })
     const bufferBodySelector = async (context: Context) => {
       const { req } = context
-      const bufferBody = await readBufferBody(req, { encoding: 'kimbug' })
+      const bufferBody = await readBufferBody(req, { encoding: 'oopsie' })
       return bufferBody
     }
 
@@ -123,7 +123,9 @@ describe('readBufferBody', () => {
         throwHttpErrors: false,
         responseType: 'json',
         method: 'POST',
-        body: Buffer.from('Form follows function.')
+        body: Buffer.from(
+          'Please subscribe the Kimbug channel: https://www.youtube.com/c/kimbug'
+        )
       })
 
       expect(response.statusCode).toBe(400)
@@ -135,7 +137,7 @@ describe('readBufferBody', () => {
 })
 
 describe('readTextBody', () => {
-  it('responds with string', async () => {
+  it('responds body in text', async () => {
     expect.hasAssertions()
 
     const textBodySelector = async (context: Context) => {
@@ -159,7 +161,7 @@ describe('readTextBody', () => {
 })
 
 describe('readJsonBody', () => {
-  it('responds with JSON object', async () => {
+  it('responds body in the form of JSON object', async () => {
     expect.hasAssertions()
 
     const jsonBodySelector = async (context: Context) => {
@@ -211,7 +213,7 @@ describe('readJsonBody', () => {
     )
 
     await testHandler(handler, async url => {
-      const target = 'Oops'
+      const target = 'Oopsie'
       const response = await got(url, {
         throwHttpErrors: false,
         responseType: 'json',
