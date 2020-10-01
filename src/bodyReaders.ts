@@ -6,12 +6,16 @@ import { BufferOptions } from './types'
 
 const rawBodyMap = new WeakMap()
 /**
- * Description of buffer
+ * An async function to buffer the incoming request body
  *
+ * @remarks
+ * Can be called multiple times, as it caches the raw request body
+ * the first time
  *
  * @param req {@link IncomingMessage}
- * @param options HTTP status code of the response
- * @returns Promise<string | Buffer>
+ * @param options - Options including how much data should be aggregated
+ * before parsing at max and setting encoding type
+ * @returns Promise<Buffer | string>
  *
  * @public
  */
@@ -40,6 +44,17 @@ export async function readBufferBody(
   }
 }
 
+/**
+ * An async function to parse buffer body and return it in the form
+ * of text
+ *
+ * @param req {@link IncomingMessage}
+ * @param options - Options including how much data should be aggregated
+ * before parsing at max and setting encoding type
+ * @returns Promise<string>
+ *
+ * @public
+ */
 export async function readTextBody(
   req: IncomingMessage,
   options?: BufferOptions
@@ -50,6 +65,17 @@ export async function readTextBody(
   return buffer.toString(encoding)
 }
 
+/**
+ * An async function to parse buffered body and return it in the form
+ * of JSON object
+ *
+ * @param req {@link IncomingMessage}
+ * @param options - Options including how much data should be aggregated
+ * before parsing at max and setting encoding type
+ * @returns Promise<object>
+ *
+ * @public
+ */
 export async function readJsonBody(
   req: IncomingMessage,
   options?: BufferOptions
