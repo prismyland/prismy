@@ -14,7 +14,7 @@ const rawBodyMap = new WeakMap()
  *
  * @param req {@link IncomingMessage}
  * @param options Options such as limit and encoding
- * @returns
+ * @returns Buffer body
  *
  * @public
  */
@@ -41,6 +41,24 @@ export const readBufferBody = async (
       throw createError(400, `Invalid body`, error)
     }
   }
+}
+
+/**
+ * An async function to parse the incoming request body into text
+ *
+ * @param req {@link IncomingMessage}
+ * @param options Options such as limit and encoding
+ * @returns Text body
+ *
+ * @public
+ */
+export const readTextBody = async (
+  req: IncomingMessage,
+  options?: BufferBodyOptions
+): Promise<string> => {
+  const { encoding } = resolveBufferBodyOptions(req, options)
+  const body = await readBufferBody(req, options)
+  return body.toString(encoding)
 }
 
 function resolveBufferBodyOptions(

@@ -1,4 +1,4 @@
-import { text } from 'micro'
+import { readTextBody } from '../bodyReaders'
 import { AsyncSelector } from '../types'
 
 /**
@@ -40,6 +40,6 @@ export function createTextBodySelector(
   options?: TextBodySelectorOptions
 ): AsyncSelector<string> {
   return ({ req }) => {
-    return text(req, options)
+    return readTextBody(req, options)
   }
 }
