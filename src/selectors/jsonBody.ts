@@ -1,4 +1,4 @@
-import { json } from 'micro'
+import { readJsonBody } from '../bodyReaders'
 import { createError } from '../error'
 import { AsyncSelector } from '../types'
 import { headersSelector } from './headers'
@@ -56,7 +56,7 @@ export function createJsonBodySelector(
         )
       }
     }
-    return json(context.req, options)
+    return readJsonBody(context.req, options)
   }
 }
 
