@@ -61,6 +61,27 @@ export const readTextBody = async (
   return body.toString(encoding)
 }
 
+/**
+ * An async function to parse the incoming request body into JSON object
+ *
+ * @param req {@link IncomingMessage}
+ * @param options Options such as limit and encoding
+ * @returns JSON object
+ *
+ * @public
+ */
+export const readJsonBody = async (
+  req: IncomingMessage,
+  options?: BufferBodyOptions
+): Promise<object> => {
+  const body = await readTextBody(req, options)
+  try {
+    return JSON.parse(body)
+  } catch (error) {
+    throw createError(400, `Invalid JSON`, error)
+  }
+}
+
 function resolveBufferBodyOptions(
   req: IncomingMessage,
   options?: BufferBodyOptions
