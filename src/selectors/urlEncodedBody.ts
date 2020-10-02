@@ -1,5 +1,5 @@
-import { text } from 'micro'
 import { ParsedUrlQuery, parse } from 'querystring'
+import { readTextBody } from '../bodyReaders'
 import { createError } from '../error'
 import { AsyncSelector } from '../types'
 
@@ -44,7 +44,7 @@ export function createUrlEncodedBodySelector(
   options?: UrlEncodedBodySelectorOptions
 ): AsyncSelector<ParsedUrlQuery> {
   return async ({ req }) => {
-    const textBody = await text(req, options)
+    const textBody = await readTextBody(req, options)
     try {
       return parse(textBody)
     } catch (error) {
