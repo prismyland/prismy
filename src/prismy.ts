@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from 'http'
-import { send } from 'micro'
+import { send } from './send'
 import {
   ResponseObject,
   Selector,
