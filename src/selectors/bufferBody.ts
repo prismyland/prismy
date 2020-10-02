@@ -1,5 +1,5 @@
-import { buffer } from 'micro'
 import { AsyncSelector } from '../types'
+import { readBufferBody } from '../bodyReaders'
 
 /**
  * Options for {@link createBufferBodySelector}
@@ -40,6 +40,6 @@ export function createBufferBodySelector(
   options?: BufferBodySelectorOptions
 ): AsyncSelector<string | Buffer> {
   return ({ req }) => {
-    return buffer(req, options)
+    return readBufferBody(req, options)
   }
 }
