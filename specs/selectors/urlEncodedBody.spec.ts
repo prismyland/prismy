@@ -12,17 +12,18 @@ describe('URLEncodedBody', () => {
 
     await testHandler(handler, async url => {
       const response = await got(url, {
-        body: {
+        method: 'POST',
+        responseType: 'json',
+        form: {
           message: 'Hello, World!'
-        },
-        form: true
+        }
       })
 
       expect(response).toMatchObject({
         statusCode: 200,
-        body: JSON.stringify({
+        body: {
           message: 'Hello, World!'
-        })
+        }
       })
     })
   })
