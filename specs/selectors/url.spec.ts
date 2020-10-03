@@ -10,7 +10,7 @@ describe('urlSelector', () => {
 
     await testHandler(handler, async url => {
       const response = await got(url, {
-        json: true
+        responseType: 'json'
       })
 
       expect(response).toMatchObject({

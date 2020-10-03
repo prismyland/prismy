@@ -107,7 +107,7 @@ describe('createWithErrorHandler', () => {
     await testHandler(handler, async url => {
       const response = await got(url, {
         throwHttpErrors: false,
-        json: true
+        responseType: 'json'
       })
 
       expect(response.body).toEqual({
@@ -133,7 +133,7 @@ describe('createWithErrorHandler', () => {
     await testHandler(handler, async url => {
       const response = await got(url, {
         throwHttpErrors: false,
-        json: true
+        responseType: 'json'
       })
 
       expect(response.statusCode).toBe(500)
@@ -158,7 +158,7 @@ describe('createWithErrorHandler', () => {
     await testHandler(handler, async url => {
       const response = await got(url, {
         throwHttpErrors: false,
-        json: true
+        responseType: 'json'
       })
 
       expect(response.statusCode).toBe(500)

@@ -11,10 +11,11 @@ describe('createJsonBodySelector', () => {
 
     await testHandler(handler, async url => {
       const response = await got(url, {
-        body: {
+        method: 'POST',
+        responseType: 'json',
+        json: {
           message: 'Hello, World!'
-        },
-        json: true
+        }
       })
 
       expect(response).toMatchObject({
@@ -34,6 +35,7 @@ describe('createJsonBodySelector', () => {
 
     await testHandler(handler, async url => {
       const response = await got(url, {
+        method: 'POST',
         body: JSON.stringify({
           message: 'Hello, World!'
         }),
@@ -56,6 +58,7 @@ describe('createJsonBodySelector', () => {
 
     await testHandler(handler, async url => {
       const response = await got(url, {
+        method: 'POST',
         body: JSON.stringify({
           message: 'Hello, World!'
         }),
@@ -83,6 +86,7 @@ describe('createJsonBodySelector', () => {
 
     await testHandler(handler, async url => {
       const response = await got(url, {
+        method: 'POST',
         body: JSON.stringify({
           message: 'Hello, World!'
         }),
