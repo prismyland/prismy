@@ -2,6 +2,15 @@ import { ServerResponse } from 'http'
 import { readable } from 'is-stream'
 import { Stream } from 'stream'
 
+/**
+ * Function to send data to the client
+ *
+ * @param res {@link ServerResponse}
+ * @param statusCode HTTP status code
+ * @param data
+ *
+ * @public
+ */
 export const send = (
   res: ServerResponse,
   statusCode: number,
