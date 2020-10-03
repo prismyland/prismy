@@ -68,7 +68,6 @@
     "content-type": "^1.0.4",
     "got": "^11.7.0",
     "is-stream": "^2.0.0",
-    "micro": "^9.3.5-canary.3",
     "raw-body": "^2.4.1",
     "tslib": "^2.0.1"
   }
