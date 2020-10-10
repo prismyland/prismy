@@ -136,7 +136,9 @@ describe('readBufferBody', () => {
       })
     })
   })
+})
 
+describe('readTextBody', () => {
   it('responds with text body', async () => {
     expect.hasAssertions()
 
@@ -160,7 +162,9 @@ describe('readBufferBody', () => {
       )
     })
   })
+})
 
+describe('readJsonBody', () => {
   it('responds with JSON object', async () => {
     expect.hasAssertions()
 
