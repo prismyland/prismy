@@ -4,7 +4,7 @@ import { readBufferBody, readJsonBody, readTextBody } from '../src/bodyReaders'
 import { testHandler } from './helpers'
 
 describe('readBufferBody', () => {
-  it('responds with buffer body', async () => {
+  it('reads buffer body from a request', async () => {
     expect.hasAssertions()
 
     const bufferBodySelector = async ({ req }: Context) => {
@@ -34,7 +34,7 @@ describe('readBufferBody', () => {
     })
   })
 
-  it('responds with cached buffer body', async () => {
+  it('returns cached buffer if it is read already', async () => {
     expect.hasAssertions()
 
     const bufferBodySelector = async ({ req }: Context) => {
@@ -65,7 +65,7 @@ describe('readBufferBody', () => {
     })
   })
 
-  it('throws 413 error', async () => {
+  it('throws 413 error if the request body is bigger than limits', async () => {
     expect.hasAssertions()
 
     const withErrorHandler = createWithErrorHandler({
@@ -102,7 +102,7 @@ describe('readBufferBody', () => {
     })
   })
 
-  it('throws 400 error', async () => {
+  it('throws 400 error if encoding of request body is invalid', async () => {
     expect.hasAssertions()
 
     const withErrorHandler = createWithErrorHandler({
@@ -139,7 +139,7 @@ describe('readBufferBody', () => {
 })
 
 describe('readTextBody', () => {
-  it('responds with text body', async () => {
+  it('reads text from request body', async () => {
     expect.hasAssertions()
 
     const textBodySelector = async ({ req }: Context) => {
@@ -165,7 +165,7 @@ describe('readTextBody', () => {
 })
 
 describe('readJsonBody', () => {
-  it('responds with JSON object', async () => {
+  it('reads and parse JSON from a request body', async () => {
     expect.hasAssertions()
 
     const jsonBodySelector = async ({ req }: Context) => {
@@ -192,7 +192,7 @@ describe('readJsonBody', () => {
     })
   })
 
-  it('throws 400 error', async () => {
+  it('throws 400 error if the JSON body is invalid', async () => {
     expect.hasAssertions()
 
     const withErrorHandler = createWithErrorHandler({
