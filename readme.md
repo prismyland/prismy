@@ -29,7 +29,7 @@
 
 ## Concepts
 
-1. _Asynchronously_ pick required values of a handler from context(which having HTTP Request obejct: IncomingMessage).
+1. _Asynchronously_ pick required values of a handler from context(which having HTTP Request object: IncomingMessage).
 2. _Asynchronously_ execute the handler with the picked values.
 3. **PROFIT!!**
 
@@ -37,7 +37,7 @@
 
 - Very small (No Expressjs, the only deps are micro and tslib)
 - Takes advantage of the asynchronous nature of Javascript with full support for async / await
-- Simple and easy argument injection for handlers (Inpsired by Reselect)
+- Simple and easy argument injection for handlers (Inspired by ReselectJS)
   - Completely **TYPE-SAFE**
   - No more complicated classes / decorators, only simple functions
   - Highly testable (Request handlers can be tested without mocking request or sending actual http requests)
@@ -47,19 +47,19 @@
 
 ### Installation
 
-Create an package.json file
+Create a package.json file.
 
 ```sh
 npm init
 ```
 
-Install prismy
+Install prismy.
 
 ```sh
 npm install prismy --save
 ```
 
-Make sure typescript strict setting is on if using typescript
+Make sure typescript strict setting is on if using typescript.
 
 `tsconfig.json`
 
@@ -76,14 +76,14 @@ Make sure typescript strict setting is on if using typescript
 ```ts
 import { prismy, res, Selector } from 'prismy'
 
-const worldSelector: Selector<string> = () => 'world'!
+const worldSelector: Selector<string> = () => 'world'
 
 export default prismy([worldSelector], async world => {
   return res(`Hello ${world}!`) // Hello world!
 })
 ```
 
-If you are using now.sh or next.js you can just put handlers in the `pages` directory and your done!  
+If you are using now.sh or next.js you can just put handlers in the `pages` directory and your done!
 Simple, easy, no hassle.
 
 Otherwise, serve your application using node.js http server.
@@ -99,7 +99,7 @@ const server = new http.Server(handler)
 server.listen(8000)
 ```
 
-For more indepth application see the more indepth [Example](#simple-example)
+For more in-depth application see the more in-depth [Example.](#simple-example)
 
 ## Guide
 
@@ -113,25 +113,25 @@ interface Context {
 }
 ```
 
-Context is passed into all selectors and middleware. It can be used to assist memoization and communicate between linked selectors and middleware.
+Context is passed into all selectors and middlewares. It can be used to assist memoization and communicate between linked selectors and middlewares.
 
-:exclamation: **It is highly recommended to use `Symbol('property-name')` in order to not have duplicate property names and end up overwriting something important.**  
+:exclamation: **It is highly recommended to use `Symbol('property-name')` in order to prevent duplicating property names and end up overwriting something important.**
 Read more about Symbols [here.](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol)
 
 This way of communicating via symbols on the context object is used in `prismy-session`.
 
-:exclamation: Due to how prismy resolves selectors, context should **NOT** be used to communicate between selectors. Due to their async nature resolution order can not be guaranteed.
+:exclamation: Due to how prismy resolves selectors, context should **NOT** be used to communicate between selectors. Due to its async nature resolution order cannot be guaranteed.
 
 ### Selectors
 
-Many other server libraries supporting argument injection through the use of
-decorators e.g inversifyjs, nestjs and tachijs.  
+Many other server libraries support argument injection through the use of
+decorators e.g inversifyjs, nestjs and tachijs.
 Decorators can seem nice and clean but have several pitfalls.
 
-- Controllers must be declared as class.(But not class expressions)
-- Argument injection via the decorators is not type-safe.
+- Controllers must be declared as class. (But not class expressions)
+- Argument injection via decorators is not type-safe.
 
-An example controller in nestjs:
+An example controller in NestJS:
 
 ```ts
 function createController() {
@@ -152,7 +152,7 @@ function createController() {
 }
 ```
 
-Prismy however uses _Selectors_, a pattern inspired by Reselectjs.  
+Prismy however uses _Selectors_, a pattern inspired by ReselectJS.
 Selectors are simple functions used to generate the arguments for the handler. A Selector accepts a
 single `context` argument or type `Context`.
 
@@ -252,7 +252,7 @@ For other helper selectors please refer to the [API Documentation](#api)
 
 Middleware in Prismy works as a single pass pipeline of composed functions. The next middleware is
 accepted as an argument to the previous middleware allowing the request to be progressed or returned
-as desired.  
+as desired.
 The middleware stack is composed and so the response travels right to left across the array.
 
 This pattern, much like Redux middleware, allows you to:
@@ -307,7 +307,7 @@ npm install prismy-session --save
 ```
 
 `prismy-session` exposes `createSession` which accepts a `SessionStrategy` instance and returns a
-selector and middleware to give to prismy.  
+selector and middleware to give to prismy.
 Official strategies include `prismy-session-strategy-jwt-cookie` and `prismy-session-strategy-signed-cookie`. Both available on npm.
 
 ```ts
@@ -485,7 +485,7 @@ describe('handler', () => {
 
 ### Unit Tests
 
-Thanks to Prismy's simple, function based architecture unit testing in Prismy is extremely simple.  
+Thanks to Prismy's simple, function based architecture unit testing in Prismy is extremely simple.
 Prismy handler exposes its original handler function so you can directly unit test the handler function even if it is an anonymous function argument to `prismy` without needing to mock http requests.
 
 ```ts
