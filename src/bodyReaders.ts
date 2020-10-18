@@ -25,9 +25,12 @@ export const readBufferBody = async (
   const { limit, encoding } = resolveBufferBodyOptions(req, options)
   const length = req.headers['content-length']
 
-  const body = rawBodyMap.get(req)
-  if (body) {
-    return body
+  if (req.complete) {
+    const body = rawBodyMap.get(req)
+    if (body) {
+      return body
+    }
+    throw createError(400, `The request has already been drained`)
   }
 
   try {
