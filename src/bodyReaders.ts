@@ -30,7 +30,7 @@ export const readBufferBody = async (
     if (body) {
       return body
     }
-    throw createError(400, `The request has already been drained`)
+    throw createError(500, `The request has already been drained`)
   }
 
   try {
