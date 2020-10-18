@@ -139,7 +139,7 @@ describe('readBufferBody', () => {
   })
 
 
-  it ('throws 400 error if the request body is parsed already', async () => {
+  it ('throws 500 error if the request stream is drained already', async () => {
     expect.hasAssertions()
 
     const withErrorHandler = createWithErrorHandler({
@@ -170,7 +170,7 @@ describe('readBufferBody', () => {
         body: targetBuffer
       })
 
-      expect(response.statusCode).toBe(400)
+      expect(response.statusCode).toBe(500)
       expect(response.body).toMatchObject({
         message: `The request has already been drained`
       })
