@@ -139,11 +139,12 @@ describe('readBufferBody', () => {
   })
 
 
-  it ('throws 500 error if the request stream is drained already', async () => {
+  it ('throws 500 error if the request is drained already', async () => {
     expect.hasAssertions()
 
     const withErrorHandler = createWithErrorHandler({
       json: true,
+      dev: true,
       silent: true
     })
     const bufferBodySelector = async ({ req }: Context) => {
@@ -171,9 +172,7 @@ describe('readBufferBody', () => {
       })
 
       expect(response.statusCode).toBe(500)
-      expect(response.body).toMatchObject({
-        message: `The request has already been drained`
-      })
+      expect((response.body as any).message).toContain(`The request has already been drained`)
     })
   })
 })
