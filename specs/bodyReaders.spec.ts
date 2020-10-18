@@ -153,7 +153,6 @@ describe('readBufferBody', () => {
       const body = await readBufferBody(req)
       return body
     }
-
     const handler = prismy(
       [bufferBodySelector],
       body => {
