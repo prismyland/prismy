@@ -1,4 +1,5 @@
-import got from 'got/dist/source'
+import got from 'got'
+import getRawBody from 'raw-body'
 import { Context, createWithErrorHandler, prismy, res } from '../src'
 import { readBufferBody, readJsonBody, readTextBody } from '../src/bodyReaders'
 import { testHandler } from './helpers'
@@ -133,6 +134,45 @@ describe('readBufferBody', () => {
       expect(response.statusCode).toBe(400)
       expect(response.body).toMatchObject({
         message: `Invalid body`
+      })
+    })
+  })
+
+
+  it ('throws 400 error if the request body is parsed already', async () => {
+    expect.hasAssertions()
+
+    const withErrorHandler = createWithErrorHandler({
+      json: true,
+      silent: true
+    })
+    const bufferBodySelector = async ({ req }: Context) => {
+      const length = req.headers['content-length']
+      await getRawBody(req, { limit: '1mb', length })
+      const body = await readBufferBody(req)
+      return body
+    }
+
+    const handler = prismy(
+      [bufferBodySelector],
+      body => {
+        return res(body)
+      },
+      [withErrorHandler]
+    )
+
+    await testHandler(handler, async (url) => {
+      const targetBuffer = Buffer.from('Oops!')
+      const response = await got(url, {
+        throwHttpErrors: false,
+        method: 'POST',
+        responseType: 'json',
+        body: targetBuffer
+      })
+
+      expect(response.statusCode).toBe(400)
+      expect(response.body).toMatchObject({
+        message: `The request has already been drained`
       })
     })
   })
