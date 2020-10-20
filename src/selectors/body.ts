@@ -1,4 +1,6 @@
+import { parse } from 'querystring'
 import { readBufferBody, readJsonBody, readTextBody } from '../bodyReaders'
+import { createError } from '../error'
 import { AsyncSelector } from '../types'
 
 /**
@@ -16,12 +18,17 @@ export function createBodySelector(
 ): AsyncSelector<Buffer | object | string> {
   return async ({ req }) => {
     const type = req.headers['content-type']
+
     if (type === 'application/json' || type === 'application/ld+json') {
       return readJsonBody(req, options)
     } else if (type === 'application/x-www-form-urlencoded') {
-      const qs = require('querystring')
-      const body = await readTextBody(req, options)
-      return qs.decode(body)
+      const textBody = await readTextBody(req, options)
+      try {
+        return parse(textBody)
+      } catch (error) {
+        /* istanbul ignore next */
+        throw createError(400, 'Invalid url-encoded body', error)
+      }
     } else {
       return readBufferBody(req, options)
     }
