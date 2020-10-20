@@ -1,0 +1,70 @@
+import got from 'got'
+import { testHandler } from '../helpers'
+import { createBodySelector } from '../../src/selectors'
+import { prismy, res } from '../../src'
+
+describe('createBodySelector', () => {
+  it('returns buffer body', async () => {
+    expect.hasAssertions()
+    const bodySelector = createBodySelector()
+    const handler = prismy([bodySelector], (body) => {
+      return res(`${body.constructor.name}: ${body}`)
+    })
+
+    await testHandler(handler, async url => {
+      const response = await got(url, {
+        method: 'POST',
+        body: 'Hello, World!'
+      })
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+        body: `Buffer: Hello, World!`
+      })
+    })
+  })
+
+  it('returns text body', async () => {
+    expect.hasAssertions()
+    const bodySelector = createBodySelector()
+    const handler = prismy([bodySelector], (body) => {
+      return res(`${body.constructor.name}: ${body}`, 200, {
+        'content-type': 'text/plain'
+      })
+    })
+
+    await testHandler(handler, async url => {
+      const response = await got(url, {
+        method: 'POST',
+        body: 'Hello, World!'
+      })
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+        body: `String: Hello, World!`
+      })
+    })
+  })
+
+  it('returns JSON object body', async () => {
+    expect.hasAssertions()
+    const bodySelector = createBodySelector()
+    const handler = prismy([bodySelector], (body) => {
+      return res(body)
+    })
+
+    await testHandler(handler, async url => {
+      const target = {
+        foo: 'bar'
+      }
+      const response = await got(url, {
+        method: 'POST',
+        responseType: 'json',
+        json: target
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(response.body).toMatchObject(target)
+    })
+  })
+})
