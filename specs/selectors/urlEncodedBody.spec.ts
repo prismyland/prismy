@@ -6,12 +6,9 @@ describe('URLEncodedBody', () => {
   it('injects parsed url encoded body', async () => {
     const urlEncodedBodySelector = createUrlEncodedBodySelector()
 
-    const handler = prismy(
-      [urlEncodedBodySelector],
-      body => {
-        return res(body)
-      }
-    )
+    const handler = prismy([urlEncodedBodySelector], body => {
+      return res(body)
+    })
 
     await testHandler(handler, async url => {
       const response = await got(url, {
