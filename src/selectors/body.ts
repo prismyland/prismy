@@ -1,5 +1,5 @@
 import { parse } from 'querystring'
-import { readBufferBody, readJsonBody, readTextBody } from '../bodyReaders'
+import { readJsonBody, readTextBody } from '../bodyReaders'
 import { createError } from '../error'
 import { AsyncSelector } from '../types'
 
@@ -15,7 +15,7 @@ export interface BodySelectorOptions {
 
 export function createBodySelector(
   options?: BodySelectorOptions
-): AsyncSelector<Buffer | object | string> {
+): AsyncSelector<object | string> {
   return async ({ req }) => {
     const type = req.headers['content-type']
 
@@ -30,7 +30,7 @@ export function createBodySelector(
         throw createError(400, 'Invalid url-encoded body', error)
       }
     } else {
-      return readBufferBody(req, options)
+      return readTextBody(req, options)
     }
   }
 }
