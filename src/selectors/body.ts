@@ -13,6 +13,31 @@ export interface BodySelectorOptions {
   encoding?: string
 }
 
+/**
+ * Factory function to create a general selector that detects type of body and then extracts it respectively from a request
+ *
+ * @example
+ * Simple example
+ * ```ts
+ *
+ * const bodySelector = createBodySelector({
+ *  limit: "1mb"
+ * })
+ *
+ * const prismyHandler = prismy(
+ *  [bodySelector],
+ *  body => {
+ *    ...
+ *  }
+ * )
+ *
+ * ```
+ *
+ * @param options - Options such as limit and encoding
+ * @returns a selector for request bodies
+ *
+ * @public
+ */
 export function createBodySelector(
   options?: BodySelectorOptions
 ): AsyncSelector<object | string> {
