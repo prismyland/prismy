@@ -29,7 +29,7 @@
 
 ## Concepts
 
-1. _Asynchronously_ pick required values of a handler from context(which having HTTP Request obejct: IncomingMessage).
+1. _Asynchronously_ pick required values of a handler from context(which having HTTP Request object: IncomingMessage).
 2. _Asynchronously_ execute the handler with the picked values.
 3. **PROFIT!!**
 
@@ -37,7 +37,7 @@
 
 - Very small (No Expressjs, the only deps are micro and tslib)
 - Takes advantage of the asynchronous nature of Javascript with full support for async / await
-- Simple and easy argument injection for handlers (Inpsired by Reselect)
+- Simple and easy argument injection for handlers (Inspired by ReselectJS)
   - Completely **TYPE-SAFE**
   - No more complicated classes / decorators, only simple functions
   - Highly testable (Request handlers can be tested without mocking request or sending actual http requests)
@@ -47,19 +47,19 @@
 
 ### Installation
 
-Create an package.json file
+Create a package.json file.
 
 ```sh
 npm init
 ```
 
-Install prismy
+Install prismy.
 
 ```sh
 npm install prismy --save
 ```
 
-Make sure typescript strict setting is on if using typescript
+Make sure typescript strict setting is on if using typescript.
 
 `tsconfig.json`
 
@@ -79,11 +79,11 @@ import { prismy, res, Selector } from 'prismy'
 const worldSelector: Selector<string> = () => 'world'!
 
 export default prismy([worldSelector], async world => {
-  return res(`Hello ${world}!`) // Hello world!
+  return res(`Hello ${world}`) // Hello world!
 })
 ```
 
-If you are using now.sh or next.js you can just put handlers in the `pages` directory and your done!  
+If you are using now.sh or next.js you can just put handlers in the `pages` directory and your done!
 Simple, easy, no hassle.
 
 Otherwise, serve your application using node.js http server.
@@ -99,7 +99,7 @@ const server = new http.Server(handler)
 server.listen(8000)
 ```
 
-For more indepth application see the more indepth [Example](#simple-example)
+For more in-depth application see the more in-depth [Example.](#simple-example)
 
 ## Guide
 
@@ -113,25 +113,25 @@ interface Context {
 }
 ```
 
-Context is passed into all selectors and middleware. It can be used to assist memoization and communicate between linked selectors and middleware.
+Context is passed into all selectors and middlewares. It can be used to assist memoization and communicate between linked selectors and middlewares.
 
-:exclamation: **It is highly recommended to use `Symbol('property-name')` in order to not have duplicate property names and end up overwriting something important.**  
+:exclamation: **It is highly recommended to use `Symbol('property-name')` in order to prevent duplicating property names and end up overwriting something important.**
 Read more about Symbols [here.](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol)
 
 This way of communicating via symbols on the context object is used in `prismy-session`.
 
-:exclamation: Due to how prismy resolves selectors, context should **NOT** be used to communicate between selectors. Due to their async nature resolution order can not be guaranteed.
+:exclamation: Due to how prismy resolves selectors, context should **NOT** be used to communicate between selectors. Due to its async nature resolution order cannot be guaranteed.
 
 ### Selectors
 
-Many other server libraries supporting argument injection through the use of
-decorators e.g inversifyjs, nestjs and tachijs.  
+Many other server libraries support argument injection through the use of
+decorators e.g InversifyJS, NestJS and TachiJS.
 Decorators can seem nice and clean but have several pitfalls.
 
-- Controllers must be declared as class.(But not class expressions)
-- Argument injection via the decorators is not type-safe.
+- Controllers must be declared as class. (But not class expressions)
+- Argument injection via decorators is not type-safe.
 
-An example controller in nestjs:
+An example controller in NestJS:
 
 ```ts
 function createController() {
@@ -152,12 +152,12 @@ function createController() {
 }
 ```
 
-Prismy however uses _Selectors_, a pattern inspired by Reselectjs.  
+Prismy however uses _Selectors_, a pattern inspired by ReselectJS.
 Selectors are simple functions used to generate the arguments for the handler. A Selector accepts a
 single `context` argument or type `Context`.
 
 ```ts
-import { prismy, Selector, res } from 'prismy'
+import { prismy, res, Selector } from 'prismy'
 
 // This selector picks the current url off the request object
 const urlSelector: Selector<string> = context => {
@@ -167,7 +167,7 @@ const urlSelector: Selector<string> = context => {
 }
 
 export default prismy(
-  [searchQuerySelector],
+  [urlSelector],
   // Typescript can infer `url` argument type via the given selector tuple
   // making it type safe without having to worry about verbose typings.
   url => {
@@ -181,17 +181,20 @@ Async selectors are also fully supported out of the box!
 It will resolve all selectors right before executing handler.
 
 ```ts
-import { prismy, Selector, res } from 'prismy'
+import { prismy, res, Selector } from 'prismy'
 
 const asyncSelector: Selector<string> = async context => {
   const value = await readValueFromFileSystem()
   return value
 }
 
-export default prismy([asyncSelector], async value => {
-  await doSomething(value)
-  return res('Done!')
-})
+export default prismy(
+  [asyncSelector],
+  async value => {
+    await doSomething(value)
+    return res('Done!')
+  }
+)
 ```
 
 #### Included Selectors
@@ -215,16 +218,19 @@ const jsonBodySelector = createJsonBodySelector({
   limit: '1mb'
 })
 
-export default prismy([jsonBodySelector], async jsonBody => {
-  await doSomething(jsonBody)
-  return res('Done!')
-})
+export default prismy(
+  [jsonBodySelector],
+  async jsonBody => {
+    await doSomething(jsonBody)
+    return res('Done!')
+  }
+)
 ```
 
 These helper selectors can be composed to provide more solid typing and error handling.
 
 ```ts
-import { Selector, createJsonBodySelector } from 'prismy'
+import { createJsonBodySelector, Selector } from 'prismy'
 
 interface RequestBody {
   data: string
@@ -241,18 +247,20 @@ const requestBodySelector: Selector<RequestBody> = context => {
   return jsonBody
 }
 
-export default prismy([requestBodySelector], requestBody => {
-  return res(`You're query was ${requestBody.json}!`)
-})
+export default prismy(
+  [requestBodySelector],
+  requestBody => {
+    return res(`You're query was ${requestBody.json}!`)
+  }
+)
 ```
 
-For other helper selectors please refer to the [API Documentation](#api)
+For other helper selectors, please refer to the [API Documentation.](#api)
 
 ### Middleware
 
 Middleware in Prismy works as a single pass pipeline of composed functions. The next middleware is
-accepted as an argument to the previous middleware allowing the request to be progressed or returned
-as desired.  
+accepted as an argument to the previous middleware allowing the request to be progressed or returned as desired.
 The middleware stack is composed and so the response travels right to left across the array.
 
 This pattern, much like Redux middleware, allows you to:
@@ -262,7 +270,7 @@ This pattern, much like Redux middleware, allows you to:
 - Do something other than executing handler (e.g Routing, Error handling)
 
 ```ts
-import { prismy, Selector, res, middleware, updateHeaders } from 'prismy'
+import { middleware, prismy, res, Selector, updateHeaders } from 'prismy'
 
 const withCors = middleware([], next => async () => {
   const resObject = await next()
@@ -278,7 +286,7 @@ const withErrorHandler = middleware([urlSelector], next => async url => {
   try {
     return await next()
   } catch (error) {
-    return res(`Error from ${url} : ${error.message}`)
+    return res(`Error from ${url}: ${error.message}`)
   }
 })
 
@@ -307,7 +315,7 @@ npm install prismy-session --save
 ```
 
 `prismy-session` exposes `createSession` which accepts a `SessionStrategy` instance and returns a
-selector and middleware to give to prismy.  
+selector and middleware to give to prismy.
 Official strategies include `prismy-session-strategy-jwt-cookie` and `prismy-session-strategy-signed-cookie`. Both available on npm.
 
 ```ts
@@ -339,17 +347,20 @@ Prismy also offers a selector for cookies in the `prismy-cookie` package.
 
 ```ts
 import { prismy, res } from 'prismy'
-import { createCookiesSelector, appendCookie } from 'prismy-cookie'
+import { appendCookie, createCookiesSelector } from 'prismy-cookie'
 
 const cookiesSelector = createCookiesSelector()
 
-export default prismy([cookiesSelector], async cookies => {
-  /** appendCookie is a helper function that takes a response object and
-   * a string key, value tuple returning a new response object with the
-   * cookie appended.
-   */
-  return appendCookie(res('Cookie added!'), ['key', 'value'])
-})
+export default prismy(
+  [cookiesSelector],
+  async cookies => {
+    /** appendCookie is a helper function that takes a response object and
+     * a string key, value tuple returning a new response object with the
+     * cookie appended.
+     */
+    return appendCookie(res('Cookie added!'), ['key', 'value'])
+  }
+)
 ```
 
 ### Method Routing
@@ -381,17 +392,17 @@ export default methodRouter(
 
 ```ts
 import {
-  prismy,
-  res,
-  Selector,
+  createJsonBodySelector,
   middleware,
+  prismy,
   querySelector,
-  redirect
+  redirect,
+  res,
+  Selector
 } from 'prismy'
 import { methodRouter } from 'prismy-method-router'
 import createSession from 'prismy-session'
 import JWTSessionStrategy from 'prismy-session-strategy-jwt-cookie'
-import { createJsonBodySelector } from 'prismy'
 
 const jsonBodySelector = createJsonBodySelector({
   limit: '1mb'
@@ -459,7 +470,7 @@ Prismy is designed to be easily testable. To furthur ease testing `prismy-test` 
 
 ### E2E Tests
 
-End to end tests are very simple
+End to end tests are very simple.
 
 ```ts
 import got from 'got'
@@ -469,8 +480,10 @@ import handler from './handler'
 describe('handler', () => {
   it('e2e test', async () => {
     await testHandler(handler, async url => {
-      const response = await got.post(url, {
-        body: {
+      const response = await got(url, {
+        method: 'POST',
+        responseType: 'json',
+        json: {
           ... // JSON data
         }
       })
@@ -485,7 +498,7 @@ describe('handler', () => {
 
 ### Unit Tests
 
-Thanks to Prismy's simple, function based architecture unit testing in Prismy is extremely simple.  
+Thanks to Prismy's simple, function-based architecture unit testing in Prismy is extremely simple.
 Prismy handler exposes its original handler function so you can directly unit test the handler function even if it is an anonymous function argument to `prismy` without needing to mock http requests.
 
 ```ts
@@ -541,7 +554,7 @@ prismy([selector1, selector2], (one, two) => {
 - mhandler argument must be of `type next => async () => T`. Remember the async.
 - If using Typescript, `'strict'` compiler option MUST be `true`. This can be set in tsconfig.json.
 
-<!-- TODO add api docs -->
+<!-- TODO: add api docs -->
 
 ## License
 
