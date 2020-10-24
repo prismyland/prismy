@@ -14,6 +14,7 @@
 ## Index
 
 - [Getting Started](#getting-started)
+  - [Requisition](#requisition)
   - [Installation](#installation)
   - [Hello World](#hello-world)
 - [Guide](#guide)
@@ -44,6 +45,11 @@
 - Single pass (lambda) style composable middleware (Similar to Redux)
 
 ## Getting Started
+
+### Requisition
+
+- TypeScript v4.x
+- Node v12.x and above
 
 ### Installation
 
@@ -188,13 +194,10 @@ const asyncSelector: Selector<string> = async context => {
   return value
 }
 
-export default prismy(
-  [asyncSelector],
-  async value => {
-    await doSomething(value)
-    return res('Done!')
-  }
-)
+export default prismy([asyncSelector], async value => {
+  await doSomething(value)
+  return res('Done!')
+})
 ```
 
 #### Included Selectors
@@ -218,13 +221,10 @@ const jsonBodySelector = createJsonBodySelector({
   limit: '1mb'
 })
 
-export default prismy(
-  [jsonBodySelector],
-  async jsonBody => {
-    await doSomething(jsonBody)
-    return res('Done!')
-  }
-)
+export default prismy([jsonBodySelector], async jsonBody => {
+  await doSomething(jsonBody)
+  return res('Done!')
+})
 ```
 
 These helper selectors can be composed to provide more solid typing and error handling.
@@ -247,12 +247,9 @@ const requestBodySelector: Selector<RequestBody> = context => {
   return jsonBody
 }
 
-export default prismy(
-  [requestBodySelector],
-  requestBody => {
-    return res(`You're query was ${requestBody.json}!`)
-  }
-)
+export default prismy([requestBodySelector], requestBody => {
+  return res(`You're query was ${requestBody.json}!`)
+})
 ```
 
 For other helper selectors, please refer to the [API Documentation.](#api)
@@ -351,16 +348,13 @@ import { appendCookie, createCookiesSelector } from 'prismy-cookie'
 
 const cookiesSelector = createCookiesSelector()
 
-export default prismy(
-  [cookiesSelector],
-  async cookies => {
-    /** appendCookie is a helper function that takes a response object and
-     * a string key, value tuple returning a new response object with the
-     * cookie appended.
-     */
-    return appendCookie(res('Cookie added!'), ['key', 'value'])
-  }
-)
+export default prismy([cookiesSelector], async cookies => {
+  /** appendCookie is a helper function that takes a response object and
+   * a string key, value tuple returning a new response object with the
+   * cookie appended.
+   */
+  return appendCookie(res('Cookie added!'), ['key', 'value'])
+})
 ```
 
 ### Method Routing
