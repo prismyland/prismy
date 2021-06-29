@@ -44,7 +44,7 @@
     "@types/node": "^12.19.1",
     "@types/test-listen": "^1.1.0",
     "codecov": "^3.8.0",
-    "jest": "^26.6.1",
+    "jest": "^27.0.6",
     "prettier": "^1.17.1",
     "rimraf": "^3.0.0",
     "test-listen": "^1.1.0",
