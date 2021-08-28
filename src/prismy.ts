@@ -1,4 +1,5 @@
 import { IncomingMessage, ServerResponse } from 'http'
+import { createErrorResObject } from './error'
 import { send } from './send'
 import {
   ResponseObject,
@@ -8,9 +9,9 @@ import {
   Context,
   ContextHandler,
   PrismyRequestListener,
-  SelectorReturnTypeTuple
+  SelectorReturnTypeTuple,
 } from './types'
-import { res, compileHandler } from './utils'
+import { compileHandler } from './utils'
 
 /**
  * Generates a handler to be used by http.Server
@@ -54,7 +55,10 @@ export function prismy<S extends Selector<unknown>[]>(
     try {
       resObject = await pipe()
     } catch (error) {
-      resObject = res(`Unhandled Error: ${error.message}`, 500)
+      if (process.env.NODE_ENV !== 'test') {
+        console.error(error)
+      }
+      resObject = createErrorResObject(error)
     }
 
     return resObject
@@ -65,7 +69,7 @@ export function prismy<S extends Selector<unknown>[]>(
     response: ServerResponse
   ) {
     const context = {
-      req
+      req,
     }
 
     const resObject = await contextHandler(context)

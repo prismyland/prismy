@@ -38,7 +38,7 @@ export const readBufferBody = async (
     rawBodyMap.set(req, buffer)
     return buffer
   } catch (error) {
-    if (error.type === 'entity.too.large') {
+    if ((error as any).type === 'entity.too.large') {
       throw createError(413, `Body exceeded ${limit} limit`, error)
     } else {
       throw createError(400, `Invalid body`, error)
@@ -98,6 +98,6 @@ function resolveBufferBodyOptions(
 
   return {
     limit,
-    encoding
+    encoding,
   }
 }

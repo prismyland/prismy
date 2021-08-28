@@ -6,110 +6,112 @@ describe('prismy', () => {
   it('returns node.js request handler', async () => {
     const handler = prismy([], () => res('Hello, World!'))
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
       expect(response).toMatchObject({
         statusCode: 200,
-        body: 'Hello, World!'
+        body: 'Hello, World!',
       })
     })
   })
 
   it('selects value from context via selector', async () => {
-    const rawUrlSelector: Selector<string> = context => context.req.url!
-    const handler = prismy([rawUrlSelector], url => res(url))
+    const rawUrlSelector: Selector<string> = (context) => context.req.url!
+    const handler = prismy([rawUrlSelector], (url) => res(url))
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
       expect(response).toMatchObject({
         statusCode: 200,
-        body: '/'
+        body: '/',
       })
     })
   })
 
   it('selects value from context via selector', async () => {
-    const asyncRawUrlSelector: Selector<string> = async context =>
+    const asyncRawUrlSelector: Selector<string> = async (context) =>
       context.req.url!
-    const handler = prismy([asyncRawUrlSelector], url => res(url))
+    const handler = prismy([asyncRawUrlSelector], (url) => res(url))
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
       expect(response).toMatchObject({
         statusCode: 200,
-        body: '/'
+        body: '/',
       })
     })
   })
 
   it('expose raw prismy handler for unit tests', () => {
-    const rawUrlSelector: Selector<string> = context => context.req.url!
-    const handler = prismy([rawUrlSelector], url => res(url))
+    const rawUrlSelector: Selector<string> = (context) => context.req.url!
+    const handler = prismy([rawUrlSelector], (url) => res(url))
 
     const result = handler.handler('Hello, World!')
 
     expect(result).toEqual({
       body: 'Hello, World!',
       headers: {},
-      statusCode: 200
+      statusCode: 200,
     })
   })
 
   it('applys middleware', async () => {
-    const errorMiddleware: PrismyPureMiddleware = context => async next => {
+    const errorMiddleware: PrismyPureMiddleware = (context) => async (next) => {
       try {
         return await next()
       } catch (error) {
-        return res(error.message, 500)
+        return res((error as any).message, 500)
       }
     }
-    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const rawUrlSelector: Selector<string> = (context) => context.req.url!
     const handler = prismy(
       [rawUrlSelector],
-      url => {
+      (url) => {
         throw new Error('Hey!')
       },
       [errorMiddleware]
     )
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
-        throwHttpErrors: false
+        throwHttpErrors: false,
       })
       expect(response).toMatchObject({
         statusCode: 500,
-        body: 'Hey!'
+        body: 'Hey!',
       })
     })
   })
 
   it('applys middleware orderly', async () => {
-    const problematicMiddleware: PrismyPureMiddleware = context => async next => {
+    const problematicMiddleware: PrismyPureMiddleware = (context) => async (
+      next
+    ) => {
       throw new Error('Hey!')
     }
-    const errorMiddleware: PrismyPureMiddleware = context => async next => {
+    const errorMiddleware: PrismyPureMiddleware = (context) => async (next) => {
       try {
         return await next()
       } catch (error) {
-        return res(error.message, 500)
+        return res((error as any).message, 500)
       }
     }
-    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const rawUrlSelector: Selector<string> = (context) => context.req.url!
     const handler = prismy(
       [rawUrlSelector],
-      url => {
+      (url) => {
         return res(url)
       },
       [problematicMiddleware, errorMiddleware]
     )
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
-        throwHttpErrors: false
+        throwHttpErrors: false,
       })
       expect(response).toMatchObject({
         statusCode: 500,
-        body: 'Hey!'
+        body: 'Hey!',
       })
     })
   })
@@ -122,35 +124,35 @@ describe('prismy', () => {
       },
       []
     )
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
-        throwHttpErrors: false
+        throwHttpErrors: false,
       })
       expect(response).toMatchObject({
         statusCode: 500,
-        body: 'Unhandled Error: Hey!'
+        body: expect.stringContaining('Error: Hey!'),
       })
     })
   })
 
   it('handles unhandled errors from selectors', async () => {
-    const rawUrlSelector: Selector<string> = context => {
+    const rawUrlSelector: Selector<string> = (context) => {
       throw new Error('Hey!')
     }
     const handler = prismy(
       [rawUrlSelector],
-      url => {
+      (url) => {
         return res(url)
       },
       []
     )
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
-        throwHttpErrors: false
+        throwHttpErrors: false,
       })
       expect(response).toMatchObject({
         statusCode: 500,
-        body: 'Unhandled Error: Hey!'
+        body: expect.stringContaining('Error: Hey!'),
       })
     })
   })

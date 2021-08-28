@@ -5,101 +5,103 @@ import { createJsonBodySelector, prismy, res } from '../../src'
 describe('createJsonBodySelector', () => {
   it('creates json body selector', async () => {
     const jsonBodySelector = createJsonBodySelector()
-    const handler = prismy([jsonBodySelector], body => {
+    const handler = prismy([jsonBodySelector], (body) => {
       return res(body)
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
         method: 'POST',
         responseType: 'json',
         json: {
-          message: 'Hello, World!'
-        }
+          message: 'Hello, World!',
+        },
       })
 
       expect(response).toMatchObject({
         statusCode: 200,
         body: {
-          message: 'Hello, World!'
-        }
+          message: 'Hello, World!',
+        },
       })
     })
   })
 
   it('throws if content type of a request is not application/json #1 (Anti CSRF)', async () => {
     const jsonBodySelector = createJsonBodySelector()
-    const handler = prismy([jsonBodySelector], body => {
+    const handler = prismy([jsonBodySelector], (body) => {
       return res(body)
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
         method: 'POST',
         body: JSON.stringify({
-          message: 'Hello, World!'
+          message: 'Hello, World!',
         }),
-        throwHttpErrors: false
+        throwHttpErrors: false,
       })
 
       expect(response).toMatchObject({
-        statusCode: 500,
-        body:
-          'Unhandled Error: Content type must be application/json. (Current: undefined)'
+        statusCode: 400,
+        body: expect.stringContaining(
+          'Error: Content type must be application/json. (Current: undefined)'
+        ),
       })
     })
   })
 
   it('throws if content type of a request is not application/json #2 (Anti CSRF)', async () => {
     const jsonBodySelector = createJsonBodySelector()
-    const handler = prismy([jsonBodySelector], body => {
+    const handler = prismy([jsonBodySelector], (body) => {
       return res(body)
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
         method: 'POST',
-        body: JSON.stringify({
-          message: 'Hello, World!'
-        }),
-        headers: {
-          'content-type': 'text/plain'
+        json: {
+          message: 'Hello, World!',
         },
-        throwHttpErrors: false
+        headers: {
+          'content-type': 'text/plain',
+        },
+        throwHttpErrors: false,
       })
 
       expect(response).toMatchObject({
-        statusCode: 500,
-        body:
-          'Unhandled Error: Content type must be application/json. (Current: text/plain)'
+        statusCode: 400,
+        body: expect.stringContaining(
+          'Error: Content type must be application/json. (Current: text/plain)'
+        ),
       })
     })
   })
 
   it('skips content-type checking if the option is given', async () => {
     const jsonBodySelector = createJsonBodySelector({
-      skipContentTypeCheck: true
+      skipContentTypeCheck: true,
     })
-    const handler = prismy([jsonBodySelector], body => {
+    const handler = prismy([jsonBodySelector], (body) => {
       return res(body)
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
         method: 'POST',
-        body: JSON.stringify({
-          message: 'Hello, World!'
-        }),
+        json: {
+          message: 'Hello, World!',
+        },
         headers: {
-          'content-type': 'text/plain'
-        }
+          'content-type': 'text/plain',
+        },
       })
 
       expect(response).toMatchObject({
         statusCode: 200,
         body: JSON.stringify({
-          message: 'Hello, World!'
-        })
+          message: 'Hello, World!',
+        }),
       })
     })
   })
