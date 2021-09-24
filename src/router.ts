@@ -6,13 +6,14 @@ import { createError } from './error'
 
 export type RouteMethod = 'get' | 'put' | 'patch' | 'post' | 'delete' | '*'
 export type RouteIndicator = [RouteMethod, string]
-export type RouteParams<S extends Selector<unknown>[]> = [
+export type RouteParams<T = unknown> = [
   string | RouteIndicator,
-  PrismyRequestListener<S>
+  PrismyRequestListener<Selector<T>[]>
 ]
-type Route<S extends Selector<unknown>[]> = {
+
+type Route<T = unknown> = {
   indicator: RouteIndicator
-  listener: PrismyRequestListener<S>
+  listener: PrismyRequestListener<Selector<T>[]>
 }
 
 export function router(
@@ -63,9 +64,9 @@ export function router(
   )
 }
 
-function createRoute<S extends Selector<unknown>[]>(
-  routeParams: RouteParams<S>
-): Route<S> {
+function createRoute<T = unknown>(
+  routeParams: RouteParams<Selector<T>[]>
+): Route<Selector<T>[]> {
   const [indicator, listener] = routeParams
   if (typeof indicator === 'string') {
     return {
