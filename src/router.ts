@@ -4,9 +4,9 @@ import { match as createMatchFunction } from 'path-to-regexp'
 import { prismy } from './prismy'
 import { createError } from './error'
 
-type RouteMethod = 'get' | 'put' | 'patch' | 'post' | 'delete' | '*'
-type RouteIndicator = [RouteMethod, string]
-type RouteParams<S extends Selector<unknown>[]> = [
+export type RouteMethod = 'get' | 'put' | 'patch' | 'post' | 'delete' | '*'
+export type RouteIndicator = [RouteMethod, string]
+export type RouteParams<S extends Selector<unknown>[]> = [
   string | RouteIndicator,
   PrismyRequestListener<S>
 ]
