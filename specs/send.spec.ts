@@ -10,10 +10,12 @@ describe('send', () => {
 
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(res, statusCode)
+      send(req, res, {
+        statusCode,
+      })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
       expect(response.body).toBeFalsy()
     })
@@ -26,15 +28,15 @@ describe('send', () => {
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/octet-stream')
       const statusCode = res.statusCode
-      send(res, statusCode, targetBuffer)
+      send(req, res, { statusCode, body: targetBuffer })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const responsePromise = got(url)
       const bufferPromise = responsePromise.buffer()
       const [response, buffer] = await Promise.all([
         responsePromise,
-        bufferPromise
+        bufferPromise,
       ])
 
       expect(targetBuffer.equals(buffer)).toBe(true)
@@ -50,15 +52,18 @@ describe('send', () => {
     const targetBuffer = Buffer.from('Hello, world!')
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(res, statusCode, targetBuffer)
+      send(req, res, {
+        statusCode,
+        body: targetBuffer,
+      })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const responsePromise = got(url)
       const bufferPromise = responsePromise.buffer()
       const [response, buffer] = await Promise.all([
         responsePromise,
-        bufferPromise
+        bufferPromise,
       ])
 
       expect(targetBuffer.equals(buffer)).toBe(true)
@@ -77,12 +82,15 @@ describe('send', () => {
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/octet-stream')
       const statusCode = res.statusCode
-      send(res, statusCode, stream)
+      send(req, res, {
+        statusCode,
+        body: stream,
+      })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
-        responseType: 'buffer'
+        responseType: 'buffer',
       })
       expect(targetBuffer.equals(response.body)).toBe(true)
     })
@@ -95,15 +103,15 @@ describe('send', () => {
     const stream = Readable.from(targetBuffer.toString())
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(res, statusCode, stream)
+      send(req, res, { statusCode, body: stream })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const responsePromise = got(url)
       const bufferPromise = responsePromise.buffer()
       const [response, buffer] = await Promise.all([
         responsePromise,
-        bufferPromise
+        bufferPromise,
       ])
       expect(targetBuffer.equals(buffer)).toBe(true)
       expect(response.headers['content-type']).toBe('application/octet-stream')
@@ -114,17 +122,17 @@ describe('send', () => {
     expect.hasAssertions()
 
     const target = {
-      foo: 'bar'
+      foo: 'bar',
     }
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/json; charset=utf-8')
       const statusCode = res.statusCode
-      send(res, statusCode, target)
+      send(req, res, { statusCode, body: target })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
-        responseType: 'json'
+        responseType: 'json',
       })
       expect(response.body).toMatchObject(target)
       expect(response.headers['content-length']).toBe(
@@ -137,16 +145,16 @@ describe('send', () => {
     expect.hasAssertions()
 
     const target = {
-      foo: 'bar'
+      foo: 'bar',
     }
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(res, statusCode, target)
+      send(req, res, { statusCode, body: target })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
-        responseType: 'json'
+        responseType: 'json',
       })
       expect(response.body).toMatchObject(target)
       expect(response.headers['content-length']).toBe(
@@ -165,10 +173,13 @@ describe('send', () => {
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/json; charset=utf-8')
       const statusCode = res.statusCode
-      send(res, statusCode, target)
+      send(req, res, {
+        statusCode,
+        body: target,
+      })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
       const stringifiedTarget = JSON.stringify(target)
       expect(response.body).toBe(stringifiedTarget)
@@ -184,10 +195,13 @@ describe('send', () => {
     const target = 1004
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(res, statusCode, target)
+      send(req, res, {
+        statusCode,
+        body: target,
+      })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
       const stringifiedTarget = JSON.stringify(target)
       expect(response.body).toBe(stringifiedTarget)

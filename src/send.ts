@@ -1,57 +1,72 @@
-import { ServerResponse } from 'http'
+import { IncomingMessage, ServerResponse } from 'http'
 import { readable } from 'is-stream'
 import { Stream } from 'stream'
+import { ResponseObject } from './types'
 
 /**
  * Function to send data to the client
  *
- * @param res {@link ServerResponse}
+ * @param response {@link ServerResponse}
  * @param statusCode HTTP status code
  * @param data
  *
  * @public
  */
 export const send = (
-  res: ServerResponse,
-  statusCode: number,
-  data: any = null
+  request: IncomingMessage,
+  response: ServerResponse,
+  resObject: ResponseObject<any>
 ) => {
-  res.statusCode = statusCode
+  const { statusCode = 200, body, headers = [] } = resObject
+  Object.entries(headers).forEach(([key, value]) => {
+    /* istanbul ignore if */
+    if (value == null) {
+      return
+    }
+    response.setHeader(key, value)
+  })
+  response.statusCode = statusCode
 
-  if (data === null) {
-    res.end()
+  if (body == null) {
+    response.end()
     return
   }
 
-  if (Buffer.isBuffer(data)) {
-    if (!res.getHeader('Content-Type')) {
-      res.setHeader('Content-Type', 'application/octet-stream')
-    }
-
-    res.setHeader('Content-Length', data.length)
-    res.end(data)
+  if (typeof body === 'function') {
+    ;(body as any)(request, response)
     return
   }
 
-  if (data instanceof Stream || readable(data)) {
-    if (!res.getHeader('Content-Type')) {
-      res.setHeader('Content-Type', 'application/octet-stream')
+  if (Buffer.isBuffer(body)) {
+    if (!response.getHeader('Content-Type')) {
+      response.setHeader('Content-Type', 'application/octet-stream')
     }
 
-    data.pipe(res)
+    response.setHeader('Content-Length', body.length)
+    response.end(body)
     return
   }
 
-  let str = data
+  if (body instanceof Stream || readable(body)) {
+    if (!response.getHeader('Content-Type')) {
+      response.setHeader('Content-Type', 'application/octet-stream')
+    }
 
-  if (typeof data === 'object' || typeof data === 'number') {
-    str = JSON.stringify(data)
+    body.pipe(response)
+    return
+  }
 
-    if (!res.getHeader('Content-Type')) {
-      res.setHeader('Content-Type', 'application/json; charset=utf-8')
+  const bodyIsNotString = typeof body === 'object' || typeof body === 'number'
+  if (bodyIsNotString) {
+    if (!response.getHeader('Content-Type')) {
+      response.setHeader('Content-Type', 'application/json; charset=utf-8')
     }
   }
 
-  res.setHeader('Content-Length', Buffer.byteLength(str))
-  res.end(str)
+  const stringifiedBody = bodyIsNotString
+    ? JSON.stringify(body)
+    : body.toString()
+
+  response.setHeader('Content-Length', Buffer.byteLength(stringifiedBody))
+  response.end(stringifiedBody)
 }

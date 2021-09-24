@@ -74,8 +74,8 @@ export type Promisable<T> = T | Promise<T>
  */
 export interface ResponseObject<B> {
   body?: B
-  statusCode: number
-  headers: OutgoingHttpHeaders
+  statusCode?: number
+  headers?: OutgoingHttpHeaders
 }
 
 /**

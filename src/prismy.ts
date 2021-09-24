@@ -65,24 +65,16 @@ export function prismy<S extends Selector<unknown>[]>(
   }
 
   async function requestListener(
-    req: IncomingMessage,
+    request: IncomingMessage,
     response: ServerResponse
   ) {
     const context = {
-      req,
+      req: request,
     }
 
     const resObject = await contextHandler(context)
 
-    Object.entries(resObject.headers).forEach(([key, value]) => {
-      /* istanbul ignore if */
-      if (value == null) {
-        return
-      }
-      response.setHeader(key, value)
-    })
-
-    await send(response, resObject.statusCode, resObject.body)
+    await send(request, response, resObject)
   }
 
   requestListener.handler = handler
