@@ -72,7 +72,7 @@ export type Promisable<T> = T | Promise<T>
  *
  * @public
  */
-export interface ResponseObject<B> {
+export interface ResponseObject<B = unknown> {
   body?: B
   statusCode?: number
   headers?: OutgoingHttpHeaders
