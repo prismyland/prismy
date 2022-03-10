@@ -3,7 +3,7 @@ import {
   ResponseObject,
   Selector,
   SelectorReturnTypeTuple,
-  Context
+  Context,
 } from './types'
 
 /**
@@ -24,7 +24,7 @@ export function res<B = unknown>(
   return {
     body,
     statusCode,
-    headers
+    headers,
   }
 }
 
@@ -45,7 +45,7 @@ export function redirect(
 ): ResponseObject<null> {
   return res(null, statusCode, {
     location,
-    ...extraHeaders
+    ...extraHeaders,
   })
 }
 
@@ -64,7 +64,7 @@ export function setBody<B1, B2>(
 ): ResponseObject<B2> {
   return {
     ...resObject,
-    body
+    body,
   }
 }
 
@@ -83,7 +83,7 @@ export function setStatusCode<B>(
 ): ResponseObject<B> {
   return {
     ...resObject,
-    statusCode
+    statusCode,
   }
 }
 
@@ -104,8 +104,8 @@ export function updateHeaders<B>(
     ...resObject,
     headers: {
       ...resObject.headers,
-      ...extraHeaders
-    }
+      ...extraHeaders,
+    },
   }
 }
 
@@ -124,7 +124,7 @@ export function setHeaders<B>(
 ): ResponseObject<B> {
   return {
     ...resObject,
-    headers
+    headers,
   }
 }
 
@@ -157,11 +157,15 @@ export function compileHandler<S extends Selector<unknown>[], R>(
  *
  * @internal
  */
-export function resolveSelectors<S extends Selector<unknown>[]>(
+export async function resolveSelectors<S extends Selector<unknown>[]>(
   context: Context,
   selectors: [...S]
 ): Promise<SelectorReturnTypeTuple<S>> {
-  return Promise.all(selectors.map(selector => selector(context))) as Promise<
-    SelectorReturnTypeTuple<S>
-  >
+  const resolvedValues = []
+  for (const selector of selectors) {
+    const resolvedValue = await selector(context)
+    resolvedValues.push(resolvedValue)
+  }
+
+  return resolvedValues as SelectorReturnTypeTuple<S>
 }
