@@ -6,17 +6,23 @@ import { ResponseObject } from './types'
 /**
  * Function to send data to the client
  *
+ * @param request {@link IncomingMessage}
  * @param response {@link ServerResponse}
- * @param statusCode HTTP status code
- * @param data
+ * @param ResponseObject
  *
  * @public
  */
 export const send = (
   request: IncomingMessage,
   response: ServerResponse,
-  resObject: ResponseObject<any>
+  resObject:
+    | ResponseObject<any>
+    | ((request: IncomingMessage, response: ServerResponse) => void)
 ) => {
+  if (typeof resObject === 'function') {
+    resObject(request, response)
+    return
+  }
   const { statusCode = 200, body, headers = [] } = resObject
   Object.entries(headers).forEach(([key, value]) => {
     /* istanbul ignore if */
@@ -29,11 +35,6 @@ export const send = (
 
   if (body == null) {
     response.end()
-    return
-  }
-
-  if (typeof body === 'function') {
-    ;(body as any)(request, response)
     return
   }
 
