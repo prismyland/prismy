@@ -8,7 +8,7 @@ import {
   Promisable,
   Context,
   ContextHandler,
-  PrismyRequestListener,
+  PrismyHandler,
   SelectorReturnTypeTuple,
 } from './types'
 import { compileHandler } from './utils'
@@ -43,7 +43,7 @@ export function prismy<S extends Selector<unknown>[]>(
     ...args: SelectorReturnTypeTuple<S>
   ) => Promisable<ResponseObject<any>>,
   middlewareList: PrismyPureMiddleware[] = []
-): PrismyRequestListener<SelectorReturnTypeTuple<S>> {
+): PrismyHandler<SelectorReturnTypeTuple<S>> {
   const contextHandler: ContextHandler = async (context: Context) => {
     const next = async () => compileHandler(selectors, handler)(context)
 
@@ -55,6 +55,7 @@ export function prismy<S extends Selector<unknown>[]>(
     try {
       resObject = await pipe()
     } catch (error) {
+      /* istanbul ignore next */
       if (process.env.NODE_ENV !== 'test') {
         console.error(error)
       }

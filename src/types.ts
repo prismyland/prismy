@@ -122,7 +122,7 @@ export type ContextHandler = (context: Context) => Promise<ResponseObject<any>>
 /**
  * @public
  */
-export interface PrismyRequestListener<A extends any[]> {
+export interface PrismyHandler<A extends any[]> {
   (req: IncomingMessage, res: ServerResponse): void
   handler(...args: A): Promisable<ResponseObject<any>>
   contextHandler: ContextHandler
