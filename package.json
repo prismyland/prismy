@@ -1,6 +1,6 @@
 {
   "name": "prismy",
-  "version": "3.0.0-5",
+  "version": "3.0.0-6",
   "description": ":rainbow: Simple and fast type safe server library based on micro for now.sh v2.",
   "keywords": [
     "micro",
