@@ -26,7 +26,7 @@ const testHandler = prismy([], () => {
 
 const myRouter = router([
   ['/', rootHandler],
-  [['get', '/test'], testHandler],
+  [['/test', 'get'], testHandler],
 ])
 
 export default myRouter
