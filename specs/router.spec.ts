@@ -40,8 +40,8 @@ describe('router', () => {
     })
 
     const routerHandler = router([
-      [['get', '/'], handlerA],
-      [['post', '/'], handlerB],
+      [['/', 'get'], handlerA],
+      [['/', 'post'], handlerB],
     ])
 
     await testHandler(routerHandler, async (url) => {
@@ -129,8 +129,8 @@ describe('router', () => {
     })
 
     const routerHandler = router([
-      [['get', '/'], handlerA],
-      [['post', '/'], handlerB],
+      [['/', 'get'], handlerA],
+      [['/', 'post'], handlerB],
     ])
 
     await testHandler(routerHandler, async (url) => {
@@ -157,8 +157,8 @@ describe('router', () => {
 
     const routerHandler = router(
       [
-        [['get', '/'], handlerA],
-        [['post', '/'], handlerB],
+        [['/', 'get'], handlerA],
+        [['/', 'post'], handlerB],
       ],
       {
         notFoundHandler: prismy([], () => {

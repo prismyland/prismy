@@ -12,7 +12,7 @@ export type RouteMethod =
   | 'delete'
   | 'options'
   | '*'
-export type RouteIndicator = [RouteMethod, string]
+export type RouteIndicator = [string, RouteMethod]
 export type RouteParams<T = unknown> = [
   string | RouteIndicator,
   PrismyHandler<T[]>
@@ -30,7 +30,7 @@ export function router(
   const { notFoundHandler } = options
   const compiledRoutes = routes.map((routeParams) => {
     const { indicator, listener } = createRoute(routeParams)
-    const [method, targetPath] = indicator
+    const [targetPath, method] = indicator
     const compiledTargetPath = removeTralingSlash(targetPath)
     const match = createMatchFunction(compiledTargetPath, { strict: false })
     return {
@@ -79,7 +79,7 @@ function createRoute<T = unknown>(
   const [indicator, listener] = routeParams
   if (typeof indicator === 'string') {
     return {
-      indicator: ['get', indicator],
+      indicator: [indicator, 'get'],
       listener,
     }
   }
