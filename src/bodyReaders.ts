@@ -25,7 +25,7 @@ export const readBufferBody = async (
   const { limit, encoding } = resolveBufferBodyOptions(req, options)
   const length = req.headers['content-length']
 
-  if (req.complete) {
+  if (!req.readable) {
     const body = rawBodyMap.get(req)
     if (body) {
       return body

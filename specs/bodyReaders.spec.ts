@@ -1,6 +1,6 @@
 import got from 'got'
 import getRawBody from 'raw-body'
-import { Context, prismy, res } from '../src'
+import { Context, middleware, prismy, res } from '../src'
 import { readBufferBody, readJsonBody, readTextBody } from '../src/bodyReaders'
 import { testHandler } from './helpers'
 
@@ -15,6 +15,56 @@ describe('readBufferBody', () => {
     const handler = prismy([bufferBodySelector], (body) => {
       return res(body)
     })
+
+    await testHandler(handler, async (url) => {
+      const targetBuffer = Buffer.from('Hello, world!')
+      const responsePromise = got(url, {
+        method: 'POST',
+        body: targetBuffer,
+      })
+      const bufferPromise = responsePromise.buffer()
+      const [response, buffer] = await Promise.all([
+        responsePromise,
+        bufferPromise,
+      ])
+
+      expect(buffer.equals(targetBuffer)).toBe(true)
+      expect(response.headers['content-length']).toBe(
+        targetBuffer.length.toString()
+      )
+    })
+  })
+
+  it('reads buffer body regardless delaying', async () => {
+    expect.hasAssertions()
+
+    const bufferBodySelector = async ({ req }: Context) => {
+      const body = await readBufferBody(req)
+      return body
+    }
+    const handler = prismy(
+      [
+        () => {
+          return new Promise((resolve) => {
+            setImmediate(resolve)
+          })
+        },
+        bufferBodySelector,
+      ],
+      (_, body) => {
+        return res(body)
+      },
+      [
+        middleware([], (next) => async () => {
+          try {
+            return await next()
+          } catch (error) {
+            console.error(error)
+            throw error
+          }
+        }),
+      ]
+    )
 
     await testHandler(handler, async (url) => {
       const targetBuffer = Buffer.from('Hello, world!')
