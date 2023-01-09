@@ -13,7 +13,9 @@ import { res } from './utils'
  */
 export function createErrorResObject(error: any) {
   const statusCode = error.statusCode || error.status || 500
-  const message = error.stack
+  /* istanbul ignore next */
+  const message =
+    process.env.NODE_ENV === 'production' ? error.message : error.stack
 
   return res(message, statusCode)
 }
