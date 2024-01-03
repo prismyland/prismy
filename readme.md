@@ -23,7 +23,7 @@
   - [Middleware](#middleware)
   - [Session](#session)
   - [Cookies](#cookies)
-  - [Method Routing](#method-routing)
+  - [Routing](#routing)
 - [Example](#simple-example)
 - [Testing](#writing-tests)
 - [Gotchas](#gotchas-and-troubleshooting)
@@ -102,7 +102,7 @@ import * as http from 'http'
 
 const server = new http.Server(handler)
 
-server.listen(8000)
+server.listen(process.env.PORT)
 ```
 
 For more in-depth application see the more in-depth [Example.](#simple-example)
@@ -357,30 +357,49 @@ export default prismy([cookiesSelector], async cookies => {
 })
 ```
 
-### Method Routing
+### Routing
 
-Dealing with the different HTTP methods using just a methodSelector can get arduous. As such `prismy-method-router` is available to make it easier and smoother.
+From v3, `prismy` provides `router` method to create a routing handler.
 
 ```ts
 import { prismy, res } from 'prismy'
-import { methodRouter } from 'prismy-method-router'
+import { router } from 'prismy-method-router'
+import http from 'http'
 
-export default methodRouter(
-  {
-    get: prismy([], () => {
-      return res('Got something!')
-    }),
-    post: prismy([], () => {
-      return res('Posted something!')
-    })
-  },
+const myRouter = router([
   [
-    /* common middleware can be past in here */
+    ['/posts', 'get'], prismy([], () => {
+      const posts = fetchPostList()
+
+      return res({ posts })
+    })
+  ],
+  [
+    ['/posts', 'post'], prismy([bodySelector], (body) => {
+      const post = createPost(body)
+
+      return redirect(`/posts/${post.id}`)
+    })
+  ],
+  [
+    // GET method can be omitted
+    // You can select route param with `createRouteParamSelector`
+    '/posts/:postId', prismy([createRouteParamSelector('postId')], (postId) => {
+      const post = fetchOnePost(postId)
+
+      return res({ post })
+    })
   ]
-)
+])
+
+// Router is a prismy handler. You can directly pass to the server
+const server = new http.Server(handler)
+
+server.listen(process.env.PORT)
 ```
 
-`methodRouter` supports all HTTP verbs.
+> Routing handler is using path-to-regexp internally. Please check their document to learn more routing behavior.
+https://github.com/pillarjs/path-to-regexp
 
 ## Simple Example
 
