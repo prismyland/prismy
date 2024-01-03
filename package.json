@@ -1,6 +1,6 @@
 {
   "name": "prismy",
-  "version": "2.0.0",
+  "version": "3.0.0-11",
   "description": ":rainbow: Simple and fast type safe server library based on micro for now.sh v2.",
   "keywords": [
     "micro",
@@ -50,6 +50,7 @@
     "test-listen": "^1.1.0",
     "ts-jest": "^26.4.2",
     "typedoc": "^0.15.0",
+    "got": "^11.8.0",
     "typescript": "^4.0.3"
   },
   "jest": {
@@ -63,8 +64,8 @@
   },
   "dependencies": {
     "content-type": "^1.0.4",
-    "got": "^11.8.0",
     "is-stream": "^2.0.0",
+    "path-to-regexp": "^6.2.0",
     "raw-body": "^2.4.1",
     "tslib": "^2.0.3"
   }

@@ -1,18 +1,11 @@
-import { res } from 'prismy'
-import handler from '..'
+import { rootHandler } from '..'
 
 describe('index', () => {
-  it('returns parsed query', async () => {
+  it('returns root page html', async () => {
     // When
-    const result = await handler.handler({
-      message: 'Hello, World!'
-    })
+    const result = await rootHandler.handler()
 
     // Then
-    expect(result).toEqual(
-      res({
-        message: 'Hello, World!'
-      })
-    )
+    expect(result.body).toContain('Root Page')
   })
 })

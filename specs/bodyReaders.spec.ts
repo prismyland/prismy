@@ -1,6 +1,6 @@
 import got from 'got'
 import getRawBody from 'raw-body'
-import { Context, createWithErrorHandler, prismy, res } from '../src'
+import { Context, middleware, prismy, res } from '../src'
 import { readBufferBody, readJsonBody, readTextBody } from '../src/bodyReaders'
 import { testHandler } from './helpers'
 
@@ -12,20 +12,70 @@ describe('readBufferBody', () => {
       const body = await readBufferBody(req)
       return body
     }
-    const handler = prismy([bufferBodySelector], body => {
+    const handler = prismy([bufferBodySelector], (body) => {
       return res(body)
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const targetBuffer = Buffer.from('Hello, world!')
       const responsePromise = got(url, {
         method: 'POST',
-        body: targetBuffer
+        body: targetBuffer,
       })
       const bufferPromise = responsePromise.buffer()
       const [response, buffer] = await Promise.all([
         responsePromise,
-        bufferPromise
+        bufferPromise,
+      ])
+
+      expect(buffer.equals(targetBuffer)).toBe(true)
+      expect(response.headers['content-length']).toBe(
+        targetBuffer.length.toString()
+      )
+    })
+  })
+
+  it('reads buffer body regardless delaying', async () => {
+    expect.hasAssertions()
+
+    const bufferBodySelector = async ({ req }: Context) => {
+      const body = await readBufferBody(req)
+      return body
+    }
+    const handler = prismy(
+      [
+        () => {
+          return new Promise((resolve) => {
+            setImmediate(resolve)
+          })
+        },
+        bufferBodySelector,
+      ],
+      (_, body) => {
+        return res(body)
+      },
+      [
+        middleware([], (next) => async () => {
+          try {
+            return await next()
+          } catch (error) {
+            console.error(error)
+            throw error
+          }
+        }),
+      ]
+    )
+
+    await testHandler(handler, async (url) => {
+      const targetBuffer = Buffer.from('Hello, world!')
+      const responsePromise = got(url, {
+        method: 'POST',
+        body: targetBuffer,
+      })
+      const bufferPromise = responsePromise.buffer()
+      const [response, buffer] = await Promise.all([
+        responsePromise,
+        bufferPromise,
       ])
 
       expect(buffer.equals(targetBuffer)).toBe(true)
@@ -43,20 +93,20 @@ describe('readBufferBody', () => {
       const body = await readBufferBody(req)
       return body
     }
-    const handler = prismy([bufferBodySelector], body => {
+    const handler = prismy([bufferBodySelector], (body) => {
       return res(body)
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const targetBuffer = Buffer.from('Hello, world!')
       const responsePromise = got(url, {
         method: 'POST',
-        body: targetBuffer
+        body: targetBuffer,
       })
       const bufferPromise = responsePromise.buffer()
       const [response, buffer] = await Promise.all([
         responsePromise,
-        bufferPromise
+        bufferPromise,
       ])
 
       expect(buffer.equals(targetBuffer)).toBe(true)
@@ -69,23 +119,15 @@ describe('readBufferBody', () => {
   it('throws 413 error if the request body is bigger than limits', async () => {
     expect.hasAssertions()
 
-    const withErrorHandler = createWithErrorHandler({
-      json: true,
-      silent: true
-    })
     const bufferBodySelector = async ({ req }: Context) => {
       const body = await readBufferBody(req, { limit: '1 byte' })
       return body
     }
-    const handler = prismy(
-      [bufferBodySelector],
-      body => {
-        return res(body)
-      },
-      [withErrorHandler]
-    )
+    const handler = prismy([bufferBodySelector], (body) => {
+      return res(body)
+    })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const targetBuffer = Buffer.from(
         'Peter Piper picked a peck of pickled peppers'
       )
@@ -93,73 +135,51 @@ describe('readBufferBody', () => {
         throwHttpErrors: false,
         method: 'POST',
         responseType: 'json',
-        body: targetBuffer
+        body: targetBuffer,
       })
 
       expect(response.statusCode).toBe(413)
-      expect(response.body).toMatchObject({
-        message: `Body exceeded 1 byte limit`
-      })
+      expect(response.body).toMatch('Body exceeded 1 byte limit')
     })
   })
 
   it('throws 400 error if encoding of request body is invalid', async () => {
     expect.hasAssertions()
 
-    const withErrorHandler = createWithErrorHandler({
-      json: true,
-      silent: true
-    })
     const bufferBodySelector = async ({ req }: Context) => {
       const body = await readBufferBody(req, { encoding: 'lol' })
       return body
     }
-    const handler = prismy(
-      [bufferBodySelector],
-      body => {
-        return res(body)
-      },
-      [withErrorHandler]
-    )
+    const handler = prismy([bufferBodySelector], (body) => {
+      return res(body)
+    })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const targetBuffer = Buffer.from('Hello, world!')
       const response = await got(url, {
         throwHttpErrors: false,
         method: 'POST',
         responseType: 'json',
-        body: targetBuffer
+        body: targetBuffer,
       })
 
       expect(response.statusCode).toBe(400)
-      expect(response.body).toMatchObject({
-        message: `Invalid body`
-      })
+      expect(response.body).toMatch('Invalid body')
     })
   })
 
-
-  it ('throws 500 error if the request is drained already', async () => {
+  it('throws 500 error if the request is drained already', async () => {
     expect.hasAssertions()
 
-    const withErrorHandler = createWithErrorHandler({
-      json: true,
-      dev: true,
-      silent: true
-    })
     const bufferBodySelector = async ({ req }: Context) => {
       const length = req.headers['content-length']
       await getRawBody(req, { limit: '1mb', length })
       const body = await readBufferBody(req)
       return body
     }
-    const handler = prismy(
-      [bufferBodySelector],
-      body => {
-        return res(body)
-      },
-      [withErrorHandler]
-    )
+    const handler = prismy([bufferBodySelector], (body) => {
+      return res(body)
+    })
 
     await testHandler(handler, async (url) => {
       const targetBuffer = Buffer.from('Oops!')
@@ -167,11 +187,11 @@ describe('readBufferBody', () => {
         throwHttpErrors: false,
         method: 'POST',
         responseType: 'json',
-        body: targetBuffer
+        body: targetBuffer,
       })
 
       expect(response.statusCode).toBe(500)
-      expect((response.body as any).message).toContain(`The request has already been drained`)
+      expect(response.body).toMatch('The request has already been drained')
     })
   })
 })
@@ -184,15 +204,15 @@ describe('readTextBody', () => {
       const body = await readTextBody(req)
       return body
     }
-    const handler = prismy([textBodySelector], body => {
+    const handler = prismy([textBodySelector], (body) => {
       return res(body)
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const targetBuffer = Buffer.from('Hello, world!')
       const response = await got(url, {
         method: 'POST',
-        body: targetBuffer
+        body: targetBuffer,
       })
       expect(response.body).toBe('Hello, world!')
       expect(response.headers['content-length']).toBe(
@@ -210,18 +230,18 @@ describe('readJsonBody', () => {
       const body = await readJsonBody(req)
       return body
     }
-    const handler = prismy([jsonBodySelector], body => {
+    const handler = prismy([jsonBodySelector], (body) => {
       return res(body)
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const target = {
-        foo: 'bar'
+        foo: 'bar',
       }
       const response = await got(url, {
         method: 'POST',
         responseType: 'json',
-        json: target
+        json: target,
       })
       expect(response.body).toMatchObject(target)
       expect(response.headers['content-length']).toBe(
@@ -233,34 +253,24 @@ describe('readJsonBody', () => {
   it('throws 400 error if the JSON body is invalid', async () => {
     expect.hasAssertions()
 
-    const withErrorHandler = createWithErrorHandler({
-      json: true,
-      silent: true
-    })
     const jsonBodySelector = async ({ req }: Context) => {
       const body = await readJsonBody(req)
       return body
     }
-    const handler = prismy(
-      [jsonBodySelector],
-      body => {
-        return res(body)
-      },
-      [withErrorHandler]
-    )
+    const handler = prismy([jsonBodySelector], (body) => {
+      return res(body)
+    })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const target = 'Oopsie'
       const response = await got(url, {
         throwHttpErrors: false,
         method: 'POST',
         responseType: 'json',
-        body: target
+        body: target,
       })
       expect(response.statusCode).toBe(400)
-      expect(response.body).toEqual({
-        message: `Invalid JSON`
-      })
+      expect(response.body).toMatch('Error: Invalid JSON')
     })
   })
 })

@@ -28,6 +28,14 @@ export function res<B = unknown>(
   }
 }
 
+export function err<B>(
+  statusCode: number,
+  body: B,
+  headers?: OutgoingHttpHeaders
+): ResponseObject<B> {
+  return res(body, statusCode, headers)
+}
+
 /**
  * Factory function for easily generating a redirect response
  *
@@ -157,11 +165,15 @@ export function compileHandler<S extends Selector<unknown>[], R>(
  *
  * @internal
  */
-export function resolveSelectors<S extends Selector<unknown>[]>(
+export async function resolveSelectors<S extends Selector<unknown>[]>(
   context: Context,
   selectors: [...S]
 ): Promise<SelectorReturnTypeTuple<S>> {
-  return Promise.all(selectors.map(selector => selector(context))) as Promise<
-    SelectorReturnTypeTuple<S>
-  >
+  const resolvedValues = []
+  for (const selector of selectors) {
+    const resolvedValue = await selector(context)
+    resolvedValues.push(resolvedValue)
+  }
+
+  return resolvedValues as SelectorReturnTypeTuple<S>
 }

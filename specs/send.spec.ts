@@ -1,40 +1,52 @@
 import got from 'got'
-import { RequestListener } from 'http'
+import { IncomingMessage, RequestListener, ServerResponse } from 'http'
 import { Readable } from 'stream'
 import { send } from '../src/send'
 import { testHandler } from './helpers'
 
 describe('send', () => {
-  it('sends empty body when data is null', async () => {
+  it('sends empty body when body is null', async () => {
     expect.hasAssertions()
 
     const handler: RequestListener = (req, res) => {
-      const statusCode = res.statusCode
-      send(res, statusCode)
+      send(req, res, {})
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
       expect(response.body).toBeFalsy()
     })
   })
 
-  it('sends buffer body when data is buffer', async () => {
+  it('sends string body', async () => {
+    expect.hasAssertions()
+
+    const handler: RequestListener = (req, res) => {
+      send(req, res, { body: 'test' })
+    }
+
+    await testHandler(handler, async (url) => {
+      const response = await got(url)
+      expect(response.body).toEqual('test')
+    })
+  })
+
+  it('sends buffer body', async () => {
     expect.hasAssertions()
 
     const targetBuffer = Buffer.from('Hello, world!')
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/octet-stream')
       const statusCode = res.statusCode
-      send(res, statusCode, targetBuffer)
+      send(req, res, { statusCode, body: targetBuffer })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const responsePromise = got(url)
       const bufferPromise = responsePromise.buffer()
       const [response, buffer] = await Promise.all([
         responsePromise,
-        bufferPromise
+        bufferPromise,
       ])
 
       expect(targetBuffer.equals(buffer)).toBe(true)
@@ -50,15 +62,18 @@ describe('send', () => {
     const targetBuffer = Buffer.from('Hello, world!')
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(res, statusCode, targetBuffer)
+      send(req, res, {
+        statusCode,
+        body: targetBuffer,
+      })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const responsePromise = got(url)
       const bufferPromise = responsePromise.buffer()
       const [response, buffer] = await Promise.all([
         responsePromise,
-        bufferPromise
+        bufferPromise,
       ])
 
       expect(targetBuffer.equals(buffer)).toBe(true)
@@ -69,7 +84,7 @@ describe('send', () => {
     })
   })
 
-  it('sends buffer body when data is stream', async () => {
+  it('sends buffer body when body is stream', async () => {
     expect.hasAssertions()
 
     const targetBuffer = Buffer.from('Hello, world!')
@@ -77,14 +92,35 @@ describe('send', () => {
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/octet-stream')
       const statusCode = res.statusCode
-      send(res, statusCode, stream)
+      send(req, res, {
+        statusCode,
+        body: stream,
+      })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
-        responseType: 'buffer'
+        responseType: 'buffer',
       })
       expect(targetBuffer.equals(response.body)).toBe(true)
+    })
+  })
+
+  it('uses handler when body is function', async () => {
+    expect.hasAssertions()
+    const sendHandler = (
+      _request: IncomingMessage,
+      response: ServerResponse
+    ) => {
+      response.end('test')
+    }
+    const handler: RequestListener = (req, res) => {
+      send(req, res, sendHandler)
+    }
+
+    await testHandler(handler, async (url) => {
+      const response = await got(url)
+      expect(response.body).toEqual('test')
     })
   })
 
@@ -95,36 +131,36 @@ describe('send', () => {
     const stream = Readable.from(targetBuffer.toString())
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(res, statusCode, stream)
+      send(req, res, { statusCode, body: stream })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const responsePromise = got(url)
       const bufferPromise = responsePromise.buffer()
       const [response, buffer] = await Promise.all([
         responsePromise,
-        bufferPromise
+        bufferPromise,
       ])
       expect(targetBuffer.equals(buffer)).toBe(true)
       expect(response.headers['content-type']).toBe('application/octet-stream')
     })
   })
 
-  it('sends stringified JSON object when data is object', async () => {
+  it('sends stringified JSON object when body is object', async () => {
     expect.hasAssertions()
 
     const target = {
-      foo: 'bar'
+      foo: 'bar',
     }
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/json; charset=utf-8')
       const statusCode = res.statusCode
-      send(res, statusCode, target)
+      send(req, res, { statusCode, body: target })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
-        responseType: 'json'
+        responseType: 'json',
       })
       expect(response.body).toMatchObject(target)
       expect(response.headers['content-length']).toBe(
@@ -137,16 +173,16 @@ describe('send', () => {
     expect.hasAssertions()
 
     const target = {
-      foo: 'bar'
+      foo: 'bar',
     }
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(res, statusCode, target)
+      send(req, res, { statusCode, body: target })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
-        responseType: 'json'
+        responseType: 'json',
       })
       expect(response.body).toMatchObject(target)
       expect(response.headers['content-length']).toBe(
@@ -158,17 +194,20 @@ describe('send', () => {
     })
   })
 
-  it('sends stringified JSON object when data is number', async () => {
+  it('sends stringified JSON object when body is number', async () => {
     expect.hasAssertions()
 
     const target = 1004
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/json; charset=utf-8')
       const statusCode = res.statusCode
-      send(res, statusCode, target)
+      send(req, res, {
+        statusCode,
+        body: target,
+      })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
       const stringifiedTarget = JSON.stringify(target)
       expect(response.body).toBe(stringifiedTarget)
@@ -184,10 +223,13 @@ describe('send', () => {
     const target = 1004
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(res, statusCode, target)
+      send(req, res, {
+        statusCode,
+        body: target,
+      })
     }
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
       const stringifiedTarget = JSON.stringify(target)
       expect(response.body).toBe(stringifiedTarget)
@@ -197,6 +239,43 @@ describe('send', () => {
       expect(response.headers['content-type']).toBe(
         'application/json; charset=utf-8'
       )
+    })
+  })
+
+  it('sends with header', async () => {
+    expect.hasAssertions()
+
+    const handler: RequestListener = (req, res) => {
+      const statusCode = res.statusCode
+      send(req, res, {
+        statusCode,
+        headers: {
+          test: 'test value',
+        },
+      })
+    }
+
+    await testHandler(handler, async (url) => {
+      const response = await got(url)
+      expect(response.body).toBeFalsy()
+      expect(response.headers['test']).toEqual('test value')
+    })
+  })
+  it('sends with header', async () => {
+    expect.hasAssertions()
+
+    const handler: RequestListener = (req, res) => {
+      send(req, res, {
+        headers: {
+          test: 'test value',
+        },
+      })
+    }
+
+    await testHandler(handler, async (url) => {
+      const response = await got(url)
+      expect(response.body).toBeFalsy()
+      expect(response.headers['test']).toEqual('test value')
     })
   })
 })

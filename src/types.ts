@@ -72,10 +72,10 @@ export type Promisable<T> = T | Promise<T>
  *
  * @public
  */
-export interface ResponseObject<B> {
+export interface ResponseObject<B = unknown> {
   body?: B
-  statusCode: number
-  headers: OutgoingHttpHeaders
+  statusCode?: number
+  headers?: OutgoingHttpHeaders
 }
 
 /**
@@ -122,7 +122,7 @@ export type ContextHandler = (context: Context) => Promise<ResponseObject<any>>
 /**
  * @public
  */
-export interface PrismyRequestListener<A extends any[]> {
+export interface PrismyHandler<A extends any[]> {
   (req: IncomingMessage, res: ServerResponse): void
   handler(...args: A): Promisable<ResponseObject<any>>
   contextHandler: ContextHandler

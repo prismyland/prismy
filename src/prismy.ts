@@ -1,4 +1,5 @@
 import { IncomingMessage, ServerResponse } from 'http'
+import { createErrorResObject } from './error'
 import { send } from './send'
 import {
   ResponseObject,
@@ -7,10 +8,10 @@ import {
   Promisable,
   Context,
   ContextHandler,
-  PrismyRequestListener,
-  SelectorReturnTypeTuple
+  PrismyHandler,
+  SelectorReturnTypeTuple,
 } from './types'
-import { res, compileHandler } from './utils'
+import { compileHandler } from './utils'
 
 /**
  * Generates a handler to be used by http.Server
@@ -42,7 +43,7 @@ export function prismy<S extends Selector<unknown>[]>(
     ...args: SelectorReturnTypeTuple<S>
   ) => Promisable<ResponseObject<any>>,
   middlewareList: PrismyPureMiddleware[] = []
-): PrismyRequestListener<SelectorReturnTypeTuple<S>> {
+): PrismyHandler<SelectorReturnTypeTuple<S>> {
   const contextHandler: ContextHandler = async (context: Context) => {
     const next = async () => compileHandler(selectors, handler)(context)
 
@@ -54,31 +55,27 @@ export function prismy<S extends Selector<unknown>[]>(
     try {
       resObject = await pipe()
     } catch (error) {
-      resObject = res(`Unhandled Error: ${error.message}`, 500)
+      /* istanbul ignore next */
+      if (process.env.NODE_ENV !== 'test') {
+        console.error(error)
+      }
+      resObject = createErrorResObject(error)
     }
 
     return resObject
   }
 
   async function requestListener(
-    req: IncomingMessage,
+    request: IncomingMessage,
     response: ServerResponse
   ) {
     const context = {
-      req
+      req: request,
     }
 
     const resObject = await contextHandler(context)
 
-    Object.entries(resObject.headers).forEach(([key, value]) => {
-      /* istanbul ignore if */
-      if (value == null) {
-        return
-      }
-      response.setHeader(key, value)
-    })
-
-    await send(response, resObject.statusCode, resObject.body)
+    await send(request, response, resObject)
   }
 
   requestListener.handler = handler

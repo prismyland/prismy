@@ -43,9 +43,10 @@ describe('createJsonBodySelector', () => {
       })
 
       expect(response).toMatchObject({
-        statusCode: 500,
-        body:
-          'Unhandled Error: Content type must be application/json. (Current: undefined)'
+        statusCode: 400,
+        body: expect.stringContaining(
+          'Error: Content type must be application/json. (Current: undefined)'
+        )
       })
     })
   })
@@ -59,9 +60,9 @@ describe('createJsonBodySelector', () => {
     await testHandler(handler, async url => {
       const response = await got(url, {
         method: 'POST',
-        body: JSON.stringify({
+        json: {
           message: 'Hello, World!'
-        }),
+        },
         headers: {
           'content-type': 'text/plain'
         },
@@ -69,9 +70,10 @@ describe('createJsonBodySelector', () => {
       })
 
       expect(response).toMatchObject({
-        statusCode: 500,
-        body:
-          'Unhandled Error: Content type must be application/json. (Current: text/plain)'
+        statusCode: 400,
+        body: expect.stringContaining(
+          'Error: Content type must be application/json. (Current: text/plain)'
+        )
       })
     })
   })
@@ -87,9 +89,9 @@ describe('createJsonBodySelector', () => {
     await testHandler(handler, async url => {
       const response = await got(url, {
         method: 'POST',
-        body: JSON.stringify({
+        json: {
           message: 'Hello, World!'
-        }),
+        },
         headers: {
           'content-type': 'text/plain'
         }

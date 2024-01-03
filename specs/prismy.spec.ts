@@ -1,6 +1,6 @@
 import got from 'got'
 import { testHandler } from './helpers'
-import { prismy, res, Selector, PrismyPureMiddleware } from '../src'
+import { prismy, res, Selector, PrismyPureMiddleware, err } from '../src'
 
 describe('prismy', () => {
   it('returns node.js request handler', async () => {
@@ -60,7 +60,7 @@ describe('prismy', () => {
       try {
         return await next()
       } catch (error) {
-        return res(error.message, 500)
+        return err(500, (error as any).message)
       }
     }
     const rawUrlSelector: Selector<string> = context => context.req.url!
@@ -91,7 +91,7 @@ describe('prismy', () => {
       try {
         return await next()
       } catch (error) {
-        return res(error.message, 500)
+        return res((error as any).message, 500)
       }
     }
     const rawUrlSelector: Selector<string> = context => context.req.url!
@@ -128,7 +128,7 @@ describe('prismy', () => {
       })
       expect(response).toMatchObject({
         statusCode: 500,
-        body: 'Unhandled Error: Hey!'
+        body: expect.stringContaining('Error: Hey!')
       })
     })
   })
@@ -150,7 +150,7 @@ describe('prismy', () => {
       })
       expect(response).toMatchObject({
         statusCode: 500,
-        body: 'Unhandled Error: Hey!'
+        body: expect.stringContaining('Error: Hey!')
       })
     })
   })
