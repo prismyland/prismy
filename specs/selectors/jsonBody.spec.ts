@@ -77,32 +77,4 @@ describe('JsonBodySelector', () => {
       })
     })
   })
-
-  it('skips content-type checking if the option is given', async () => {
-    const jsonBodySelector = JsonBodySelector({
-      skipContentTypeCheck: true,
-    })
-    const handler = prismy([jsonBodySelector], (body) => {
-      return res(body)
-    })
-
-    await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        method: 'POST',
-        json: {
-          message: 'Hello, World!',
-        },
-        headers: {
-          'content-type': 'text/plain',
-        },
-      })
-
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: JSON.stringify({
-          message: 'Hello, World!',
-        }),
-      })
-    })
-  })
 })

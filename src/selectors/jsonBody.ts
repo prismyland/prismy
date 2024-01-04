@@ -9,7 +9,6 @@ import { getPrismyContext } from '../prismy'
  * @public
  */
 export interface JsonBodySelectorOptions {
-  skipContentTypeCheck?: boolean
   limit?: string | number
   encoding?: string
 }
@@ -47,15 +46,12 @@ export function JsonBodySelector(
 ): AsyncSelector<any> {
   return () => {
     const { req } = getPrismyContext()
-    const { skipContentTypeCheck = false } = options || {}
-    if (!skipContentTypeCheck) {
-      const contentType = req.headers['content-type']
-      if (!isContentTypeIsApplicationJSON(contentType)) {
-        throw createError(
-          400,
-          `Content type must be application/json. (Current: ${contentType})`,
-        )
-      }
+    const contentType = req.headers['content-type']
+    if (!isContentTypeIsApplicationJSON(contentType)) {
+      throw createError(
+        400,
+        `Content type must be application/json. (Current: ${contentType})`,
+      )
     }
 
     return readJsonBody(req, options)
