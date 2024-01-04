@@ -61,3 +61,8 @@ export function BodySelector(
     }
   }
 }
+
+/**
+ * @deprecated Use `BodySelector`
+ */
+export const createBodySelector = BodySelector

@@ -30,7 +30,8 @@ export const querySelector: SyncSelector<ParsedUrlQuery> = () => {
   if (query == null) {
     const url = urlSelector()
     /* istanbul ignore next */
-    context[querySymbol] = query = url.search != null ? parse(url.search.slice(1)) : {}
+    context[querySymbol] = query =
+      url.search != null ? parse(url.search.slice(1)) : {}
   }
   return query
 }

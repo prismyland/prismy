@@ -45,3 +45,8 @@ export function BufferBodySelector(
     return readBufferBody(req, options)
   }
 }
+
+/**
+ * @deprecated Use `BufferBodySelector`
+ */
+export const createBufferBodySelector = BufferBodySelector

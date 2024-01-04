@@ -67,3 +67,8 @@ function isContentTypeIsApplicationJSON(contentType: string | undefined) {
   if (!contentType.startsWith('application/json')) return false
   return true
 }
+
+/**
+ * @deprecated Use `JsonBodySelector`
+ */
+export const createJsonBodySelector = JsonBodySelector
