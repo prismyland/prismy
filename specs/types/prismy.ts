@@ -4,28 +4,27 @@ import {
   methodSelector,
   res,
   AsyncSelector,
-  ResponseObject
+  ResponseObject,
 } from '../../src'
-import { UrlWithStringQuery } from 'url'
+import { URL } from 'url'
 import { expectType } from '../helpers'
 
-const asyncUrlSelector: AsyncSelector<UrlWithStringQuery> = async context =>
-  urlSelector(context)
+const asyncUrlSelector: AsyncSelector<URL> = async () => urlSelector()
 
 const handler1 = prismy(
   [urlSelector, methodSelector, asyncUrlSelector],
   (url, method, url2) => {
-    expectType<UrlWithStringQuery>(url)
+    expectType<URL>(url)
     expectType<string | undefined>(method)
-    expectType<UrlWithStringQuery>(url2)
+    expectType<URL>(url2)
     return res('')
-  }
+  },
 )
 
 expectType<
   (
-    url: UrlWithStringQuery,
+    url: URL,
     method: string | undefined,
-    url2: UrlWithStringQuery
+    url2: URL,
   ) => ResponseObject<any> | Promise<ResponseObject<any>>
 >(handler1.handler)

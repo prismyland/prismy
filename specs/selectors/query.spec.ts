@@ -4,19 +4,19 @@ import { querySelector, prismy, res } from '../../src'
 
 describe('querySelector', () => {
   it('selects query', async () => {
-    const handler = prismy([querySelector], query => {
+    const handler = prismy([querySelector], (query) => {
       return res(query)
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url, {
         searchParams: { message: 'Hello, World!' },
-        responseType: 'json'
+        responseType: 'json',
       })
 
       expect(response).toMatchObject({
         statusCode: 200,
-        body: { message: 'Hello, World!' }
+        body: { message: 'Hello, World!' },
       })
     })
   })
@@ -26,12 +26,12 @@ describe('querySelector', () => {
       return res(JSON.stringify(query === query2))
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
 
       expect(response).toMatchObject({
         statusCode: 200,
-        body: 'true'
+        body: 'true',
       })
     })
   })

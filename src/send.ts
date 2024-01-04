@@ -15,15 +15,13 @@ import { ResponseObject } from './types'
 export const send = (
   request: IncomingMessage,
   response: ServerResponse,
-  resObject:
-    | ResponseObject<any>
-    | ((request: IncomingMessage, response: ServerResponse) => void)
+  sendable: ((request: IncomingMessage, response: ServerResponse) => void) | ResponseObject<any>
 ) => {
-  if (typeof resObject === 'function') {
-    resObject(request, response)
+  if (typeof sendable === 'function') {
+    sendable(request, response)
     return
   }
-  const { statusCode = 200, body, headers = [] } = resObject
+  const { statusCode = 200, body, headers = [] } = sendable
   Object.entries(headers).forEach(([key, value]) => {
     /* istanbul ignore if */
     if (value == null) {
@@ -64,9 +62,7 @@ export const send = (
     }
   }
 
-  const stringifiedBody = bodyIsNotString
-    ? JSON.stringify(body)
-    : body.toString()
+  const stringifiedBody = bodyIsNotString ? JSON.stringify(body) : body.toString()
 
   response.setHeader('Content-Length', Buffer.byteLength(stringifiedBody))
   response.end(stringifiedBody)

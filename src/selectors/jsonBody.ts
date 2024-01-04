@@ -1,7 +1,7 @@
 import { readJsonBody } from '../bodyReaders'
 import { createError } from '../error'
 import { AsyncSelector } from '../types'
-import { headersSelector } from './headers'
+import { getPrismyContext } from '../prismy'
 
 /**
  * Options for {@link createJsonBodySelector}
@@ -42,21 +42,23 @@ export interface JsonBodySelectorOptions {
  *
  * @public
  */
-export function createJsonBodySelector(
-  options?: JsonBodySelectorOptions
+export function JsonBodySelector(
+  options?: JsonBodySelectorOptions,
 ): AsyncSelector<any> {
-  return context => {
+  return () => {
+    const { req } = getPrismyContext()
     const { skipContentTypeCheck = false } = options || {}
     if (!skipContentTypeCheck) {
-      const contentType = headersSelector(context)['content-type']
+      const contentType = req.headers['content-type']
       if (!isContentTypeIsApplicationJSON(contentType)) {
         throw createError(
           400,
-          `Content type must be application/json. (Current: ${contentType})`
+          `Content type must be application/json. (Current: ${contentType})`,
         )
       }
     }
-    return readJsonBody(context.req, options)
+
+    return readJsonBody(req, options)
   }
 }
 

@@ -1,6 +1,6 @@
 import got from 'got'
 import { testHandler } from './helpers'
-import { prismy, res, Selector, PrismyPureMiddleware, err } from '../src'
+import { prismy, res, Selector, PrismyPureMiddleware, err, getPrismyContext } from '../src'
 
 describe('prismy', () => {
   it('returns node.js request handler', async () => {
@@ -16,7 +16,10 @@ describe('prismy', () => {
   })
 
   it('selects value from context via selector', async () => {
-    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const rawUrlSelector: Selector<string> = () => {
+      const { req } = getPrismyContext()
+      return req.url!
+    }
     const handler = prismy([rawUrlSelector], url => res(url))
 
     await testHandler(handler, async url => {
@@ -29,8 +32,7 @@ describe('prismy', () => {
   })
 
   it('selects value from context via selector', async () => {
-    const asyncRawUrlSelector: Selector<string> = async context =>
-      context.req.url!
+    const asyncRawUrlSelector: Selector<string> = async () => getPrismyContext().req.url!
     const handler = prismy([asyncRawUrlSelector], url => res(url))
 
     await testHandler(handler, async url => {
@@ -43,7 +45,7 @@ describe('prismy', () => {
   })
 
   it('expose raw prismy handler for unit tests', () => {
-    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const rawUrlSelector: Selector<string> = () => getPrismyContext().req.url!
     const handler = prismy([rawUrlSelector], url => res(url))
 
     const result = handler.handler('Hello, World!')
@@ -56,14 +58,14 @@ describe('prismy', () => {
   })
 
   it('applys middleware', async () => {
-    const errorMiddleware: PrismyPureMiddleware = context => async next => {
+    const errorMiddleware: PrismyPureMiddleware = () => async next => {
       try {
         return await next()
       } catch (error) {
         return err(500, (error as any).message)
       }
     }
-    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const rawUrlSelector: Selector<string> = () => getPrismyContext().req.url!
     const handler = prismy(
       [rawUrlSelector],
       url => {
@@ -84,17 +86,17 @@ describe('prismy', () => {
   })
 
   it('applys middleware orderly', async () => {
-    const problematicMiddleware: PrismyPureMiddleware = context => async next => {
+    const problematicMiddleware: PrismyPureMiddleware = () => async next => {
       throw new Error('Hey!')
     }
-    const errorMiddleware: PrismyPureMiddleware = context => async next => {
+    const errorMiddleware: PrismyPureMiddleware = () => async next => {
       try {
         return await next()
       } catch (error) {
         return res((error as any).message, 500)
       }
     }
-    const rawUrlSelector: Selector<string> = context => context.req.url!
+    const rawUrlSelector: Selector<string> = () => getPrismyContext().req.url!
     const handler = prismy(
       [rawUrlSelector],
       url => {
@@ -134,7 +136,7 @@ describe('prismy', () => {
   })
 
   it('handles unhandled errors from selectors', async () => {
-    const rawUrlSelector: Selector<string> = context => {
+    const rawUrlSelector: Selector<string> = () => {
       throw new Error('Hey!')
     }
     const handler = prismy(

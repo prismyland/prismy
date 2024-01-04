@@ -1,10 +1,11 @@
 import { parse } from 'querystring'
+import { getPrismyContext } from '../prismy'
 import { readJsonBody, readTextBody } from '../bodyReaders'
 import { createError } from '../error'
 import { AsyncSelector } from '../types'
 
 /**
- * Options for {@link createBodySelector}
+ * Options for {@link bodySelector}
  *
  * @public
  */
@@ -38,10 +39,11 @@ export interface BodySelectorOptions {
  *
  * @public
  */
-export function createBodySelector(
-  options?: BodySelectorOptions
+export function BodySelector(
+  options?: BodySelectorOptions,
 ): AsyncSelector<object | string> {
-  return async ({ req }) => {
+  return async () => {
+    const { req } = getPrismyContext()
     const type = req.headers['content-type']
 
     if (type === 'application/json' || type === 'application/ld+json') {

@@ -1,4 +1,5 @@
-import { UrlWithStringQuery, parse } from 'url'
+import { URL } from 'url'
+import { getPrismyContext } from '../prismy'
 import { SyncSelector } from '../types'
 
 const urlSymbol = Symbol('prismy-url')
@@ -18,17 +19,20 @@ const urlSymbol = Symbol('prismy-url')
  * )
  * ```
  *
- * @param context - Request context
  * @returns The url of the request
  *
  * @public
  */
-export const urlSelector: SyncSelector<UrlWithStringQuery> = context => {
-  let url: UrlWithStringQuery | undefined = context[urlSymbol]
+export const urlSelector: SyncSelector<URL> = () => {
+  const context = getPrismyContext()
+  let url: URL | undefined = context[urlSymbol]
   if (url == null) {
     const { req } = context
     /* istanbul ignore next */
-    url = context[urlSymbol] = parse(req.url == null ? '' : req.url)
+    url = context[urlSymbol] = new URL(
+      req.url == null ? '' : req.url,
+      `http://${req.headers.host}`,
+    )
   }
   return url
 }

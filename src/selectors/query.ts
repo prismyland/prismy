@@ -1,4 +1,5 @@
 import { ParsedUrlQuery, parse } from 'querystring'
+import { prismyContextStorage } from '../prismy'
 import { SyncSelector } from '../types'
 import { urlSelector } from './url'
 
@@ -19,17 +20,17 @@ const querySymbol = Symbol('prismy-query')
  * )
  * ```
  *
- * @param context - Request context
  * @returns a selector for the url query
  *
  * @public
  */
-export const querySelector: SyncSelector<ParsedUrlQuery> = context => {
+export const querySelector: SyncSelector<ParsedUrlQuery> = () => {
+  const context = prismyContextStorage.getStore()!
   let query: ParsedUrlQuery | undefined = context[querySymbol]
   if (query == null) {
-    const url = urlSelector(context)
+    const url = urlSelector()
     /* istanbul ignore next */
-    context[querySymbol] = query = url.query != null ? parse(url.query) : {}
+    context[querySymbol] = query = url.search != null ? parse(url.search.slice(1)) : {}
   }
   return query
 }

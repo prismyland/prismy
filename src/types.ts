@@ -5,7 +5,7 @@ import { IncomingMessage, ServerResponse, OutgoingHttpHeaders } from 'http'
  *
  * @public
  */
-export interface Context {
+export interface PrismyContext {
   req: IncomingMessage
 }
 
@@ -14,13 +14,13 @@ export interface Context {
  *
  * @public
  */
-export type SyncSelector<T> = (context: Context) => T
+export type SyncSelector<T> = () => T
 /**
  * An asynchronous argument selector
  *
  * @public
  */
-export type AsyncSelector<T> = (context: Context) => Promise<T>
+export type AsyncSelector<T> = () => Promise<T>
 /**
  * An argument selector to extract arguments for the handler
  *
@@ -98,34 +98,33 @@ export type AsyncRes<B> = Promise<ResponseObject<B>>
  * @public
  */
 export interface PrismyPureMiddleware {
-  (context: Context): (
-    next: () => Promise<ResponseObject<any>>
-  ) => Promise<ResponseObject<any>>
+  (): (next: () => Promise<ResponseObject<any>>) => Promise<ResponseObject<any>>
 }
 /**
  * prismy compatible middleware
  *
  * @public
  */
-export interface PrismyMiddleware<A extends any[]>
-  extends PrismyPureMiddleware {
-  mhandler(
-    next: () => Promise<ResponseObject<any>>
-  ): (...args: A) => Promise<ResponseObject<any>>
+export interface PrismyMiddleware<A extends any[]> extends PrismyPureMiddleware {
+  mhandler(next: () => Promise<ResponseObject<any>>): (...args: A) => Promise<ResponseObject<any>>
 }
-
-/**
- * @public
- */
-export type ContextHandler = (context: Context) => Promise<ResponseObject<any>>
 
 /**
  * @public
  */
 export interface PrismyHandler<A extends any[]> {
   (req: IncomingMessage, res: ServerResponse): void
+  /**
+   * PrismyHandler exposes `handler` for unit testing the handler.
+   * @param args selected arguments
+   */
   handler(...args: A): Promisable<ResponseObject<any>>
-  contextHandler: ContextHandler
+  /**
+   * PrismyHandler exposes compiled funciton which must be ran in a prismy context.
+   * This is useful when using a prismy handler in other prismy handler or a middleware like Routing.
+   * `router()` is also using this prop to run a handler after matching URL.
+   */
+  contextHandler: () => Promise<ResponseObject<any>>
 }
 
 /**

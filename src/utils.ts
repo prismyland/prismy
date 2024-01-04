@@ -1,10 +1,5 @@
 import { OutgoingHttpHeaders } from 'http'
-import {
-  ResponseObject,
-  Selector,
-  SelectorReturnTypeTuple,
-  Context
-} from './types'
+import { ResponseObject, Selector, SelectorReturnTypeTuple } from './types'
 
 /**
  * Factory function for creating http responses
@@ -28,11 +23,7 @@ export function res<B = unknown>(
   }
 }
 
-export function err<B>(
-  statusCode: number,
-  body: B,
-  headers?: OutgoingHttpHeaders
-): ResponseObject<B> {
+export function err<B>(statusCode: number, body: B, headers?: OutgoingHttpHeaders): ResponseObject<B> {
   return res(body, statusCode, headers)
 }
 
@@ -66,10 +57,7 @@ export function redirect(
  *
  * @public
  */
-export function setBody<B1, B2>(
-  resObject: ResponseObject<B1>,
-  body: B2
-): ResponseObject<B2> {
+export function setBody<B1, B2>(resObject: ResponseObject<B1>, body: B2): ResponseObject<B2> {
   return {
     ...resObject,
     body
@@ -85,10 +73,7 @@ export function setBody<B1, B2>(
  *
  * @public
  */
-export function setStatusCode<B>(
-  resObject: ResponseObject<B>,
-  statusCode: number
-): ResponseObject<B> {
+export function setStatusCode<B>(resObject: ResponseObject<B>, statusCode: number): ResponseObject<B> {
   return {
     ...resObject,
     statusCode
@@ -104,10 +89,7 @@ export function setStatusCode<B>(
  *
  * @public
  */
-export function updateHeaders<B>(
-  resObject: ResponseObject<B>,
-  extraHeaders: OutgoingHttpHeaders
-): ResponseObject<B> {
+export function updateHeaders<B>(resObject: ResponseObject<B>, extraHeaders: OutgoingHttpHeaders): ResponseObject<B> {
   return {
     ...resObject,
     headers: {
@@ -126,10 +108,7 @@ export function updateHeaders<B>(
  *
  * @public
  */
-export function setHeaders<B>(
-  resObject: ResponseObject<B>,
-  headers: OutgoingHttpHeaders
-): ResponseObject<B> {
+export function setHeaders<B>(resObject: ResponseObject<B>, headers: OutgoingHttpHeaders): ResponseObject<B> {
   return {
     ...resObject,
     headers
@@ -149,9 +128,9 @@ export function setHeaders<B>(
 export function compileHandler<S extends Selector<unknown>[], R>(
   selectors: [...S],
   handler: (...args: SelectorReturnTypeTuple<S>) => R
-): (context: Context) => Promise<R> {
-  return async (context: Context) => {
-    return handler(...(await resolveSelectors(context, selectors)))
+): () => Promise<R> {
+  return async () => {
+    return handler(...(await resolveSelectors(selectors)))
   }
 }
 
@@ -166,12 +145,11 @@ export function compileHandler<S extends Selector<unknown>[], R>(
  * @internal
  */
 export async function resolveSelectors<S extends Selector<unknown>[]>(
-  context: Context,
   selectors: [...S]
 ): Promise<SelectorReturnTypeTuple<S>> {
   const resolvedValues = []
   for (const selector of selectors) {
-    const resolvedValue = await selector(context)
+    const resolvedValue = await selector()
     resolvedValues.push(resolvedValue)
   }
 

@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from 'async_hooks'
 import { IncomingMessage, ServerResponse } from 'http'
 import { createErrorResObject } from './error'
 import { send } from './send'
@@ -6,12 +7,20 @@ import {
   Selector,
   PrismyPureMiddleware,
   Promisable,
-  Context,
-  ContextHandler,
+  PrismyContext,
   PrismyHandler,
-  SelectorReturnTypeTuple,
+  SelectorReturnTypeTuple
 } from './types'
 import { compileHandler } from './utils'
+
+export const prismyContextStorage = new AsyncLocalStorage<PrismyContext>()
+export function getPrismyContext(): PrismyContext {
+  const context = prismyContextStorage.getStore()
+  if (context == null) {
+    throw new Error('Prismy context is not loaded.')
+  }
+  return context
+}
 
 /**
  * Generates a handler to be used by http.Server
@@ -39,16 +48,14 @@ import { compileHandler } from './utils'
  */
 export function prismy<S extends Selector<unknown>[]>(
   selectors: [...S],
-  handler: (
-    ...args: SelectorReturnTypeTuple<S>
-  ) => Promisable<ResponseObject<any>>,
+  handler: (...args: SelectorReturnTypeTuple<S>) => Promisable<ResponseObject<any>>,
   middlewareList: PrismyPureMiddleware[] = []
 ): PrismyHandler<SelectorReturnTypeTuple<S>> {
-  const contextHandler: ContextHandler = async (context: Context) => {
-    const next = async () => compileHandler(selectors, handler)(context)
+  const resResolver = async () => {
+    const next = async () => compileHandler(selectors, handler)()
 
     const pipe = middlewareList.reduce((next, middleware) => {
-      return () => middleware(context)(next)
+      return () => middleware()(next)
     }, next)
 
     let resObject
@@ -65,21 +72,19 @@ export function prismy<S extends Selector<unknown>[]>(
     return resObject
   }
 
-  async function requestListener(
-    request: IncomingMessage,
-    response: ServerResponse
-  ) {
-    const context = {
-      req: request,
+  async function requestListener(request: IncomingMessage, response: ServerResponse) {
+    const context: PrismyContext = {
+      req: request
     }
+    prismyContextStorage.run(context, async () => {
+      const resObject = await resResolver()
 
-    const resObject = await contextHandler(context)
-
-    await send(request, response, resObject)
+      send(request, response, resObject)
+    })
   }
 
   requestListener.handler = handler
-  requestListener.contextHandler = contextHandler
+  requestListener.contextHandler = resResolver
 
   return requestListener
 }

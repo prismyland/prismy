@@ -1,3 +1,4 @@
+import { getPrismyContext } from '../prismy'
 import { SyncSelector } from '../types'
 
 /**
@@ -22,6 +23,7 @@ import { SyncSelector } from '../types'
  *
  * @public
  */
-export const methodSelector: SyncSelector<string | undefined> = ({ req }) => {
+export const methodSelector: SyncSelector<string | undefined> = () => {
+  const { req } = getPrismyContext()
   return req.method
 }

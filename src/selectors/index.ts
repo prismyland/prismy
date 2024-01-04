@@ -1,6 +1,5 @@
 export * from './body'
 export * from './bufferBody'
-export * from './context'
 export * from './headers'
 export * from './jsonBody'
 export * from './method'

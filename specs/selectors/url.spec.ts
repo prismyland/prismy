@@ -4,20 +4,24 @@ import { urlSelector, prismy, res } from '../../src'
 
 describe('urlSelector', () => {
   it('selects url', async () => {
-    const handler = prismy([urlSelector], url => {
-      return res(url)
+    const handler = prismy([urlSelector], (url) => {
+      return res({
+        pathname: url.pathname,
+        search: url.search,
+      })
     })
 
-    await testHandler(handler, async url => {
-      const response = await got(url, {
-        responseType: 'json'
+    await testHandler(handler, async (url) => {
+      const response = await got(url + '/test?query=true#hash', {
+        responseType: 'json',
       })
 
       expect(response).toMatchObject({
         statusCode: 200,
         body: expect.objectContaining({
-          path: '/'
-        })
+          pathname: '/test',
+          search: '?query=true',
+        }),
       })
     })
   })
@@ -27,12 +31,12 @@ describe('urlSelector', () => {
       return res(JSON.stringify(url === url2))
     })
 
-    await testHandler(handler, async url => {
+    await testHandler(handler, async (url) => {
       const response = await got(url)
 
       expect(response).toMatchObject({
         statusCode: 200,
-        body: 'true'
+        body: 'true',
       })
     })
   })

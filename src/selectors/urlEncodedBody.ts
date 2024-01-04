@@ -1,4 +1,5 @@
 import { ParsedUrlQuery, parse } from 'querystring'
+import { getPrismyContext } from '../prismy'
 import { readTextBody } from '../bodyReaders'
 import { createError } from '../error'
 import { AsyncSelector } from '../types'
@@ -40,10 +41,11 @@ export interface UrlEncodedBodySelectorOptions {
  *
  * @public
  */
-export function createUrlEncodedBodySelector(
-  options?: UrlEncodedBodySelectorOptions
+export function UrlEncodedBodySelector(
+  options?: UrlEncodedBodySelectorOptions,
 ): AsyncSelector<ParsedUrlQuery> {
-  return async ({ req }) => {
+  return async () => {
+    const { req } = getPrismyContext()
     const textBody = await readTextBody(req, options)
     try {
       return parse(textBody)

@@ -1,4 +1,5 @@
 import { IncomingHttpHeaders } from 'http'
+import { getPrismyContext } from '../prismy'
 import { SyncSelector } from '../types'
 
 /**
@@ -16,10 +17,11 @@ import { SyncSelector } from '../types'
  * )
  * ```
  *
- * @param context - The request context
  * @returns The request headers
  *
  * @public
  */
-export const headersSelector: SyncSelector<IncomingHttpHeaders> = context =>
-  context.req.headers
+export const headersSelector: SyncSelector<IncomingHttpHeaders> = () => {
+  const { req } = getPrismyContext()
+  return req.headers
+}
