@@ -6,7 +6,11 @@ import { urlSelector } from './url'
 const querySymbol = Symbol('prismy-query')
 
 /**
- * Selector to extract the parsed query from the request URL
+ * @deprecated Use SearchParamSelector or SearchParamListSelector.
+ * To get all search params, use urlSelector, which resolves WHATWG URL object, and access `url.searchParams`.
+ *
+ * Selector to extract the parsed query from the request URL.
+ * Using `querystring.parse` internally.
  *
  * @example
  * Simple example
