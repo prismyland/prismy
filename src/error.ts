@@ -1,4 +1,4 @@
-import { res } from './utils'
+import { res } from './res'
 
 /**
  * Creates a response object from an error
@@ -28,7 +28,7 @@ class PrismyError extends Error {
 export function createError(
   statusCode: number,
   message: string,
-  originalError?: any
+  originalError?: any,
 ): PrismyError {
   const error = new PrismyError(message)
 
