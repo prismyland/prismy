@@ -1,12 +1,6 @@
 import got from 'got'
 import { testHandler } from './helpers'
-import {
-  prismy,
-  res,
-  PrismyPureMiddleware,
-  err,
-  getPrismyContext,
-} from '../src'
+import { prismy, res, err, getPrismyContext, middleware } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
 
 describe('prismy', () => {
@@ -53,7 +47,7 @@ describe('prismy', () => {
     })
   })
 
-  it('expose raw prismy handler for unit tests', () => {
+  it('exposes raw prismy handler for unit tests', () => {
     const rawUrlSelector = createPrismySelector(
       () => getPrismyContext().req.url!,
     )
@@ -68,8 +62,8 @@ describe('prismy', () => {
     })
   })
 
-  it('applys middleware', async () => {
-    const errorMiddleware: PrismyPureMiddleware = (next) => {
+  it('applies middleware', async () => {
+    const errorMiddleware = middleware([], (next) => {
       return async () => {
         try {
           return await next()
@@ -77,7 +71,7 @@ describe('prismy', () => {
           return err(500, (error as any).message)
         }
       }
-    }
+    })
     const rawUrlSelector = createPrismySelector(
       () => getPrismyContext().req.url!,
     )
@@ -100,21 +94,17 @@ describe('prismy', () => {
     })
   })
 
-  it('applys middleware orderly', async () => {
-    const problematicMiddleware: PrismyPureMiddleware = (next) => {
-      return () => {
-        throw new Error('Hey!')
+  it('applies middleware orderly', async () => {
+    const problematicMiddleware = middleware([], (next) => () => {
+      throw new Error('Hey!')
+    })
+    const errorMiddleware = middleware([], (next) => async () => {
+      try {
+        return await next()
+      } catch (error) {
+        return res((error as any).message, 500)
       }
-    }
-    const errorMiddleware: PrismyPureMiddleware = (next) => {
-      return async () => {
-        try {
-          return await next()
-        } catch (error) {
-          return res((error as any).message, 500)
-        }
-      }
-    }
+    })
     const rawUrlSelector = createPrismySelector(
       () => getPrismyContext().req.url!,
     )

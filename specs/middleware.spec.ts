@@ -1,12 +1,6 @@
 import got from 'got'
 import { testHandler } from './helpers'
-import {
-  prismy,
-  res,
-  PrismyPureMiddleware,
-  middleware,
-  getPrismyContext,
-} from '../src'
+import { prismy, res, middleware, getPrismyContext } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
 
 describe('middleware', () => {
@@ -14,7 +8,7 @@ describe('middleware', () => {
     const rawUrlSelector = createPrismySelector(
       () => getPrismyContext().req.url!,
     )
-    const errorMiddleware: PrismyPureMiddleware = middleware(
+    const errorMiddleware = middleware(
       [rawUrlSelector],
       (next) => async (url) => {
         try {
