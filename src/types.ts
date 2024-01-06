@@ -69,12 +69,7 @@ export interface ResponseObject<B = unknown> {
  */
 export type Res<B> = ResponseObject<B>
 
-/**
- * alias for Promise<ResponseObject<B>> for user with async handlers
- *
- * @public
- */
-export type AsyncRes<B> = Promise<ResponseObject<B>>
+export type PrismyNextFunction = () => Promise<ResponseObject<any>>
 
 /**
  * prismy compaticble middleware
@@ -82,7 +77,7 @@ export type AsyncRes<B> = Promise<ResponseObject<B>>
  * @public
  */
 export interface PrismyPureMiddleware {
-  (): (next: () => Promise<ResponseObject<any>>) => Promise<ResponseObject<any>>
+  (next: PrismyNextFunction): PrismyNextFunction
 }
 /**
  * prismy compatible middleware
@@ -91,9 +86,9 @@ export interface PrismyPureMiddleware {
  */
 export interface PrismyMiddleware<A extends any[]>
   extends PrismyPureMiddleware {
-  mhandler(
-    next: () => Promise<ResponseObject<any>>,
-  ): (...args: A) => Promise<ResponseObject<any>>
+  mhandler: (
+    next: PrismyNextFunction,
+  ) => (...args: A) => Promise<ResponseObject<any>>
 }
 
 /**

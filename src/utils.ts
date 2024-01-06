@@ -1,3 +1,4 @@
+import { Promisable } from '.'
 import { PrismySelector } from './selectors/createSelector'
 import { SelectorReturnTypeTuple } from './types'
 
@@ -13,7 +14,7 @@ import { SelectorReturnTypeTuple } from './types'
  */
 export function compileHandler<S extends PrismySelector<unknown>[], R>(
   selectors: [...S],
-  handler: (...args: SelectorReturnTypeTuple<S>) => R,
+  handler: (...args: SelectorReturnTypeTuple<S>) => Promisable<R>,
 ): () => Promise<R> {
   return async () => {
     return handler(...(await resolveSelectors(selectors)))

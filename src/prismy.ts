@@ -1,5 +1,6 @@
 import { AsyncLocalStorage } from 'async_hooks'
 import { IncomingMessage, ServerResponse } from 'http'
+import { PrismyNextFunction } from '.'
 import { createErrorResObject } from './error'
 import { PrismySelector } from './selectors/createSelector'
 import { send } from './send'
@@ -54,10 +55,10 @@ export function prismy<S extends PrismySelector<unknown>[]>(
   middlewareList: PrismyPureMiddleware[] = [],
 ): PrismyHandler<SelectorReturnTypeTuple<S>> {
   const resResolver = async () => {
-    const next = async () => compileHandler(selectors, handler)()
+    const next: PrismyNextFunction = compileHandler(selectors, handler)
 
     const pipe = middlewareList.reduce((next, middleware) => {
-      return () => middleware()(next)
+      return middleware(next)
     }, next)
 
     let resObject

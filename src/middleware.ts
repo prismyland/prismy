@@ -1,3 +1,4 @@
+import { PrismyNextFunction } from '.'
 import { PrismySelector } from './selectors/createSelector'
 import {
   ResponseObject,
@@ -44,11 +45,12 @@ import { compileHandler } from './utils'
 export function middleware<SS extends PrismySelector<unknown>[]>(
   selectors: [...SS],
   mhandler: (
-    next: () => Promise<ResponseObject<any>>,
+    next: PrismyNextFunction,
   ) => (...args: SelectorReturnTypeTuple<SS>) => Promise<ResponseObject<any>>,
 ): PrismyMiddleware<SelectorReturnTypeTuple<SS>> {
-  const middleware = () => async (next: () => Promise<ResponseObject<any>>) =>
-    compileHandler(selectors, mhandler(next))()
+  const middleware = (next: PrismyNextFunction) => {
+    return compileHandler(selectors, mhandler(next))
+  }
   middleware.mhandler = mhandler
 
   return middleware
