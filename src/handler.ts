@@ -2,7 +2,7 @@ import {
   createErrorResObject,
   PrismyMiddleware,
   PrismyNextFunction,
-  Promisable,
+  MaybePromise,
   ResponseObject,
   SelectorReturnTypeTuple,
 } from '.'
@@ -18,7 +18,7 @@ export class PrismyHandler<S extends PrismySelector<any>[]> {
      */
     public handler: (
       ...args: SelectorReturnTypeTuple<S>
-    ) => Promisable<ResponseObject<any>>,
+    ) => MaybePromise<ResponseObject<any>>,
     public middlewareList: PrismyMiddleware<any[]>[],
   ) {}
 
@@ -74,7 +74,7 @@ export function Handler<S extends PrismySelector<any>[]>(
   selectors: [...S],
   handler: (
     ...args: SelectorReturnTypeTuple<S>
-  ) => Promisable<ResponseObject<any>>,
+  ) => MaybePromise<ResponseObject<any>>,
   middlewareList: PrismyMiddleware<any[]>[] = [],
 ) {
   return new PrismyHandler(selectors, handler, middlewareList)

@@ -6,7 +6,7 @@ import { PrismySelector } from './selectors/createSelector'
 import { send } from './send'
 import {
   ResponseObject,
-  Promisable,
+  MaybePromise,
   PrismyContext,
   SelectorReturnTypeTuple,
 } from './types'
@@ -51,14 +51,14 @@ export function prismy<S extends PrismySelector<unknown>[]>(
   selectors: [...S],
   handler: (
     ...args: SelectorReturnTypeTuple<S>
-  ) => Promisable<ResponseObject<any>>,
+  ) => MaybePromise<ResponseObject<any>>,
   middlewareList?: PrismyMiddleware<any[]>[],
 ): RequestListener
 export function prismy<S extends PrismySelector<unknown>[]>(
   selectorsOrPrismyHandler: [...S] | PrismyHandler<S>,
   handler?: (
     ...args: SelectorReturnTypeTuple<S>
-  ) => Promisable<ResponseObject<any>>,
+  ) => MaybePromise<ResponseObject<any>>,
   middlewareList?: PrismyMiddleware<any[]>[],
 ): RequestListener {
   const injectedHandler =

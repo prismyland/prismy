@@ -1,4 +1,4 @@
-import { IncomingMessage, ServerResponse, OutgoingHttpHeaders } from 'http'
+import { IncomingMessage, OutgoingHttpHeaders } from 'http'
 import { PrismySelector } from './selectors/createSelector'
 
 /**
@@ -49,7 +49,7 @@ export type PromiseResolve<T> = T extends Promise<infer U> ? U : T
 /**
  * @public
  */
-export type Promisable<T> = T | Promise<T>
+export type MaybePromise<T> = T | Promise<T>
 
 /**
  * prismy's representation of a response
