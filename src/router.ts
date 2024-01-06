@@ -7,6 +7,7 @@ import {
   createPrismySelector,
   PrismySelector,
 } from './selectors/createSelector'
+import { PrismyMiddleware } from '.'
 
 export type RouteMethod =
   | 'get'
@@ -17,22 +18,28 @@ export type RouteMethod =
   | 'options'
   | '*'
 export type RouteIndicator = [string, RouteMethod]
-export type RouteParams<T = unknown> = [
-  string | RouteIndicator,
-  PrismyHandler<T[]>,
-]
 
 type Route<T = unknown> = {
   indicator: RouteIndicator
   listener: PrismyHandler<T[]>
 }
 
+export class PrismyRoute<T = unknown> {
+  indicator: RouteIndicator
+  listener: PrismyHandler<T[]>
+
+  constructor(indicator: RouteIndicator, listener: PrismyHandler<T[]>) {
+    this.indicator = indicator
+    this.listener = listener
+  }
+}
+
 export function router(
-  routes: RouteParams<unknown>[],
-  options: PrismyRouterOptions = {},
+  routes: PrismyRoute<unknown>[],
+  { prefix, middleware = [] }: PrismyRouterOptions = {},
 ) {
-  const compiledRoutes = routes.map((routeParams) => {
-    const { indicator, listener } = createRoute(routeParams)
+  const compiledRoutes = routes.map((route) => {
+    const { indicator, listener } = route
     const [targetPath, method] = indicator
     const compiledTargetPath = removeTralingSlash(targetPath)
     const match = createMatchFunction(compiledTargetPath, { strict: false })
@@ -43,47 +50,46 @@ export function router(
       targetPath: compiledTargetPath,
     }
   })
-  return prismy([methodSelector, urlSelector], (method, url) => {
-    const prismyContext = getPrismyContext()
-    /* istanbul ignore next */
-    const normalizedMethod = method != null ? method.toLowerCase() : null
-    /* istanbul ignore next */
-    const normalizedPath = removeTralingSlash(url.pathname || '/')
 
-    for (const route of compiledRoutes) {
-      const { method: targetMethod, match } = route
-      if (targetMethod !== '*' && targetMethod !== normalizedMethod) {
-        continue
+  return prismy(
+    [methodSelector, urlSelector],
+    (method, url) => {
+      const prismyContext = getPrismyContext()
+      /* istanbul ignore next */
+      const normalizedMethod = method != null ? method.toLowerCase() : null
+      /* istanbul ignore next */
+      const normalizedPath = removeTralingSlash(url.pathname || '/')
+
+      for (const route of compiledRoutes) {
+        const { method: targetMethod, match } = route
+        if (targetMethod !== '*' && targetMethod !== normalizedMethod) {
+          continue
+        }
+
+        const result = match(normalizedPath)
+        if (!result) {
+          continue
+        }
+
+        setRouteParamsToPrismyContext(prismyContext, result.params)
+
+        return route.listener.contextHandler()
       }
 
-      const result = match(normalizedPath)
-      if (!result) {
-        continue
-      }
-
-      setRouteParamsToPrismyContext(prismyContext, result.params)
-
-      return route.listener.contextHandler()
-    }
-
-    throw createError(404, 'Not Found')
-  })
+      throw createError(404, 'Not Found')
+    },
+    middleware,
+  )
 }
 
-function createRoute<T = unknown>(
-  routeParams: RouteParams<PrismySelector<T>[]>,
-): Route<PrismySelector<T>[]> {
-  const [indicator, listener] = routeParams
+export function Route<T = unknown>(
+  indicator: RouteIndicator | string,
+  listener: PrismyHandler<T[]>,
+): PrismyRoute {
   if (typeof indicator === 'string') {
-    return {
-      indicator: [indicator, 'get'],
-      listener,
-    }
+    return new PrismyRoute([indicator, 'get'], listener)
   }
-  return {
-    indicator,
-    listener,
-  }
+  return new PrismyRoute(indicator, listener)
 }
 
 const routeParamsMap = new WeakMap()
@@ -106,7 +112,10 @@ export function routeParamSelector(
   })
 }
 
-interface PrismyRouterOptions {}
+interface PrismyRouterOptions {
+  prefix?: string
+  middleware?: PrismyMiddleware<any[]>[]
+}
 
 function removeTralingSlash(value: string) {
   if (value === '/') {
