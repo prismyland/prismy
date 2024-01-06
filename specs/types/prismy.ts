@@ -7,19 +7,12 @@ import {
 } from '../../src'
 import { URL } from 'url'
 import { expectType } from '../helpers'
-import { PrismySelector } from '../../src/selectors/createSelector'
 
-const asyncUrlSelector: PrismySelector<URL> = urlSelector
-
-const handler1 = prismy(
-  [urlSelector, methodSelector, asyncUrlSelector],
-  (url, method, url2) => {
-    expectType<URL>(url)
-    expectType<string | undefined>(method)
-    expectType<URL>(url2)
-    return res('')
-  },
-)
+const handler1 = prismy([urlSelector, methodSelector], (url, method) => {
+  expectType<URL>(url)
+  expectType<string | undefined>(method)
+  return res('')
+})
 
 expectType<
   (

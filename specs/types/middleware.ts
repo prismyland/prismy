@@ -8,16 +8,12 @@ import {
 } from '../../src'
 import { URL } from 'url'
 import { expectType } from '../helpers'
-import { PrismySelector } from '../../src/selectors/createSelector'
-
-const asyncUrlSelector: PrismySelector<URL> = urlSelector
 
 const middleware1 = middleware(
-  [urlSelector, methodSelector, asyncUrlSelector],
-  (next) => async (url, method, url2) => {
+  [urlSelector, methodSelector],
+  (next) => async (url, method) => {
     expectType<URL>(url)
     expectType<string | undefined>(method)
-    expectType<URL>(url2)
     return next()
   },
 )
