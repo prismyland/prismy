@@ -85,14 +85,15 @@ function createRoute<T = unknown>(
     listener,
   }
 }
-const routeParamsSymbol = Symbol('route params')
+
+const routeParamsMap = new WeakMap()
 
 function setRouteParamsToPrismyContext(context: PrismyContext, params: object) {
-  ;(context as any)[routeParamsSymbol] = params
+  routeParamsMap.set(context, params)
 }
 
 function getRouteParamsFromPrismyContext(context: PrismyContext) {
-  return (context as any)[routeParamsSymbol]
+  return routeParamsMap.get(context)
 }
 
 export function routeParamSelector(

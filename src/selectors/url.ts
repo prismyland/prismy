@@ -2,7 +2,7 @@ import { URL } from 'url'
 import { getPrismyContext } from '../prismy'
 import { createPrismySelector } from './createSelector'
 
-const urlSymbol = Symbol('prismy-url')
+const urlMap = new WeakMap()
 
 /**
  * Selector for extracting the requested URL
@@ -25,14 +25,12 @@ const urlSymbol = Symbol('prismy-url')
  */
 export const urlSelector = createPrismySelector((): URL => {
   const context = getPrismyContext()
-  let url: URL | undefined = context[urlSymbol]
+  let url: URL | undefined = urlMap.get(context)
   if (url == null) {
     const { req } = context
     /* istanbul ignore next */
-    url = context[urlSymbol] = new URL(
-      req.url == null ? '' : req.url,
-      `http://${req.headers.host}`,
-    )
+    url = new URL(req.url == null ? '' : req.url, `http://${req.headers.host}`)
+    urlMap.set(context, url)
   }
   return url
 })

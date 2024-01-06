@@ -3,7 +3,7 @@ import { prismyContextStorage } from '../prismy'
 import { createPrismySelector, PrismySelector } from './createSelector'
 import { urlSelector } from './url'
 
-const querySymbol = Symbol('prismy-query')
+const queryMap = new WeakMap()
 
 /**
  * @deprecated Use SearchParamSelector or SearchParamListSelector.
@@ -31,12 +31,12 @@ const querySymbol = Symbol('prismy-query')
 export const querySelector: PrismySelector<ParsedUrlQuery> =
   createPrismySelector(async () => {
     const context = prismyContextStorage.getStore()!
-    let query: ParsedUrlQuery | undefined = context[querySymbol]
+    let query: ParsedUrlQuery | undefined = queryMap.get(context)
     if (query == null) {
       const url = await urlSelector.resolve()
       /* istanbul ignore next */
-      context[querySymbol] = query =
-        url.search != null ? parse(url.search.slice(1)) : {}
+      query = url.search != null ? parse(url.search.slice(1)) : {}
+      queryMap.set(context, query)
     }
     return query
   })
