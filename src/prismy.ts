@@ -1,17 +1,15 @@
 import { AsyncLocalStorage } from 'async_hooks'
-import { IncomingMessage, ServerResponse } from 'http'
-import { PrismyMiddleware, PrismyNextFunction } from '.'
-import { createErrorResObject } from './error'
+import { IncomingMessage, RequestListener, ServerResponse } from 'http'
+import { PrismyMiddleware } from '.'
+import { Handler, PrismyHandler } from './handler'
 import { PrismySelector } from './selectors/createSelector'
 import { send } from './send'
 import {
   ResponseObject,
   Promisable,
   PrismyContext,
-  PrismyHandler,
   SelectorReturnTypeTuple,
 } from './types'
-import { compileHandler } from './utils'
 
 export const prismyContextStorage = new AsyncLocalStorage<PrismyContext>()
 export function getPrismyContext(): PrismyContext {
@@ -27,52 +25,46 @@ export function getPrismyContext(): PrismyContext {
  *
  * @example
  * ```ts
- * const worldSelector: Selector<string> = () => "world"!
+ * const handler = Handler([], () => { ... })
  *
- * export default prismy([ worldSelector ], async world => {
- *  return res(`Hello ${world}!`) // Hello world!
- * })
+ * http.createServer(prismy(handler))
+ * // Or directly
+ * http.createServer([], () => { ... })
  * ```
  *
- * @remarks
- * Selectors must be a tuple (`[Selector<string>, Selector<number>]`) not an
- * array (`Selector<string>|Selector<number>[] `). Be careful when declaring the
- * array outside of the function call.
+ * @param prismyHandler
+ */
+export function prismy<S extends PrismySelector<unknown>[]>(
+  prismyHandler: PrismyHandler<S>,
+): RequestListener
+
+/**
+ * Generates a handler to be used by http.Server
  *
- * @param selectors - Tuple of Selectors to generate arguments for handler
- * @param handler - Business logic handling the request
- * @param middlewareList - Middleware to pass request and response through
+ * prismy(Handler(...))
  *
- * @public
- *
+ * @param selectors
+ * @param handler
+ * @param middlewareList
  */
 export function prismy<S extends PrismySelector<unknown>[]>(
   selectors: [...S],
   handler: (
     ...args: SelectorReturnTypeTuple<S>
   ) => Promisable<ResponseObject<any>>,
-  middlewareList: PrismyMiddleware<any[]>[] = [],
-): PrismyHandler<SelectorReturnTypeTuple<S>> {
-  const resResolver = async () => {
-    const next: PrismyNextFunction = compileHandler(selectors, handler)
-
-    const pipe = middlewareList.reduce((next, middleware) => {
-      return middleware(next)
-    }, next)
-
-    let resObject
-    try {
-      resObject = await pipe()
-    } catch (error) {
-      /* istanbul ignore next */
-      if (process.env.NODE_ENV !== 'test') {
-        console.error(error)
-      }
-      resObject = createErrorResObject(error)
-    }
-
-    return resObject
-  }
+  middlewareList?: PrismyMiddleware<any[]>[],
+): RequestListener
+export function prismy<S extends PrismySelector<unknown>[]>(
+  selectorsOrPrismyHandler: [...S] | PrismyHandler<S>,
+  handler?: (
+    ...args: SelectorReturnTypeTuple<S>
+  ) => Promisable<ResponseObject<any>>,
+  middlewareList?: PrismyMiddleware<any[]>[],
+): RequestListener {
+  const injectedHandler =
+    selectorsOrPrismyHandler instanceof PrismyHandler
+      ? selectorsOrPrismyHandler
+      : Handler(selectorsOrPrismyHandler, handler!, middlewareList)
 
   async function requestListener(
     request: IncomingMessage,
@@ -82,14 +74,11 @@ export function prismy<S extends PrismySelector<unknown>[]>(
       req: request,
     }
     prismyContextStorage.run(context, async () => {
-      const resObject = await resResolver()
+      const resObject = await injectedHandler.handle()
 
       send(request, response, resObject)
     })
   }
-
-  requestListener.handler = handler
-  requestListener.contextHandler = resResolver
 
   return requestListener
 }

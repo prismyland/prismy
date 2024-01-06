@@ -86,24 +86,6 @@ export interface PrismyMiddleware<A extends any[]> {
 /**
  * @public
  */
-export interface PrismyHandler<A extends any[]> {
-  (req: IncomingMessage, res: ServerResponse): void
-  /**
-   * PrismyHandler exposes `handler` for unit testing the handler.
-   * @param args selected arguments
-   */
-  handler(...args: A): Promisable<ResponseObject<any>>
-  /**
-   * PrismyHandler exposes compiled funciton which must be ran in a prismy context.
-   * This is useful when using a prismy handler in other prismy handler or a middleware like Routing.
-   * `router()` is also using this prop to run a handler after matching URL.
-   */
-  contextHandler: () => Promise<ResponseObject<any>>
-}
-
-/**
- * @public
- */
 export interface BufferBodyOptions {
   limit?: string | number
   encoding?: string

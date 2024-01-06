@@ -2,6 +2,7 @@ import got from 'got'
 import { testHandler } from './helpers'
 import { prismy, res, err, getPrismyContext, middleware } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
+import { Handler } from '../src/handler'
 
 describe('prismy', () => {
   it('returns node.js request handler', async () => {
@@ -47,11 +48,12 @@ describe('prismy', () => {
     })
   })
 
+  // TODO: move to handler.spec.ts
   it('exposes raw prismy handler for unit tests', () => {
     const rawUrlSelector = createPrismySelector(
       () => getPrismyContext().req.url!,
     )
-    const handler = prismy([rawUrlSelector], (url) => res(url))
+    const handler = Handler([rawUrlSelector], (url) => res(url))
 
     const result = handler.handler('Hello, World!')
 

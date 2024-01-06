@@ -1,14 +1,9 @@
-import {
-  prismy,
-  urlSelector,
-  methodSelector,
-  res,
-  ResponseObject,
-} from '../../src'
+import { urlSelector, methodSelector, res, ResponseObject } from '../../src'
 import { URL } from 'url'
 import { expectType } from '../helpers'
+import { Handler } from '../../src/handler'
 
-const handler1 = prismy([urlSelector, methodSelector], (url, method) => {
+const handler1 = Handler([urlSelector, methodSelector], (url, method) => {
   expectType<URL>(url)
   expectType<string | undefined>(method)
   return res('')

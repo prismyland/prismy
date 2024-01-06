@@ -1,13 +1,14 @@
-import { PrismyContext, PrismyHandler } from './types'
+import { PrismyContext } from './types'
 import { methodSelector, urlSelector } from './selectors'
 import { match as createMatchFunction } from 'path-to-regexp'
-import { getPrismyContext, prismy } from './prismy'
+import { getPrismyContext } from './prismy'
 import { createError } from './error'
 import {
   createPrismySelector,
   PrismySelector,
 } from './selectors/createSelector'
 import { PrismyMiddleware } from '.'
+import { Handler, PrismyHandler } from './handler'
 
 export type RouteMethod =
   | 'get'
@@ -19,23 +20,26 @@ export type RouteMethod =
   | '*'
 export type RouteIndicator = [string, RouteMethod]
 
-type Route<T = unknown> = {
+type Route = {
   indicator: RouteIndicator
-  listener: PrismyHandler<T[]>
+  listener: PrismyHandler<PrismySelector<unknown>[]>
 }
 
-export class PrismyRoute<T = unknown> {
+export class PrismyRoute {
   indicator: RouteIndicator
-  listener: PrismyHandler<T[]>
+  listener: PrismyHandler<PrismySelector<unknown>[]>
 
-  constructor(indicator: RouteIndicator, listener: PrismyHandler<T[]>) {
+  constructor(
+    indicator: RouteIndicator,
+    listener: PrismyHandler<PrismySelector<unknown>[]>,
+  ) {
     this.indicator = indicator
     this.listener = listener
   }
 }
 
 export function router(
-  routes: PrismyRoute<unknown>[],
+  routes: PrismyRoute[],
   { prefix, middleware = [] }: PrismyRouterOptions = {},
 ) {
   const compiledRoutes = routes.map((route) => {
@@ -51,7 +55,7 @@ export function router(
     }
   })
 
-  return prismy(
+  return Handler(
     [methodSelector, urlSelector],
     (method, url) => {
       const prismyContext = getPrismyContext()
@@ -73,7 +77,7 @@ export function router(
 
         setRouteParamsToPrismyContext(prismyContext, result.params)
 
-        return route.listener.contextHandler()
+        return route.listener.handle()
       }
 
       throw createError(404, 'Not Found')
@@ -82,9 +86,9 @@ export function router(
   )
 }
 
-export function Route<T = unknown>(
+export function Route(
   indicator: RouteIndicator | string,
-  listener: PrismyHandler<T[]>,
+  listener: PrismyHandler<PrismySelector<any>[]>,
 ): PrismyRoute {
   if (typeof indicator === 'string') {
     return new PrismyRoute([indicator, 'get'], listener)

@@ -2,20 +2,21 @@ import got from 'got'
 import { testHandler } from './helpers'
 import { routeParamSelector, prismy, res, router, Route } from '../src'
 import { join } from 'path'
+import { Handler } from '../src/handler'
 
 describe('router', () => {
   it('routes with pathname', async () => {
     expect.hasAssertions()
-    const handlerA = prismy([], () => {
+    const handlerA = Handler([], () => {
       return res('a')
     })
-    const handlerB = prismy([], () => {
+    const handlerB = Handler([], () => {
       return res('b')
     })
 
     const routerHandler = router([Route('/a', handlerA), Route('/b', handlerB)])
 
-    await testHandler(routerHandler, async (url) => {
+    await testHandler(prismy(routerHandler), async (url) => {
       const response = await got(join(url, 'b'), {
         method: 'GET',
       })
@@ -29,10 +30,10 @@ describe('router', () => {
 
   it('routes with method', async () => {
     expect.assertions(2)
-    const handlerA = prismy([], () => {
+    const handlerA = Handler([], () => {
       return res('a')
     })
-    const handlerB = prismy([], () => {
+    const handlerB = Handler([], () => {
       return res('b')
     })
 
@@ -41,7 +42,7 @@ describe('router', () => {
       Route(['/', 'post'], handlerB),
     ])
 
-    await testHandler(routerHandler, async (url) => {
+    await testHandler(prismy(routerHandler), async (url) => {
       const response = await got(url, {
         method: 'GET',
       })
@@ -52,7 +53,7 @@ describe('router', () => {
       })
     })
 
-    await testHandler(routerHandler, async (url) => {
+    await testHandler(prismy(routerHandler), async (url) => {
       const response = await got(url, {
         method: 'POST',
       })
@@ -66,10 +67,10 @@ describe('router', () => {
 
   it('resolve params', async () => {
     expect.hasAssertions()
-    const handlerA = prismy([], () => {
+    const handlerA = Handler([], () => {
       return res('a')
     })
-    const handlerB = prismy([routeParamSelector('id')], (id) => {
+    const handlerB = Handler([routeParamSelector('id')], (id) => {
       return res(id)
     })
 
@@ -78,7 +79,7 @@ describe('router', () => {
       Route('/b/:id', handlerB),
     ])
 
-    await testHandler(routerHandler, async (url) => {
+    await testHandler(prismy(routerHandler), async (url) => {
       const response = await got(join(url, 'b/test-param'), {
         method: 'GET',
       })
@@ -92,10 +93,10 @@ describe('router', () => {
 
   it('resolves null if param is missing', async () => {
     expect.hasAssertions()
-    const handlerA = prismy([], () => {
+    const handlerA = Handler([], () => {
       return res('a')
     })
-    const handlerB = prismy([routeParamSelector('not-id')], (notId) => {
+    const handlerB = Handler([routeParamSelector('not-id')], (notId) => {
       return res(notId)
     })
 
@@ -104,7 +105,7 @@ describe('router', () => {
       Route('/b/:id', handlerB),
     ])
 
-    await testHandler(routerHandler, async (url) => {
+    await testHandler(prismy(routerHandler), async (url) => {
       const response = await got(join(url, 'b/test-param'), {
         method: 'GET',
       })
@@ -118,10 +119,10 @@ describe('router', () => {
 
   it('throws 404 error when no route found', async () => {
     expect.assertions(1)
-    const handlerA = prismy([], () => {
+    const handlerA = Handler([], () => {
       return res('a')
     })
-    const handlerB = prismy([], () => {
+    const handlerB = Handler([], () => {
       return res('b')
     })
 
@@ -130,7 +131,7 @@ describe('router', () => {
       Route(['/', 'post'], handlerB),
     ])
 
-    await testHandler(routerHandler, async (url) => {
+    await testHandler(prismy(routerHandler), async (url) => {
       const response = await got(url, {
         method: 'PUT',
         throwHttpErrors: false,
