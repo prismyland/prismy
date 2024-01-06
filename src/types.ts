@@ -1,4 +1,5 @@
 import { IncomingMessage, ServerResponse, OutgoingHttpHeaders } from 'http'
+import { PrismySelector } from './selectors/createSelector'
 
 /**
  * Request context used in selectors
@@ -10,33 +11,14 @@ export interface PrismyContext {
 }
 
 /**
- * A Synchronous argument selector
- *
- * @public
- */
-export type SyncSelector<T> = () => T
-/**
- * An asynchronous argument selector
- *
- * @public
- */
-export type AsyncSelector<T> = () => Promise<T>
-/**
- * An argument selector to extract arguments for the handler
- *
- * @public
- */
-export type Selector<T> = SyncSelector<T> | AsyncSelector<T>
-
-/**
  * Get the return type array of Selectors
  *
  * @public
  */
 export type SelectorTuple<SS extends unknown[]> = [
   ...{
-    [I in keyof SS]: Selector<SS[I]>
-  }
+    [I in keyof SS]: PrismySelector<SS[I]>
+  },
 ]
 
 /**
@@ -44,17 +26,19 @@ export type SelectorTuple<SS extends unknown[]> = [
  *
  * @public
  */
-export type SelectorReturnType<S> = S extends Selector<infer T> ? T : never
+export type SelectorReturnType<S> = S extends PrismySelector<infer T>
+  ? T
+  : never
 
 /**
  * Get the return type array of Selectors
  *
  * @public
  */
-export type SelectorReturnTypeTuple<SS extends Selector<unknown>[]> = [
+export type SelectorReturnTypeTuple<SS extends PrismySelector<unknown>[]> = [
   ...{
     [I in keyof SS]: SelectorReturnType<SS[I]>
-  }
+  },
 ]
 
 /**
@@ -105,8 +89,11 @@ export interface PrismyPureMiddleware {
  *
  * @public
  */
-export interface PrismyMiddleware<A extends any[]> extends PrismyPureMiddleware {
-  mhandler(next: () => Promise<ResponseObject<any>>): (...args: A) => Promise<ResponseObject<any>>
+export interface PrismyMiddleware<A extends any[]>
+  extends PrismyPureMiddleware {
+  mhandler(
+    next: () => Promise<ResponseObject<any>>,
+  ): (...args: A) => Promise<ResponseObject<any>>
 }
 
 /**

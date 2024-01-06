@@ -1,15 +1,15 @@
 import { AsyncLocalStorage } from 'async_hooks'
 import { IncomingMessage, ServerResponse } from 'http'
 import { createErrorResObject } from './error'
+import { PrismySelector } from './selectors/createSelector'
 import { send } from './send'
 import {
   ResponseObject,
-  Selector,
   PrismyPureMiddleware,
   Promisable,
   PrismyContext,
   PrismyHandler,
-  SelectorReturnTypeTuple
+  SelectorReturnTypeTuple,
 } from './types'
 import { compileHandler } from './utils'
 
@@ -46,10 +46,12 @@ export function getPrismyContext(): PrismyContext {
  * @public
  *
  */
-export function prismy<S extends Selector<unknown>[]>(
+export function prismy<S extends PrismySelector<unknown>[]>(
   selectors: [...S],
-  handler: (...args: SelectorReturnTypeTuple<S>) => Promisable<ResponseObject<any>>,
-  middlewareList: PrismyPureMiddleware[] = []
+  handler: (
+    ...args: SelectorReturnTypeTuple<S>
+  ) => Promisable<ResponseObject<any>>,
+  middlewareList: PrismyPureMiddleware[] = [],
 ): PrismyHandler<SelectorReturnTypeTuple<S>> {
   const resResolver = async () => {
     const next = async () => compileHandler(selectors, handler)()
@@ -72,9 +74,12 @@ export function prismy<S extends Selector<unknown>[]>(
     return resObject
   }
 
-  async function requestListener(request: IncomingMessage, response: ServerResponse) {
+  async function requestListener(
+    request: IncomingMessage,
+    response: ServerResponse,
+  ) {
     const context: PrismyContext = {
-      req: request
+      req: request,
     }
     prismyContextStorage.run(context, async () => {
       const resObject = await resResolver()

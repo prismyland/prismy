@@ -1,4 +1,4 @@
-import { SyncSelector } from '../types'
+import { createPrismySelector, PrismySelector } from './createSelector'
 import { urlSelector } from './url'
 
 /**
@@ -22,11 +22,12 @@ import { urlSelector } from './url'
  */
 export const SearchParamSelector: (
   name: string,
-) => SyncSelector<string | null> = (name) => () => {
-  const url = urlSelector()
+) => PrismySelector<string | null> = (name) =>
+  createPrismySelector(async () => {
+    const url = await urlSelector.resolve()
 
-  return url.searchParams.get(name)
-}
+    return url.searchParams.get(name)
+  })
 
 /**
  * Create a selector which resolves a value list of the search param.
@@ -52,8 +53,9 @@ export const SearchParamSelector: (
  */
 export const SearchParamListSelector: (
   name: string,
-) => SyncSelector<string[]> = (name) => () => {
-  const url = urlSelector()
+) => PrismySelector<string[]> = (name) =>
+  createPrismySelector(async () => {
+    const url = await urlSelector.resolve()
 
-  return url.searchParams.getAll(name)
-}
+    return url.searchParams.getAll(name)
+  })

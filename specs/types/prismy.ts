@@ -3,13 +3,13 @@ import {
   urlSelector,
   methodSelector,
   res,
-  AsyncSelector,
   ResponseObject,
 } from '../../src'
 import { URL } from 'url'
 import { expectType } from '../helpers'
+import { PrismySelector } from '../../src/selectors/createSelector'
 
-const asyncUrlSelector: AsyncSelector<URL> = async () => urlSelector()
+const asyncUrlSelector: PrismySelector<URL> = urlSelector
 
 const handler1 = prismy(
   [urlSelector, methodSelector, asyncUrlSelector],

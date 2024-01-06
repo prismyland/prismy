@@ -1,20 +1,37 @@
-import { PrismyContext, Selector, SyncSelector, PrismyHandler } from './types'
+import { PrismyContext, PrismyHandler } from './types'
 import { methodSelector, urlSelector } from './selectors'
 import { match as createMatchFunction } from 'path-to-regexp'
 import { getPrismyContext, prismy } from './prismy'
 import { createError } from './error'
+import {
+  createPrismySelector,
+  PrismySelector,
+} from './selectors/createSelector'
 
-export type RouteMethod = 'get' | 'put' | 'patch' | 'post' | 'delete' | 'options' | '*'
+export type RouteMethod =
+  | 'get'
+  | 'put'
+  | 'patch'
+  | 'post'
+  | 'delete'
+  | 'options'
+  | '*'
 export type RouteIndicator = [string, RouteMethod]
-export type RouteParams<T = unknown> = [string | RouteIndicator, PrismyHandler<T[]>]
+export type RouteParams<T = unknown> = [
+  string | RouteIndicator,
+  PrismyHandler<T[]>,
+]
 
 type Route<T = unknown> = {
   indicator: RouteIndicator
   listener: PrismyHandler<T[]>
 }
 
-export function router(routes: RouteParams<unknown>[], options: PrismyRouterOptions = {}) {
-  const compiledRoutes = routes.map(routeParams => {
+export function router(
+  routes: RouteParams<unknown>[],
+  options: PrismyRouterOptions = {},
+) {
+  const compiledRoutes = routes.map((routeParams) => {
     const { indicator, listener } = createRoute(routeParams)
     const [targetPath, method] = indicator
     const compiledTargetPath = removeTralingSlash(targetPath)
@@ -23,7 +40,7 @@ export function router(routes: RouteParams<unknown>[], options: PrismyRouterOpti
       method,
       match,
       listener,
-      targetPath: compiledTargetPath
+      targetPath: compiledTargetPath,
     }
   })
   return prismy([methodSelector, urlSelector], (method, url) => {
@@ -53,17 +70,19 @@ export function router(routes: RouteParams<unknown>[], options: PrismyRouterOpti
   })
 }
 
-function createRoute<T = unknown>(routeParams: RouteParams<Selector<T>[]>): Route<Selector<T>[]> {
+function createRoute<T = unknown>(
+  routeParams: RouteParams<PrismySelector<T>[]>,
+): Route<PrismySelector<T>[]> {
   const [indicator, listener] = routeParams
   if (typeof indicator === 'string') {
     return {
       indicator: [indicator, 'get'],
-      listener
+      listener,
     }
   }
   return {
     indicator,
-    listener
+    listener,
   }
 }
 const routeParamsSymbol = Symbol('route params')
@@ -76,12 +95,14 @@ function getRouteParamsFromPrismyContext(context: PrismyContext) {
   return (context as any)[routeParamsSymbol]
 }
 
-export function routeParamSelector(paramName: string): SyncSelector<string | null> {
-  return () => {
+export function routeParamSelector(
+  paramName: string,
+): PrismySelector<string | null> {
+  return createPrismySelector(() => {
     const context = getPrismyContext()
     const param = getRouteParamsFromPrismyContext(context)[paramName]
     return param != null ? param : null
-  }
+  })
 }
 
 interface PrismyRouterOptions {}

@@ -1,4 +1,9 @@
-import { ResponseObject, Selector, SelectorReturnTypeTuple, PrismyMiddleware } from './types'
+import { PrismySelector } from './selectors/createSelector'
+import {
+  ResponseObject,
+  SelectorReturnTypeTuple,
+  PrismyMiddleware,
+} from './types'
 import { compileHandler } from './utils'
 
 /**
@@ -36,11 +41,11 @@ import { compileHandler } from './utils'
  *
  * @public
  */
-export function middleware<SS extends Selector<unknown>[]>(
+export function middleware<SS extends PrismySelector<unknown>[]>(
   selectors: [...SS],
   mhandler: (
-    next: () => Promise<ResponseObject<any>>
-  ) => (...args: SelectorReturnTypeTuple<SS>) => Promise<ResponseObject<any>>
+    next: () => Promise<ResponseObject<any>>,
+  ) => (...args: SelectorReturnTypeTuple<SS>) => Promise<ResponseObject<any>>,
 ): PrismyMiddleware<SelectorReturnTypeTuple<SS>> {
   const middleware = () => async (next: () => Promise<ResponseObject<any>>) =>
     compileHandler(selectors, mhandler(next))()

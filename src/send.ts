@@ -15,7 +15,9 @@ import { ResponseObject } from './types'
 export const send = (
   request: IncomingMessage,
   response: ServerResponse,
-  sendable: ((request: IncomingMessage, response: ServerResponse) => void) | ResponseObject<any>
+  sendable:
+    | ((request: IncomingMessage, response: ServerResponse) => void)
+    | ResponseObject<any>,
 ) => {
   if (typeof sendable === 'function') {
     sendable(request, response)
@@ -62,7 +64,9 @@ export const send = (
     }
   }
 
-  const stringifiedBody = bodyIsNotString ? JSON.stringify(body) : body.toString()
+  const stringifiedBody = bodyIsNotString
+    ? JSON.stringify(body)
+    : body.toString()
 
   response.setHeader('Content-Length', Buffer.byteLength(stringifiedBody))
   response.end(stringifiedBody)

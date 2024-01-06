@@ -2,7 +2,7 @@ import { parse } from 'querystring'
 import { getPrismyContext } from '../prismy'
 import { readJsonBody, readTextBody } from '../bodyReaders'
 import { createError } from '../error'
-import { AsyncSelector } from '../types'
+import { createPrismySelector, PrismySelector } from './createSelector'
 
 /**
  * Options for {@link bodySelector}
@@ -41,8 +41,8 @@ export interface BodySelectorOptions {
  */
 export function BodySelector(
   options?: BodySelectorOptions,
-): AsyncSelector<object | string> {
-  return async () => {
+): PrismySelector<object | string> {
+  return createPrismySelector(async () => {
     const { req } = getPrismyContext()
     const type = req.headers['content-type']
 
@@ -59,7 +59,7 @@ export function BodySelector(
     } else {
       return readTextBody(req, options)
     }
-  }
+  })
 }
 
 /**

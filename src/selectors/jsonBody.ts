@@ -1,7 +1,7 @@
 import { readJsonBody } from '../bodyReaders'
 import { createError } from '../error'
-import { AsyncSelector } from '../types'
 import { getPrismyContext } from '../prismy'
+import { createPrismySelector, PrismySelector } from './createSelector'
 
 /**
  * Options for {@link createJsonBodySelector}
@@ -43,8 +43,8 @@ export interface JsonBodySelectorOptions {
  */
 export function JsonBodySelector(
   options?: JsonBodySelectorOptions,
-): AsyncSelector<any> {
-  return () => {
+): PrismySelector<any> {
+  return createPrismySelector(() => {
     const { req } = getPrismyContext()
     const contentType = req.headers['content-type']
     if (!isContentTypeIsApplicationJSON(contentType)) {
@@ -55,7 +55,7 @@ export function JsonBodySelector(
     }
 
     return readJsonBody(req, options)
-  }
+  })
 }
 
 function isContentTypeIsApplicationJSON(contentType: string | undefined) {

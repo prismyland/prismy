@@ -2,15 +2,15 @@ import {
   middleware,
   urlSelector,
   methodSelector,
-  AsyncSelector,
   ResponseObject,
   prismy,
   res,
 } from '../../src'
 import { URL } from 'url'
 import { expectType } from '../helpers'
+import { PrismySelector } from '../../src/selectors/createSelector'
 
-const asyncUrlSelector: AsyncSelector<URL> = async () => urlSelector()
+const asyncUrlSelector: PrismySelector<URL> = urlSelector
 
 const middleware1 = middleware(
   [urlSelector, methodSelector, asyncUrlSelector],

@@ -1,4 +1,5 @@
-import { Selector, SelectorReturnTypeTuple } from './types'
+import { PrismySelector } from './selectors/createSelector'
+import { SelectorReturnTypeTuple } from './types'
 
 /**
  * Compile a handler into a runnable function by resolving selectors
@@ -10,7 +11,7 @@ import { Selector, SelectorReturnTypeTuple } from './types'
  *
  * @internal
  */
-export function compileHandler<S extends Selector<unknown>[], R>(
+export function compileHandler<S extends PrismySelector<unknown>[], R>(
   selectors: [...S],
   handler: (...args: SelectorReturnTypeTuple<S>) => R,
 ): () => Promise<R> {
@@ -29,12 +30,12 @@ export function compileHandler<S extends Selector<unknown>[], R>(
  *
  * @internal
  */
-async function resolveSelectors<S extends Selector<unknown>[]>(
+async function resolveSelectors<S extends PrismySelector<unknown>[]>(
   selectors: [...S],
 ): Promise<SelectorReturnTypeTuple<S>> {
   const resolvedValues = []
   for (const selector of selectors) {
-    const resolvedValue = await selector()
+    const resolvedValue = await selector.resolve()
     resolvedValues.push(resolvedValue)
   }
 

@@ -1,6 +1,6 @@
 import { URL } from 'url'
 import { getPrismyContext } from '../prismy'
-import { SyncSelector } from '../types'
+import { createPrismySelector } from './createSelector'
 
 const urlSymbol = Symbol('prismy-url')
 
@@ -23,7 +23,7 @@ const urlSymbol = Symbol('prismy-url')
  *
  * @public
  */
-export const urlSelector: SyncSelector<URL> = () => {
+export const urlSelector = createPrismySelector((): URL => {
   const context = getPrismyContext()
   let url: URL | undefined = context[urlSymbol]
   if (url == null) {
@@ -35,4 +35,4 @@ export const urlSelector: SyncSelector<URL> = () => {
     )
   }
   return url
-}
+})
