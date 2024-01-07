@@ -20,7 +20,7 @@ const rawBodyMap = new WeakMap()
  */
 export const readBufferBody = async (
   req: IncomingMessage,
-  options?: BufferBodyOptions
+  options?: BufferBodyOptions,
 ): Promise<Buffer | string> => {
   const { limit, encoding } = resolveBufferBodyOptions(req, options)
   const length = req.headers['content-length']
@@ -57,11 +57,11 @@ export const readBufferBody = async (
  */
 export const readTextBody = async (
   req: IncomingMessage,
-  options?: BufferBodyOptions
+  options?: BufferBodyOptions,
 ): Promise<string> => {
   const { encoding } = resolveBufferBodyOptions(req, options)
   const body = await readBufferBody(req, options)
-  return body.toString(encoding)
+  return body.toString(encoding as any)
 }
 
 /**
@@ -75,7 +75,7 @@ export const readTextBody = async (
  */
 export const readJsonBody = async (
   req: IncomingMessage,
-  options?: BufferBodyOptions
+  options?: BufferBodyOptions,
 ): Promise<object> => {
   const body = await readTextBody(req, options)
   try {
@@ -87,7 +87,7 @@ export const readJsonBody = async (
 
 function resolveBufferBodyOptions(
   req: IncomingMessage,
-  options?: BufferBodyOptions
+  options?: BufferBodyOptions,
 ): BufferBodyOptions {
   const type = req.headers['content-type'] || 'text/plain'
   let { limit = '1mb', encoding } = options || {}
