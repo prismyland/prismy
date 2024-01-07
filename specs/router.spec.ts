@@ -143,4 +143,94 @@ describe('router', () => {
       })
     })
   })
+
+  it('uses custom not found handler if set', async () => {
+    expect.assertions(1)
+    const handlerA = Handler([], () => {
+      return res('a')
+    })
+    const handlerB = Handler([], () => {
+      return res('b')
+    })
+    const customNotFoundHandler = Handler([], () => {
+      return res('Error: Customized Not Found Response', 404)
+    })
+
+    const routerHandler = router(
+      [Route(['/', 'get'], handlerA), Route(['/', 'post'], handlerB)],
+      {
+        notFoundHandler: customNotFoundHandler,
+      },
+    )
+
+    await testHandler(prismy(routerHandler), async (url) => {
+      const response = await got(url, {
+        method: 'PUT',
+        throwHttpErrors: false,
+      })
+
+      expect(response).toMatchObject({
+        statusCode: 404,
+        body: expect.stringContaining('Error: Customized Not Found Response'),
+      })
+    })
+  })
+
+  it('prepends prefix to route path', async () => {
+    expect.assertions(1)
+    const handlerA = Handler([], () => {
+      return res('a')
+    })
+    const handlerB = Handler([], () => {
+      return res('b')
+    })
+
+    const routerHandler = router(
+      [Route(['/', 'get'], handlerA), Route(['/', 'post'], handlerB)],
+      {
+        prefix: '/admin',
+      },
+    )
+
+    await testHandler(prismy(routerHandler), async (url) => {
+      const response = await got(join(url, 'admin'), {
+        method: 'GET',
+        throwHttpErrors: false,
+      })
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+        body: expect.stringContaining('a'),
+      })
+    })
+  })
+
+  it('prepends prefix to route path (without root `/`)', async () => {
+    expect.assertions(1)
+    const handlerA = Handler([], () => {
+      return res('a')
+    })
+    const handlerB = Handler([], () => {
+      return res('b')
+    })
+
+    const routerHandler = router(
+      [Route(['/', 'get'], handlerA), Route(['/', 'post'], handlerB)],
+      {
+        prefix: '/admin',
+      },
+    )
+
+    await testHandler(prismy(routerHandler), async (url) => {
+      const response = await got(join(url, 'admin'), {
+        method: 'GET',
+        throwHttpErrors: false,
+      })
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+        body: expect.stringContaining('a'),
+      })
+    })
+  })
 })

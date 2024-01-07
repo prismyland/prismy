@@ -9,6 +9,7 @@ import {
 } from './selectors/createSelector'
 import { PrismyMiddleware } from '.'
 import { Handler, PrismyHandler } from './handler'
+import { join as joinPath } from 'path'
 
 export type RouteMethod =
   | 'get'
@@ -40,12 +41,14 @@ export class PrismyRoute {
 
 export function router(
   routes: PrismyRoute[],
-  { prefix, middleware = [] }: PrismyRouterOptions = {},
+  { prefix = '/', middleware = [], notFoundHandler }: PrismyRouterOptions = {},
 ) {
   const compiledRoutes = routes.map((route) => {
     const { indicator, listener } = route
     const [targetPath, method] = indicator
-    const compiledTargetPath = removeTralingSlash(targetPath)
+    const compiledTargetPath = removeTralingSlash(
+      joinPath('/', prefix, targetPath),
+    )
     const match = createMatchFunction(compiledTargetPath, { strict: false })
     return {
       method,
@@ -80,6 +83,9 @@ export function router(
         return route.listener.handle()
       }
 
+      if (notFoundHandler != null) {
+        return notFoundHandler.handle()
+      }
       throw createError(404, 'Not Found')
     },
     middleware,
@@ -119,6 +125,7 @@ export function routeParamSelector(
 interface PrismyRouterOptions {
   prefix?: string
   middleware?: PrismyMiddleware<any[]>[]
+  notFoundHandler?: PrismyHandler
 }
 
 function removeTralingSlash(value: string) {

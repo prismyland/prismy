@@ -9,7 +9,9 @@ import {
 import { PrismySelector } from './selectors/createSelector'
 import { compileHandler } from './utils'
 
-export class PrismyHandler<S extends PrismySelector<any>[]> {
+export class PrismyHandler<
+  S extends PrismySelector<any>[] = PrismySelector<any>[],
+> {
   constructor(
     public selectors: [...S],
     /**
