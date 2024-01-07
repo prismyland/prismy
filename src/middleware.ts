@@ -42,7 +42,7 @@ import { compileHandler } from './utils'
  *
  * @public
  */
-export function middleware<SS extends PrismySelector<unknown>[]>(
+export function Middleware<SS extends PrismySelector<unknown>[]>(
   selectors: [...SS],
   mhandler: (
     next: PrismyNextFunction,

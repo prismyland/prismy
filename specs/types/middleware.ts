@@ -1,5 +1,5 @@
 import {
-  middleware,
+  Middleware,
   urlSelector,
   methodSelector,
   ResponseObject,
@@ -9,7 +9,7 @@ import {
 import { URL } from 'url'
 import { expectType } from '../helpers'
 
-const middleware1 = middleware(
+const middleware1 = Middleware(
   [urlSelector, methodSelector],
   (next) => async (url, method) => {
     expectType<URL>(url)
