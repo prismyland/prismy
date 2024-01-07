@@ -1,5 +1,4 @@
-import fetch from 'node-fetch'
-import { testHandler } from './helpers'
+import { testFetch, testHandler } from './helpers'
 import { prismy, res, Middleware, getPrismyContext } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
 
@@ -27,9 +26,9 @@ describe('middleware', () => {
     )
 
     await testHandler(handler, async (url) => {
-      const response = await fetch(url)
-      expect(response.status).toBe(500)
-      expect(await response.text()).toBe('/ : Hey!')
+      const response = await testFetch(url)
+
+      expect(response).toMatchObject({ statusCode: 500, body: '/ : Hey!' })
     })
   })
 
@@ -56,9 +55,9 @@ describe('middleware', () => {
     )
 
     await testHandler(handler, async (url) => {
-      const response = await fetch(url)
-      expect(response.status).toBe(500)
-      expect(await response.text()).toBe('/ : Hey!')
+      const response = await testFetch(url)
+
+      expect(response).toMatchObject({ statusCode: 500, body: '/ : Hey!' })
     })
   })
 })

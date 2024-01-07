@@ -1,5 +1,4 @@
-import fetch from 'node-fetch'
-import { testHandler } from './helpers'
+import { testFetch, testHandler } from './helpers'
 import { prismy, res, err, getPrismyContext, Middleware } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
 import { Handler } from '../src/handler'
@@ -9,9 +8,12 @@ describe('prismy', () => {
     const handler = prismy([], () => res('Hello, World!'))
 
     await testHandler(handler, async (url) => {
-      const response = await fetch(url)
-      expect(response.status).toBe(200)
-      expect(await response.text()).toBe('Hello, World!')
+      const response = await testFetch(url)
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+        body: 'Hello, World!',
+      })
     })
   })
 
@@ -23,9 +25,12 @@ describe('prismy', () => {
     const handler = prismy([rawUrlSelector], (url) => res(url))
 
     await testHandler(handler, async (url) => {
-      const response = await fetch(url)
-      expect(response.status).toBe(200)
-      expect(await response.text()).toBe('/')
+      const response = await testFetch(url)
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+        body: '/',
+      })
     })
   })
 
@@ -36,9 +41,12 @@ describe('prismy', () => {
     const handler = prismy([asyncRawUrlSelector], (url) => res(url))
 
     await testHandler(handler, async (url) => {
-      const response = await fetch(url)
-      expect(response.status).toBe(200)
-      expect(await response.text()).toBe('/')
+      const response = await testFetch(url)
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+        body: '/',
+      })
     })
   })
 
@@ -80,9 +88,11 @@ describe('prismy', () => {
     )
 
     await testHandler(handler, async (url) => {
-      const response = await fetch(url)
-      expect(response.status).toBe(500)
-      expect(await response.text()).toBe('Hey!')
+      const response = await testFetch(url)
+      expect(response).toMatchObject({
+        statusCode: 500,
+        body: 'Hey!',
+      })
     })
   })
 
@@ -109,9 +119,12 @@ describe('prismy', () => {
     )
 
     await testHandler(handler, async (url) => {
-      const response = await fetch(url, {})
-      expect(response.status).toBe(500)
-      expect(await response.text()).toBe('Hey!')
+      const response = await testFetch(url, {})
+
+      expect(response).toMatchObject({
+        statusCode: 500,
+        body: 'Hey!',
+      })
     })
   })
 
@@ -124,12 +137,12 @@ describe('prismy', () => {
       [],
     )
     await testHandler(handler, async (url) => {
-      const response = await fetch(url, {})
+      const response = await testFetch(url, {})
 
-      expect(response.status).toBe(500)
-      expect(await response.text()).toEqual(
-        expect.stringContaining('Error: Hey!'),
-      )
+      expect(response).toMatchObject({
+        statusCode: 500,
+        body: expect.stringContaining('Error: Hey!'),
+      })
     })
   })
 
@@ -145,12 +158,12 @@ describe('prismy', () => {
       [],
     )
     await testHandler(handler, async (url) => {
-      const response = await fetch(url, {})
+      const response = await testFetch(url, {})
 
-      expect(response.status).toBe(500)
-      expect(await response.text()).toEqual(
-        expect.stringContaining('Error: Hey!'),
-      )
+      expect(response).toMatchObject({
+        statusCode: 500,
+        body: expect.stringContaining('Error: Hey!'),
+      })
     })
   })
 })

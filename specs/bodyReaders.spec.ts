@@ -1,6 +1,6 @@
 import got from 'got'
 import getRawBody from 'raw-body'
-import { middleware, prismy, res, getPrismyContext } from '../src'
+import { Middleware, prismy, res, getPrismyContext } from '../src'
 import { readBufferBody, readJsonBody, readTextBody } from '../src/bodyReaders'
 import { createPrismySelector } from '../src/selectors/createSelector'
 import { testHandler } from './helpers'
@@ -52,7 +52,7 @@ describe('readBufferBody', () => {
         return res(body)
       },
       [
-        middleware([], (next) => async () => {
+        Middleware([], (next) => async () => {
           try {
             return await next()
           } catch (error) {

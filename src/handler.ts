@@ -33,7 +33,6 @@ export class PrismyHandler<
     const pipe = this.middlewareList.reduce((next, middleware) => {
       return middleware(next)
     }, next)
-
     let resObject
     try {
       resObject = await pipe()
