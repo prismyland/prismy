@@ -31,7 +31,7 @@ export class PrismyHandler<
     )
 
     const pipe = this.middlewareList.reduce((next, middleware) => {
-      return middleware(next)
+      return middleware.pipe(next)
     }, next)
     let resObject
     try {

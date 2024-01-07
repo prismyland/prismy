@@ -72,18 +72,6 @@ export type Res<B> = ResponseObject<B>
 export type PrismyNextFunction = () => Promise<ResponseObject<any>>
 
 /**
- * prismy compatible middleware
- *
- * @public
- */
-export interface PrismyMiddleware<A extends any[]> {
-  (next: PrismyNextFunction): PrismyNextFunction
-  mhandler: (
-    next: PrismyNextFunction,
-  ) => (...args: A) => Promise<ResponseObject<any>>
-}
-
-/**
  * @public
  */
 export interface BufferBodyOptions {

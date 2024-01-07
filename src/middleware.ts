@@ -1,14 +1,29 @@
 import { PrismyNextFunction } from '.'
 import { PrismySelector } from './selectors/createSelector'
-import {
-  ResponseObject,
-  SelectorReturnTypeTuple,
-  PrismyMiddleware,
-} from './types'
+import { ResponseObject, SelectorReturnTypeTuple } from './types'
 import { compileHandler } from './utils'
 
+export class PrismyMiddleware<
+  S extends PrismySelector<any>[] = PrismySelector<any>[],
+> {
+  constructor(
+    public selectors: [...S],
+    /**
+     * PrismyHandler exposes `handler` for unit testing the handler.
+     * @param args selected arguments
+     */
+    public handler: (
+      next: PrismyNextFunction,
+    ) => (...args: SelectorReturnTypeTuple<S>) => Promise<ResponseObject<any>>,
+  ) {}
+
+  pipe(next: PrismyNextFunction) {
+    return compileHandler(this.selectors, this.handler(next))
+  }
+}
+
 /**
- * Factory function to create a prismy compatible middleware. Accepts selectors to help with
+ * Factory function to create a prismy middleware. Accepts selectors to help with
  * testing, DI etc.
  *
  * @example
@@ -30,28 +45,23 @@ import { compileHandler } from './utils'
  * array (`Selector<string>|Selector<number>[] `). Be careful when declaring the
  * array outside of the function call.
  *
- * Be carefuly to remember the mhandler is a function which returns an _async_ function.
+ * Be carefuly to remember the handler is a function which returns an _async_ function.
  * Not returning an async function can lead to strange type error messages.
  *
  * Another reason for long type error messages is not having `{"strict": true}` setting in
  * tsconfig.json or not compiling with --strict.
  *
  * @param selectors - Tuple of selectors
- * @param mhandler - Middleware handler
+ * @param handler - Middleware handler
  * @returns A prismy compatible middleware
  *
  * @public
  */
-export function Middleware<SS extends PrismySelector<unknown>[]>(
+export function Middleware<SS extends PrismySelector<any>[]>(
   selectors: [...SS],
-  mhandler: (
+  handler: (
     next: PrismyNextFunction,
   ) => (...args: SelectorReturnTypeTuple<SS>) => Promise<ResponseObject<any>>,
-): PrismyMiddleware<SelectorReturnTypeTuple<SS>> {
-  const middleware = (next: PrismyNextFunction) => {
-    return compileHandler(selectors, mhandler(next))
-  }
-  middleware.mhandler = mhandler
-
-  return middleware
+): PrismyMiddleware<SS> {
+  return new PrismyMiddleware(selectors, handler)
 }

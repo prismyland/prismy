@@ -24,9 +24,8 @@ expectType<
   ) => (
     url: URL,
     method: string | undefined,
-    url2: URL,
   ) => ResponseObject<any> | Promise<ResponseObject<any>>
->(middleware1.mhandler)
+>(middleware1.handler)
 
 expectType<
   (
@@ -34,8 +33,7 @@ expectType<
   ) => (
     url: URL,
     method: string | undefined,
-    url2: URL,
   ) => ResponseObject<any> | Promise<ResponseObject<any>>
->(middleware1.mhandler)
+>(middleware1.handler)
 
 prismy([], () => res(''), [middleware1])

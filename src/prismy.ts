@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from 'async_hooks'
 import { IncomingMessage, RequestListener, ServerResponse } from 'http'
-import { PrismyMiddleware } from '.'
+import { PrismyMiddleware } from './middleware'
 import { Handler, PrismyHandler } from './handler'
 import { PrismySelector } from './selectors/createSelector'
 import { send } from './send'
@@ -47,19 +47,19 @@ export function prismy<S extends PrismySelector<unknown>[]>(
  * @param handler
  * @param middlewareList
  */
-export function prismy<S extends PrismySelector<unknown>[]>(
+export function prismy<S extends PrismySelector<any>[]>(
   selectors: [...S],
   handler: (
     ...args: SelectorReturnTypeTuple<S>
   ) => MaybePromise<ResponseObject<any>>,
-  middlewareList?: PrismyMiddleware<any[]>[],
+  middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
 ): RequestListener
 export function prismy<S extends PrismySelector<unknown>[]>(
   selectorsOrPrismyHandler: [...S] | PrismyHandler<S>,
   handler?: (
     ...args: SelectorReturnTypeTuple<S>
   ) => MaybePromise<ResponseObject<any>>,
-  middlewareList?: PrismyMiddleware<any[]>[],
+  middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
 ): RequestListener {
   const injectedHandler =
     selectorsOrPrismyHandler instanceof PrismyHandler
