@@ -1,6 +1,6 @@
-import got from 'got'
+import fetch from 'node-fetch'
 import { testHandler } from './helpers'
-import { prismy, res, err, getPrismyContext, middleware } from '../src'
+import { prismy, res, err, getPrismyContext, Middleware } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
 import { Handler } from '../src/handler'
 
@@ -9,11 +9,9 @@ describe('prismy', () => {
     const handler = prismy([], () => res('Hello, World!'))
 
     await testHandler(handler, async (url) => {
-      const response = await got(url)
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'Hello, World!',
-      })
+      const response = await fetch(url)
+      expect(response.status).toBe(200)
+      expect(await response.text()).toBe('Hello, World!')
     })
   })
 
@@ -25,11 +23,9 @@ describe('prismy', () => {
     const handler = prismy([rawUrlSelector], (url) => res(url))
 
     await testHandler(handler, async (url) => {
-      const response = await got(url)
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: '/',
-      })
+      const response = await fetch(url)
+      expect(response.status).toBe(200)
+      expect(await response.text()).toBe('/')
     })
   })
 
@@ -40,11 +36,9 @@ describe('prismy', () => {
     const handler = prismy([asyncRawUrlSelector], (url) => res(url))
 
     await testHandler(handler, async (url) => {
-      const response = await got(url)
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: '/',
-      })
+      const response = await fetch(url)
+      expect(response.status).toBe(200)
+      expect(await response.text()).toBe('/')
     })
   })
 
@@ -65,7 +59,7 @@ describe('prismy', () => {
   })
 
   it('applies middleware', async () => {
-    const errorMiddleware = middleware([], (next) => {
+    const errorMiddleware = Middleware([], (next) => {
       return async () => {
         try {
           return await next()
@@ -86,21 +80,17 @@ describe('prismy', () => {
     )
 
     await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        throwHttpErrors: false,
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: 'Hey!',
-      })
+      const response = await fetch(url)
+      expect(response.status).toBe(500)
+      expect(await response.text()).toBe('Hey!')
     })
   })
 
   it('applies middleware orderly', async () => {
-    const problematicMiddleware = middleware([], (next) => () => {
+    const problematicMiddleware = Middleware([], (next) => () => {
       throw new Error('Hey!')
     })
-    const errorMiddleware = middleware([], (next) => async () => {
+    const errorMiddleware = Middleware([], (next) => async () => {
       try {
         return await next()
       } catch (error) {
@@ -119,13 +109,9 @@ describe('prismy', () => {
     )
 
     await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        throwHttpErrors: false,
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: 'Hey!',
-      })
+      const response = await fetch(url, {})
+      expect(response.status).toBe(500)
+      expect(await response.text()).toBe('Hey!')
     })
   })
 
@@ -138,13 +124,12 @@ describe('prismy', () => {
       [],
     )
     await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        throwHttpErrors: false,
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: expect.stringContaining('Error: Hey!'),
-      })
+      const response = await fetch(url, {})
+
+      expect(response.status).toBe(500)
+      expect(await response.text()).toEqual(
+        expect.stringContaining('Error: Hey!'),
+      )
     })
   })
 
@@ -160,13 +145,12 @@ describe('prismy', () => {
       [],
     )
     await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        throwHttpErrors: false,
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: expect.stringContaining('Error: Hey!'),
-      })
+      const response = await fetch(url, {})
+
+      expect(response.status).toBe(500)
+      expect(await response.text()).toEqual(
+        expect.stringContaining('Error: Hey!'),
+      )
     })
   })
 })

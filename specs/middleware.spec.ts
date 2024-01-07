@@ -1,6 +1,6 @@
-import got from 'got'
+import fetch from 'node-fetch'
 import { testHandler } from './helpers'
-import { prismy, res, middleware, getPrismyContext } from '../src'
+import { prismy, res, Middleware, getPrismyContext } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
 
 describe('middleware', () => {
@@ -8,7 +8,7 @@ describe('middleware', () => {
     const rawUrlSelector = createPrismySelector(
       () => getPrismyContext().req.url!,
     )
-    const errorMiddleware = middleware(
+    const errorMiddleware = Middleware(
       [rawUrlSelector],
       (next) => async (url) => {
         try {
@@ -27,13 +27,9 @@ describe('middleware', () => {
     )
 
     await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        throwHttpErrors: false,
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: '/ : Hey!',
-      })
+      const response = await fetch(url)
+      expect(response.status).toBe(500)
+      expect(await response.text()).toBe('/ : Hey!')
     })
   })
 
@@ -41,7 +37,7 @@ describe('middleware', () => {
     const asyncRawUrlSelector = createPrismySelector(
       async () => getPrismyContext().req.url!,
     )
-    const errorMiddleware = middleware(
+    const errorMiddleware = Middleware(
       [asyncRawUrlSelector],
       (next) => async (url) => {
         try {
@@ -60,13 +56,9 @@ describe('middleware', () => {
     )
 
     await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        throwHttpErrors: false,
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: '/ : Hey!',
-      })
+      const response = await fetch(url)
+      expect(response.status).toBe(500)
+      expect(await response.text()).toBe('/ : Hey!')
     })
   })
 })
