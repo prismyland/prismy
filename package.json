@@ -3,12 +3,13 @@
   "version": "3.0.0",
   "description": ":rainbow: Simple and fast type safe server library.",
   "keywords": [
-    "micro",
-    "service",
-    "microservice",
-    "serverless",
-    "API",
-    "now"
+    "http",
+    "server",
+    "web",
+    "type",
+    "type-safe",
+    "lightweight",
+    "fast"
   ],
   "author": "Junyoung Choi <rokt33r.choi@gmail.com>",
   "homepage": "https://github.com/prismyland/prismy",
