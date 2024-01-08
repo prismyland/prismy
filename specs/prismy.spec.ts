@@ -1,4 +1,3 @@
-import { testFetch, testHandler } from './helpers'
 import {
   prismy,
   getPrismyContext,
@@ -8,18 +7,25 @@ import {
 } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
 import { Handler } from '../src/handler'
+import { testServerManager } from './helpers'
+
+beforeAll(async () => {
+  await testServerManager.start()
+})
+
+afterAll(async () => {
+  await testServerManager.close()
+})
 
 describe('prismy', () => {
   it('returns node.js request handler', async () => {
     const handler = prismy([], () => Result('Hello, World!'))
 
-    await testHandler(handler, async (url) => {
-      const response = await testFetch(url)
+    const response = await testServerManager.loadRequestListenerAndCall(handler)
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'Hello, World!',
-      })
+    expect(response).toMatchObject({
+      statusCode: 200,
+      body: 'Hello, World!',
     })
   })
 
@@ -30,13 +36,11 @@ describe('prismy', () => {
     })
     const handler = prismy([rawUrlSelector], (url) => Result(url))
 
-    await testHandler(handler, async (url) => {
-      const response = await testFetch(url)
+    const response = await testServerManager.loadRequestListenerAndCall(handler)
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: '/',
-      })
+    expect(response).toMatchObject({
+      statusCode: 200,
+      body: '/',
     })
   })
 
@@ -46,13 +50,11 @@ describe('prismy', () => {
     )
     const handler = prismy([asyncRawUrlSelector], (url) => Result(url))
 
-    await testHandler(handler, async (url) => {
-      const response = await testFetch(url)
+    const response = await testServerManager.loadRequestListenerAndCall(handler)
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: '/',
-      })
+    expect(response).toMatchObject({
+      statusCode: 200,
+      body: '/',
     })
   })
 
@@ -93,12 +95,11 @@ describe('prismy', () => {
       [errorMiddleware],
     )
 
-    await testHandler(handler, async (url) => {
-      const response = await testFetch(url)
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: 'Hey!',
-      })
+    const response = await testServerManager.loadRequestListenerAndCall(handler)
+
+    expect(response).toMatchObject({
+      statusCode: 500,
+      body: 'Hey!',
     })
   })
 
@@ -124,13 +125,11 @@ describe('prismy', () => {
       [problematicMiddleware, errorMiddleware],
     )
 
-    await testHandler(handler, async (url) => {
-      const response = await testFetch(url, {})
+    const response = await testServerManager.loadRequestListenerAndCall(handler)
 
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: 'Hey!',
-      })
+    expect(response).toMatchObject({
+      statusCode: 500,
+      body: 'Hey!',
     })
   })
 
@@ -142,13 +141,12 @@ describe('prismy', () => {
       },
       [],
     )
-    await testHandler(handler, async (url) => {
-      const response = await testFetch(url, {})
 
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: expect.stringContaining('Error: Hey!'),
-      })
+    const response = await testServerManager.loadRequestListenerAndCall(handler)
+
+    expect(response).toMatchObject({
+      statusCode: 500,
+      body: expect.stringContaining('Error: Hey!'),
     })
   })
 
@@ -163,13 +161,12 @@ describe('prismy', () => {
       },
       [],
     )
-    await testHandler(handler, async (url) => {
-      const response = await testFetch(url, {})
 
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: expect.stringContaining('Error: Hey!'),
-      })
+    const response = await testServerManager.loadRequestListenerAndCall(handler)
+
+    expect(response).toMatchObject({
+      statusCode: 500,
+      body: expect.stringContaining('Error: Hey!'),
     })
   })
 })

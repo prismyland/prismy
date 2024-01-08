@@ -1,6 +1,14 @@
-import { testFetch, testHandler } from './helpers'
-import { prismy, Result, Middleware, getPrismyContext } from '../src'
+import { Result, Middleware, getPrismyContext, Handler } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
+import { testServerManager } from './helpers'
+
+beforeAll(async () => {
+  await testServerManager.start()
+})
+
+afterAll(async () => {
+  await testServerManager.close()
+})
 
 describe('middleware', () => {
   it('creates Middleware via selectors and middleware handler', async () => {
@@ -17,7 +25,7 @@ describe('middleware', () => {
         }
       },
     )
-    const handler = prismy(
+    const handler = Handler(
       [],
       () => {
         throw new Error('Hey!')
@@ -25,11 +33,9 @@ describe('middleware', () => {
       [errorMiddleware],
     )
 
-    await testHandler(handler, async (url) => {
-      const response = await testFetch(url)
+    const response = await testServerManager.loadAndCall(handler)
 
-      expect(response).toMatchObject({ statusCode: 500, body: '/ : Hey!' })
-    })
+    expect(response).toMatchObject({ statusCode: 500, body: '/ : Hey!' })
   })
 
   it('accepts async selectors', async () => {
@@ -46,7 +52,7 @@ describe('middleware', () => {
         }
       },
     )
-    const handler = prismy(
+    const handler = Handler(
       [],
       () => {
         throw new Error('Hey!')
@@ -54,10 +60,8 @@ describe('middleware', () => {
       [errorMiddleware],
     )
 
-    await testHandler(handler, async (url) => {
-      const response = await testFetch(url)
+    const response = await testServerManager.loadAndCall(handler)
 
-      expect(response).toMatchObject({ statusCode: 500, body: '/ : Hey!' })
-    })
+    expect(response).toMatchObject({ statusCode: 500, body: '/ : Hey!' })
   })
 })

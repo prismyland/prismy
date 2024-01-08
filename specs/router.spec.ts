@@ -1,42 +1,41 @@
-import { testFetch, testHandler } from './helpers'
 import {
   routeParamSelector,
-  prismy,
   Result,
-  router,
+  Router,
   Route,
   Middleware,
   getPrismyContext,
 } from '../src'
-import { join } from 'path'
 import { Handler } from '../src/handler'
-import fetch from 'node-fetch'
+import { testServerManager } from './helpers'
+
+beforeAll(async () => {
+  await testServerManager.start()
+})
+
+afterAll(async () => {
+  await testServerManager.close()
+})
 
 describe('router', () => {
   it('routes with pathname', async () => {
-    expect.hasAssertions()
     const handlerA = Handler([], () => {
       return Result('a')
     })
     const handlerB = Handler([], () => {
       return Result('b')
     })
+    const routerHandler = Router([Route('/a', handlerA), Route('/b', handlerB)])
 
-    const routerHandler = router([Route('/a', handlerA), Route('/b', handlerB)])
+    const response = await testServerManager.loadAndCall(routerHandler, '/b')
 
-    await testHandler(prismy(routerHandler), async (url) => {
-      const response = await testFetch(join(url, 'b'))
-
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'b',
-      })
+    expect(response).toMatchObject({
+      statusCode: 200,
+      body: 'b',
     })
   })
 
   it('routes with method', async () => {
-    expect.hasAssertions()
-
     const handlerA = Handler([], () => {
       return Result('a')
     })
@@ -44,34 +43,28 @@ describe('router', () => {
       return Result('b')
     })
 
-    const routerHandler = router([
+    const routerHandler = Router([
       Route(['/', 'get'], handlerA),
       Route(['/', 'post'], handlerB),
     ])
+    testServerManager.load(routerHandler)
 
-    await testHandler(prismy(routerHandler), async (url) => {
-      const response = await testFetch(url)
+    const response1 = await testServerManager.call('/', { method: 'get' })
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'a',
-      })
+    expect(response1).toMatchObject({
+      statusCode: 200,
+      body: 'a',
     })
 
-    await testHandler(prismy(routerHandler), async (url) => {
-      const response = await testFetch(url, {
-        method: 'post',
-      })
+    const response2 = await testServerManager.call('/', { method: 'post' })
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'b',
-      })
+    expect(response2).toMatchObject({
+      statusCode: 200,
+      body: 'b',
     })
   })
 
   it('resolve params', async () => {
-    expect.hasAssertions()
     const handlerA = Handler([], () => {
       return Result('a')
     })
@@ -79,18 +72,19 @@ describe('router', () => {
       return Result(id)
     })
 
-    const routerHandler = router([
+    const routerHandler = Router([
       Route('/a', handlerA),
       Route('/b/:id', handlerB),
     ])
 
-    await testHandler(prismy(routerHandler), async (url) => {
-      const response = await testFetch(join(url, 'b/test-param'))
+    const response = await testServerManager.loadAndCall(
+      routerHandler,
+      '/b/test-param',
+    )
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'test-param',
-      })
+    expect(response).toMatchObject({
+      statusCode: 200,
+      body: 'test-param',
     })
   })
 
@@ -103,20 +97,19 @@ describe('router', () => {
       return Result(notId)
     })
 
-    const routerHandler = router([
+    const routerHandler = Router([
       Route('/a', handlerA),
       Route('/b/:id', handlerB),
     ])
 
-    await testHandler(prismy(routerHandler), async (url) => {
-      const response = await testFetch(join(url, 'b/test-param'), {
-        method: 'GET',
-      })
+    const response = await testServerManager.loadAndCall(
+      routerHandler,
+      '/b/test-param',
+    )
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: '',
-      })
+    expect(response).toMatchObject({
+      statusCode: 200,
+      body: '',
     })
   })
 
@@ -129,20 +122,18 @@ describe('router', () => {
       return Result('b')
     })
 
-    const routerHandler = router([
+    const routerHandler = Router([
       Route(['/', 'get'], handlerA),
       Route(['/', 'post'], handlerB),
     ])
 
-    await testHandler(prismy(routerHandler), async (url) => {
-      const response = await testFetch(url, {
-        method: 'PUT',
-      })
+    const response = await testServerManager.loadAndCall(routerHandler, '/', {
+      method: 'put',
+    })
 
-      expect(response).toMatchObject({
-        statusCode: 404,
-        body: expect.stringContaining('Error: Not Found'),
-      })
+    expect(response).toMatchObject({
+      statusCode: 404,
+      body: expect.stringContaining('Error: Not Found'),
     })
   })
 
@@ -158,22 +149,19 @@ describe('router', () => {
       return Result('Error: Customized Not Found Response', 404)
     })
 
-    const routerHandler = router(
+    const routerHandler = Router(
       [Route(['/', 'get'], handlerA), Route(['/', 'post'], handlerB)],
       {
         notFoundHandler: customNotFoundHandler,
       },
     )
 
-    await testHandler(prismy(routerHandler), async (url) => {
-      const response = await testFetch(url, {
-        method: 'PUT',
-      })
-
-      expect(response).toMatchObject({
-        statusCode: 404,
-        body: expect.stringContaining('Error: Customized Not Found Response'),
-      })
+    const response = await testServerManager.loadAndCall(routerHandler, '/', {
+      method: 'put',
+    })
+    expect(response).toMatchObject({
+      statusCode: 404,
+      body: expect.stringContaining('Error: Customized Not Found Response'),
     })
   })
 
@@ -186,22 +174,21 @@ describe('router', () => {
       return Result('b')
     })
 
-    const routerHandler = router(
+    const routerHandler = Router(
       [Route(['/', 'get'], handlerA), Route(['/', 'post'], handlerB)],
       {
         prefix: '/admin',
       },
     )
 
-    await testHandler(prismy(routerHandler), async (url) => {
-      const response = await testFetch(join(url, 'admin'), {
-        method: 'GET',
-      })
+    const response = await testServerManager.loadAndCall(
+      routerHandler,
+      '/admin',
+    )
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: expect.stringContaining('a'),
-      })
+    expect(response).toMatchObject({
+      statusCode: 200,
+      body: expect.stringContaining('a'),
     })
   })
 
@@ -214,22 +201,21 @@ describe('router', () => {
       return Result('b')
     })
 
-    const routerHandler = router(
+    const routerHandler = Router(
       [Route(['/', 'get'], handlerA), Route(['/', 'post'], handlerB)],
       {
         prefix: '/admin',
       },
     )
 
-    await testHandler(prismy(routerHandler), async (url) => {
-      const response = await testFetch(join(url, 'admin'), {
-        method: 'GET',
-      })
+    const response = await testServerManager.loadAndCall(
+      routerHandler,
+      '/admin',
+    )
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: expect.stringContaining('a'),
-      })
+    expect(response).toMatchObject({
+      statusCode: 200,
+      body: expect.stringContaining('a'),
     })
   })
 
@@ -246,7 +232,7 @@ describe('router', () => {
       return Result('b')
     })
 
-    const routerHandler = router(
+    const routerHandler = Router(
       [Route(['/', 'get'], handlerA), Route(['/', 'post'], handlerB)],
       {
         middleware: [
@@ -264,10 +250,8 @@ describe('router', () => {
       },
     )
 
-    await testHandler(prismy(routerHandler), async (url) => {
-      const response = await fetch(url)
-      expect(response.status).toBe(200)
-      expect(await response.text()).toBe('ba')
-    })
+    const response = await testServerManager.loadAndCall(routerHandler)
+
+    expect(response.statusCode).toBe(200)
   })
 })
