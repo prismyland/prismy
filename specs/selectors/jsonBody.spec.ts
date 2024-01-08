@@ -1,12 +1,12 @@
 import got from 'got'
 import { testHandler } from '../helpers'
-import { JsonBodySelector, prismy, res } from '../../src'
+import { JsonBodySelector, prismy, Result } from '../../src'
 
 describe('JsonBodySelector', () => {
   it('creates json body selector', async () => {
     const jsonBodySelector = JsonBodySelector()
     const handler = prismy([jsonBodySelector], (body) => {
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {
@@ -30,7 +30,7 @@ describe('JsonBodySelector', () => {
   it('throw if content typeof a request is not set', async () => {
     const jsonBodySelector = JsonBodySelector()
     const handler = prismy([jsonBodySelector], (body) => {
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {
@@ -54,7 +54,7 @@ describe('JsonBodySelector', () => {
   it('throws if content type of a request is not application/json', async () => {
     const jsonBodySelector = JsonBodySelector()
     const handler = prismy([jsonBodySelector], (body) => {
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {

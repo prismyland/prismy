@@ -1,26 +1,26 @@
-import { prismy, res, router } from 'prismy'
+import { prismy, Result, router } from 'prismy'
 
 export const rootHandler = prismy([], () => {
-  return res(
+  return Result(
     [
       '<!DOCTYPE html>',
       '<body>',
       '<h1>Root Page</h1>',
       '<a href="/test">Go to /test</a>',
       '</body>',
-    ].join('')
+    ].join(''),
   )
 })
 
 const testHandler = prismy([], () => {
-  return res(
+  return Result(
     [
       '<!DOCTYPE html>',
       '<body>',
       '<h1>Test Page</h1>',
       '<a href="/">Go to Root</a>',
       '</body>',
-    ].join('')
+    ].join(''),
   )
 })
 

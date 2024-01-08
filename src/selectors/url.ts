@@ -14,7 +14,7 @@ const urlMap = new WeakMap()
  * const prismyHandler = prismy(
  *  [urlSelector],
  *  url => {
- *    return res(url.path)
+ *    return Result(url.path)
  *  }
  * )
  * ```

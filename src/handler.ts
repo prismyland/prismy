@@ -5,6 +5,7 @@ import {
   MaybePromise,
   ResponseObject,
   SelectorReturnTypeTuple,
+  PrismySendResult,
 } from '.'
 import { PrismySelector } from './selectors/createSelector'
 import { compileHandler } from './utils'
@@ -24,7 +25,7 @@ export class PrismyHandler<
     public middlewareList: PrismyMiddleware<any[]>[],
   ) {}
 
-  async handle(): Promise<ResponseObject<any>> {
+  async handle(): Promise<ResponseObject<any> | PrismySendResult<any>> {
     const next: PrismyNextFunction = compileHandler(
       this.selectors,
       this.handler,
@@ -56,7 +57,7 @@ export class PrismyHandler<
  * const worldSelector: Selector<string> = () => "world"!
  *
  * const handler =  Handler([ worldSelector ], async world => {
- *  return res(`Hello ${world}!`) // Hello world!
+ *  return Result(`Hello ${world}!`) // Hello world!
  * })
  * ```
  *

@@ -4,14 +4,14 @@ import {
   SearchParamSelector,
   SearchParamListSelector,
   prismy,
-  res,
+  Result,
 } from '../../src'
 import { URLSearchParams } from 'url'
 
 describe('SearchParamSelector', () => {
   it('selects a search param', async () => {
     const handler = prismy([SearchParamSelector('message')], (message) => {
-      return res({ message })
+      return Result({ message })
     })
 
     await testHandler(handler, async (url) => {
@@ -29,7 +29,7 @@ describe('SearchParamSelector', () => {
 
   it('selects null if there is no param with the name', async () => {
     const handler = prismy([SearchParamSelector('message')], (message) => {
-      return res({ message })
+      return Result({ message })
     })
 
     await testHandler(handler, async (url) => {
@@ -48,7 +48,7 @@ describe('SearchParamSelector', () => {
 describe('SearchParamListSelector', () => {
   it('selects a search param list', async () => {
     const handler = prismy([SearchParamListSelector('message')], (messages) => {
-      return res({ messages })
+      return Result({ messages })
     })
 
     await testHandler(handler, async (url) => {
@@ -69,7 +69,7 @@ describe('SearchParamListSelector', () => {
 
   it('selects null if there is no param with the name', async () => {
     const handler = prismy([SearchParamListSelector('message')], (messages) => {
-      return res({ messages })
+      return Result({ messages })
     })
 
     await testHandler(handler, async (url) => {

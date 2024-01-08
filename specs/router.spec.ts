@@ -2,7 +2,7 @@ import { testFetch, testHandler } from './helpers'
 import {
   routeParamSelector,
   prismy,
-  res,
+  Result,
   router,
   Route,
   Middleware,
@@ -16,10 +16,10 @@ describe('router', () => {
   it('routes with pathname', async () => {
     expect.hasAssertions()
     const handlerA = Handler([], () => {
-      return res('a')
+      return Result('a')
     })
     const handlerB = Handler([], () => {
-      return res('b')
+      return Result('b')
     })
 
     const routerHandler = router([Route('/a', handlerA), Route('/b', handlerB)])
@@ -38,10 +38,10 @@ describe('router', () => {
     expect.hasAssertions()
 
     const handlerA = Handler([], () => {
-      return res('a')
+      return Result('a')
     })
     const handlerB = Handler([], () => {
-      return res('b')
+      return Result('b')
     })
 
     const routerHandler = router([
@@ -73,10 +73,10 @@ describe('router', () => {
   it('resolve params', async () => {
     expect.hasAssertions()
     const handlerA = Handler([], () => {
-      return res('a')
+      return Result('a')
     })
     const handlerB = Handler([routeParamSelector('id')], (id) => {
-      return res(id)
+      return Result(id)
     })
 
     const routerHandler = router([
@@ -97,10 +97,10 @@ describe('router', () => {
   it('resolves null if param is missing', async () => {
     expect.hasAssertions()
     const handlerA = Handler([], () => {
-      return res('a')
+      return Result('a')
     })
     const handlerB = Handler([routeParamSelector('not-id')], (notId) => {
-      return res(notId)
+      return Result(notId)
     })
 
     const routerHandler = router([
@@ -123,10 +123,10 @@ describe('router', () => {
   it('throws 404 error when no route found', async () => {
     expect.hasAssertions()
     const handlerA = Handler([], () => {
-      return res('a')
+      return Result('a')
     })
     const handlerB = Handler([], () => {
-      return res('b')
+      return Result('b')
     })
 
     const routerHandler = router([
@@ -149,13 +149,13 @@ describe('router', () => {
   it('uses custom not found handler if set', async () => {
     expect.hasAssertions()
     const handlerA = Handler([], () => {
-      return res('a')
+      return Result('a')
     })
     const handlerB = Handler([], () => {
-      return res('b')
+      return Result('b')
     })
     const customNotFoundHandler = Handler([], () => {
-      return res('Error: Customized Not Found Response', 404)
+      return Result('Error: Customized Not Found Response', 404)
     })
 
     const routerHandler = router(
@@ -180,10 +180,10 @@ describe('router', () => {
   it('prepends prefix to route path', async () => {
     expect.hasAssertions()
     const handlerA = Handler([], () => {
-      return res('a')
+      return Result('a')
     })
     const handlerB = Handler([], () => {
-      return res('b')
+      return Result('b')
     })
 
     const routerHandler = router(
@@ -208,10 +208,10 @@ describe('router', () => {
   it('prepends prefix to route path (without root `/`)', async () => {
     expect.hasAssertions()
     const handlerA = Handler([], () => {
-      return res('a')
+      return Result('a')
     })
     const handlerB = Handler([], () => {
-      return res('b')
+      return Result('b')
     })
 
     const routerHandler = router(
@@ -240,10 +240,10 @@ describe('router', () => {
     const handlerA = Handler([], () => {
       const context = getPrismyContext()
 
-      return res(weakMap.get(context))
+      return Result(weakMap.get(context))
     })
     const handlerB = Handler([], () => {
-      return res('b')
+      return Result('b')
     })
 
     const routerHandler = router(

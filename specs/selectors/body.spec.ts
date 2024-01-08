@@ -1,13 +1,13 @@
 import got from 'got'
 import { testHandler } from '../helpers'
 import { BodySelector } from '../../src/selectors'
-import { prismy, res } from '../../src'
+import { prismy, Result } from '../../src'
 
 describe('createBodySelector', () => {
   it('returns text body', async () => {
     expect.hasAssertions()
     const handler = prismy([BodySelector()], (body) => {
-      return res(`${body.constructor.name}: ${body}`)
+      return Result(`${body.constructor.name}: ${body}`)
     })
 
     await testHandler(handler, async (url) => {
@@ -26,7 +26,7 @@ describe('createBodySelector', () => {
   it('returns parsed url encoded body', async () => {
     expect.hasAssertions()
     const handler = prismy([BodySelector()], (body) => {
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {
@@ -50,7 +50,7 @@ describe('createBodySelector', () => {
   it('returns JSON object body', async () => {
     expect.hasAssertions()
     const handler = prismy([BodySelector()], (body) => {
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {

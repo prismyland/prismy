@@ -10,6 +10,7 @@ import {
   PrismyContext,
   SelectorReturnTypeTuple,
 } from './types'
+import { PrismyResult } from './res'
 
 export const prismyContextStorage = new AsyncLocalStorage<PrismyContext>()
 export function getPrismyContext(): PrismyContext {
@@ -76,6 +77,10 @@ export function prismy<S extends PrismySelector<unknown>[]>(
     prismyContextStorage.run(context, async () => {
       const resObject = await injectedHandler.handle()
 
+      if (resObject instanceof PrismyResult) {
+        resObject.resolve(request, response)
+        return
+      }
       send(request, response, resObject)
     })
   }

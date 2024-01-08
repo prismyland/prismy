@@ -51,7 +51,7 @@ describe('send', () => {
 
       expect(targetBuffer.equals(buffer)).toBe(true)
       expect(response.headers['content-length']).toBe(
-        targetBuffer.length.toString()
+        targetBuffer.length.toString(),
       )
     })
   })
@@ -78,7 +78,7 @@ describe('send', () => {
 
       expect(targetBuffer.equals(buffer)).toBe(true)
       expect(response.headers['content-length']).toBe(
-        targetBuffer.length.toString()
+        targetBuffer.length.toString(),
       )
       expect(response.headers['content-type']).toBe('application/octet-stream')
     })
@@ -110,7 +110,7 @@ describe('send', () => {
     expect.hasAssertions()
     const sendHandler = (
       _request: IncomingMessage,
-      response: ServerResponse
+      response: ServerResponse,
     ) => {
       response.end('test')
     }
@@ -164,7 +164,7 @@ describe('send', () => {
       })
       expect(response.body).toMatchObject(target)
       expect(response.headers['content-length']).toBe(
-        JSON.stringify(target).length.toString()
+        JSON.stringify(target).length.toString(),
       )
     })
   })
@@ -186,10 +186,10 @@ describe('send', () => {
       })
       expect(response.body).toMatchObject(target)
       expect(response.headers['content-length']).toBe(
-        JSON.stringify(target).length.toString()
+        JSON.stringify(target).length.toString(),
       )
       expect(response.headers['content-type']).toBe(
-        'application/json; charset=utf-8'
+        'application/json; charset=utf-8',
       )
     })
   })
@@ -212,7 +212,7 @@ describe('send', () => {
       const stringifiedTarget = JSON.stringify(target)
       expect(response.body).toBe(stringifiedTarget)
       expect(response.headers['content-length']).toBe(
-        stringifiedTarget.length.toString()
+        stringifiedTarget.length.toString(),
       )
     })
   })
@@ -234,10 +234,10 @@ describe('send', () => {
       const stringifiedTarget = JSON.stringify(target)
       expect(response.body).toBe(stringifiedTarget)
       expect(response.headers['content-length']).toBe(
-        stringifiedTarget.length.toString()
+        stringifiedTarget.length.toString(),
       )
       expect(response.headers['content-type']).toBe(
-        'application/json; charset=utf-8'
+        'application/json; charset=utf-8',
       )
     })
   })

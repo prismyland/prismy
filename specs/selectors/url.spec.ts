@@ -1,11 +1,11 @@
 import got from 'got'
 import { testHandler } from '../helpers'
-import { urlSelector, prismy, res } from '../../src'
+import { urlSelector, prismy, Result } from '../../src'
 
 describe('urlSelector', () => {
   it('selects url', async () => {
     const handler = prismy([urlSelector], (url) => {
-      return res({
+      return Result({
         pathname: url.pathname,
         search: url.search,
       })
@@ -28,7 +28,7 @@ describe('urlSelector', () => {
 
   it('reuses parsed url', async () => {
     const handler = prismy([urlSelector, urlSelector], (url, url2) => {
-      return res(JSON.stringify(url === url2))
+      return Result(JSON.stringify(url === url2))
     })
 
     await testHandler(handler, async (url) => {

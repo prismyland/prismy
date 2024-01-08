@@ -1,6 +1,6 @@
 import got from 'got'
 import getRawBody from 'raw-body'
-import { Middleware, prismy, res, getPrismyContext } from '../src'
+import { Middleware, prismy, Result, getPrismyContext } from '../src'
 import { readBufferBody, readJsonBody, readTextBody } from '../src/bodyReaders'
 import { createPrismySelector } from '../src/selectors/createSelector'
 import { testHandler } from './helpers'
@@ -13,7 +13,7 @@ describe('readBufferBody', () => {
       const { req } = getPrismyContext()
       const body = await readBufferBody(req)
 
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {
@@ -49,7 +49,7 @@ describe('readBufferBody', () => {
       async (_) => {
         const { req } = getPrismyContext()
         const body = await readBufferBody(req)
-        return res(body)
+        return Result(body)
       },
       [
         Middleware([], (next) => async () => {
@@ -90,7 +90,7 @@ describe('readBufferBody', () => {
       const body1 = await readBufferBody(req)
       const body2 = await readBufferBody(req)
 
-      return res({
+      return Result({
         isCached: body1 === body2,
       })
     })
@@ -113,7 +113,7 @@ describe('readBufferBody', () => {
       const { req } = getPrismyContext()
       const body = await readBufferBody(req, { limit: '1 byte' })
 
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {
@@ -139,7 +139,7 @@ describe('readBufferBody', () => {
       const { req } = getPrismyContext()
       const body = await readBufferBody(req, { encoding: 'lol' })
 
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {
@@ -165,7 +165,7 @@ describe('readBufferBody', () => {
       await getRawBody(req, { limit: '1mb', length })
       const body = await readBufferBody(req)
 
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {
@@ -191,7 +191,7 @@ describe('readTextBody', () => {
       const { req } = getPrismyContext()
       const body = await readTextBody(req)
 
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {
@@ -216,7 +216,7 @@ describe('readJsonBody', () => {
       const { req } = getPrismyContext()
       const body = await readJsonBody(req)
 
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {
@@ -242,7 +242,7 @@ describe('readJsonBody', () => {
       const { req } = getPrismyContext()
       const body = await readJsonBody(req)
 
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {

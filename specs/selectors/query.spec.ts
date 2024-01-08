@@ -1,11 +1,11 @@
 import got from 'got'
 import { testHandler } from '../helpers'
-import { querySelector, prismy, res } from '../../src'
+import { querySelector, prismy, Result } from '../../src'
 
 describe('querySelector', () => {
   it('selects query', async () => {
     const handler = prismy([querySelector], (query) => {
-      return res(query)
+      return Result(query)
     })
 
     await testHandler(handler, async (url) => {
@@ -23,7 +23,7 @@ describe('querySelector', () => {
 
   it('reuses parsed query', async () => {
     const handler = prismy([querySelector, querySelector], (query, query2) => {
-      return res(JSON.stringify(query === query2))
+      return Result(JSON.stringify(query === query2))
     })
 
     await testHandler(handler, async (url) => {

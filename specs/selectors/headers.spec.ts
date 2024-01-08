@@ -1,11 +1,11 @@
 import got from 'got'
 import { testHandler } from '../helpers'
-import { headersSelector, prismy, res } from '../../src'
+import { headersSelector, prismy, Result } from '../../src'
 
 describe('headersSelector', () => {
   it('select headers', async () => {
     const handler = prismy([headersSelector], (headers) => {
-      return res(headers['x-test'])
+      return Result(headers['x-test'])
     })
 
     await testHandler(handler, async (url) => {

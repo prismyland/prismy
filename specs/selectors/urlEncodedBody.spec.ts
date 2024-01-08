@@ -1,11 +1,11 @@
 import got from 'got'
 import { testHandler } from '../helpers'
-import { prismy, res, UrlEncodedBodySelector } from '../../src'
+import { prismy, Result, UrlEncodedBodySelector } from '../../src'
 
 describe('URLEncodedBody', () => {
   it('injects parsed url encoded body', async () => {
     const handler = prismy([UrlEncodedBodySelector()], (body) => {
-      return res(body)
+      return Result(body)
     })
 
     await testHandler(handler, async (url) => {

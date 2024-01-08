@@ -1,5 +1,5 @@
 import { testFetch, testHandler } from './helpers'
-import { prismy, res, Middleware, getPrismyContext } from '../src'
+import { prismy, Result, Middleware, getPrismyContext } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
 
 describe('middleware', () => {
@@ -13,7 +13,7 @@ describe('middleware', () => {
         try {
           return await next()
         } catch (error) {
-          return res(`${url} : ${(error as any).message}`, 500)
+          return Result(`${url} : ${(error as any).message}`, 500)
         }
       },
     )
@@ -42,7 +42,7 @@ describe('middleware', () => {
         try {
           return await next()
         } catch (error) {
-          return res(`${url} : ${(error as any).message}`, 500)
+          return Result(`${url} : ${(error as any).message}`, 500)
         }
       },
     )

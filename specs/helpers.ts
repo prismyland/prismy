@@ -37,5 +37,6 @@ export async function testFetch(url: string, options?: RequestInit) {
   return {
     statusCode: response.status,
     body: testResult,
+    headers: response.headers,
   }
 }

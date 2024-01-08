@@ -4,7 +4,7 @@ import {
   methodSelector,
   ResponseObject,
   prismy,
-  res,
+  Result,
 } from '../../src'
 import { URL } from 'url'
 import { expectType } from '../helpers'
@@ -36,4 +36,4 @@ expectType<
   ) => ResponseObject<any> | Promise<ResponseObject<any>>
 >(middleware1.handler)
 
-prismy([], () => res(''), [middleware1])
+prismy([], () => Result(''), [middleware1])

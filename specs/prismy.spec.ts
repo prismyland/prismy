@@ -1,11 +1,17 @@
 import { testFetch, testHandler } from './helpers'
-import { prismy, res, err, getPrismyContext, Middleware } from '../src'
+import {
+  prismy,
+  getPrismyContext,
+  Middleware,
+  Result,
+  ErrorResult,
+} from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
 import { Handler } from '../src/handler'
 
 describe('prismy', () => {
   it('returns node.js request handler', async () => {
-    const handler = prismy([], () => res('Hello, World!'))
+    const handler = prismy([], () => Result('Hello, World!'))
 
     await testHandler(handler, async (url) => {
       const response = await testFetch(url)
@@ -22,7 +28,7 @@ describe('prismy', () => {
       const { req } = getPrismyContext()
       return req.url!
     })
-    const handler = prismy([rawUrlSelector], (url) => res(url))
+    const handler = prismy([rawUrlSelector], (url) => Result(url))
 
     await testHandler(handler, async (url) => {
       const response = await testFetch(url)
@@ -38,7 +44,7 @@ describe('prismy', () => {
     const asyncRawUrlSelector = createPrismySelector(
       async () => getPrismyContext().req.url!,
     )
-    const handler = prismy([asyncRawUrlSelector], (url) => res(url))
+    const handler = prismy([asyncRawUrlSelector], (url) => Result(url))
 
     await testHandler(handler, async (url) => {
       const response = await testFetch(url)
@@ -55,11 +61,11 @@ describe('prismy', () => {
     const rawUrlSelector = createPrismySelector(
       () => getPrismyContext().req.url!,
     )
-    const handler = Handler([rawUrlSelector], (url) => res(url))
+    const handler = Handler([rawUrlSelector], (url) => Result(url))
 
     const result = handler.handler('Hello, World!')
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       body: 'Hello, World!',
       headers: {},
       statusCode: 200,
@@ -72,7 +78,7 @@ describe('prismy', () => {
         try {
           return await next()
         } catch (error) {
-          return err(500, (error as any).message)
+          return ErrorResult(500, (error as any).message)
         }
       }
     })
@@ -104,7 +110,7 @@ describe('prismy', () => {
       try {
         return await next()
       } catch (error) {
-        return res((error as any).message, 500)
+        return ErrorResult(500, (error as any).message)
       }
     })
     const rawUrlSelector = createPrismySelector(
@@ -113,7 +119,7 @@ describe('prismy', () => {
     const handler = prismy(
       [rawUrlSelector],
       (url) => {
-        return res(url)
+        return Result(url)
       },
       [problematicMiddleware, errorMiddleware],
     )
@@ -153,7 +159,7 @@ describe('prismy', () => {
     const handler = prismy(
       [rawUrlSelector],
       (url) => {
-        return res(url)
+        return Result(url)
       },
       [],
     )
