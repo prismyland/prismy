@@ -16,16 +16,16 @@
 
   ```
 - [ ] Update docs
-- [ ] Update examples
+- [ ] Update
 - [ ] Shorthand Prismy, Route
 - [x] redesigned router interface
-  - [x] introduced route method
-  - [ ] Add tests
-    - [ ] Wildcard parm handling
+  - [x] introduced route methodexamples
+  - [x] Add tests
+    - [x] Wildcard parm handling
     - [x] Router middleware test
-- [ ] Replace res with `PrismyResult` and `Result()`
+- [x] Replace res with `PrismyResult` and `Result()`
   - [x] Support PrismyResult
-  - [ ] Discard res, res obj
+  - [x] Discard res, res obj
 - [x] Redesigned selector interface
   - [x] Renamed factory method (ex: createBodySelector(Deprecated) => BodySelector)
   ```ts
@@ -87,7 +87,7 @@
     ```
 - [x] Make middleware into a class
 - [ ] Include prismy-cookie
-- [ ] Added DI Selector
+- [x] Added DI Selector
 - [ ] File uploading
 - [ ] Rewrite prismy-session
   - [ ] Make it compatible with SessionStore of express-session

@@ -12,6 +12,7 @@ import {
 } from '../../src'
 import { expectType } from '../helpers'
 import http from 'http'
+import { InjectSelector } from '../../src/selectors/injector'
 
 const handler1 = Handler([urlSelector, methodSelector], (url, method) => {
   expectType<URL>(url)
@@ -51,3 +52,19 @@ expectType<
 Middleware([BodySelector], () => () => Result(null))
 
 http.createServer(prismy([], () => Result(''), [middleware1]))
+
+abstract class MailService {}
+class ProductionMailService extends MailService {}
+class TestMailService extends MailService {}
+
+const mailService: MailService =
+  process.env.NODE_ENV === 'production'
+    ? new ProductionMailService()
+    : new TestMailService()
+
+const mailServiceSelector = InjectSelector(mailService)
+
+Handler([mailServiceSelector], (mailService) => {
+  expectType<MailService>(mailService)
+  return Result(null)
+})
