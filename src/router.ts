@@ -112,13 +112,13 @@ function getRouteParamsFromPrismyContext(context: PrismyContext) {
   return routeParamsMap.get(context)
 }
 
-export function routeParamSelector(
+export function RouteParamSelector(
   paramName: string,
 ): PrismySelector<string | null> {
   return createPrismySelector(() => {
     const context = getPrismyContext()
     const param = getRouteParamsFromPrismyContext(context)[paramName]
-    return param != null ? param : null
+    return param != null ? (Array.isArray(param) ? param[0] : param) : null
   })
 }
 

@@ -16,6 +16,7 @@
 
   ```
 - [ ] Update docs
+- [ ] Update examples
 - [ ] Shorthand Prismy, Route
 - [x] redesigned router interface
   - [x] introduced route method
@@ -87,6 +88,9 @@
 - [x] Make middleware into a class
 - [ ] Include prismy-cookie
 - [ ] Added DI Selector
+- [ ] File uploading
+- [ ] Rewrite prismy-session
+  - [ ] Make it compatible with SessionStore of express-session
 
 # V5 TODO(TBD)
 
@@ -94,7 +98,8 @@
   - Replace jest with node-tap, mocha or ava
 - Add `createConcurrentSelector(...selectors: PrismySelector[])`
 
-# Idea, Might not be worth to do.
+# ight not be worth to do.
+
 - Return without res
 - Add combine router to put routers together
   - notFoundHandler must be ignored when routers are combined.
