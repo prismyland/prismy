@@ -2,7 +2,7 @@
 - Legacy support: Provide snippets which can provide compatibility
 - [x] Improve server test(Replace legacy got with node-fetch@2)
   - server listner replacer?
-- Introduce tsd to test types properly
+- [x] Reimplement type test ~~Introduce tsd to test types properly~~
 - [x] Seperate Handler and Prismy
   ```ts
   import http from 'http'
@@ -23,8 +23,10 @@
       - combineRouters should take NotFoundHandler
   - [ ] Add tests
     - [ ] Wildcard parm handling
-    - [ ] Router middleware test
+    - [x] Router middleware test
 - [ ] Replace res with `PrismyResult` and `Result()`
+  - [x] Support PrismyResult
+  - [ ] Discard res, res obj
 - [x] Redesigned selector interface
   - [x] Renamed factory method (ex: createBodySelector(Deprecated) => BodySelector)
   ```ts
@@ -85,10 +87,15 @@
     ```ts
     (next: () => Promise<ResObj>) => Promise<ResObj>
     ```
-- [ ] Make middleware into a class
+- [x] Make middleware into a class
 - [ ] Return without res
 - [ ] Include prismy-cookie
 - [ ] Added DI Selector
+
+# V5 TODO(TBD)
+
+- ESM support
+  - Replace jest with node-tap, mocha or ava
 
 # Fix router
 
@@ -100,7 +107,7 @@ const serverHandler = Router([
   Route(routeInfo, [selector], handler),
   Route(routeInfo, prismyHandler),
   Route(['/deprecated', '*'], ()=> redirect('/')),
-  NotFoundRoute(() => res('Not Found', 404))
+  NotFoundRoute(() => Result('Not Found', 404))
 ], {
   prefix: '...'
   middleware: [...],
@@ -163,7 +170,7 @@ const middleware = Middleware([], next => async () => {
   const result = doSomethingBefore()
   if (isBad(result)) {
     // Skip running `next` handler
-    return res()
+    return Result()
   }
   const result = await next()
 
