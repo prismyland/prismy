@@ -11,6 +11,7 @@ import {
   urlSelector,
 } from '../../src'
 import { expectType } from '../helpers'
+import http from 'http'
 
 const handler1 = Handler([urlSelector, methodSelector], (url, method) => {
   expectType<URL>(url)
@@ -28,8 +29,10 @@ expectType<
 
 expectType<PrismyHandler>(Handler([BodySelector()], () => Result(null)))
 
+http.createServer(prismy(handler1))
+
 // @ts-expect-error
-expectError(Handler([BodySelector], () => Result(null)))
+Handler([BodySelector], () => Result(null))
 
 const middleware1 = Middleware(
   [urlSelector, methodSelector],
@@ -44,4 +47,7 @@ expectType<
   (next: PrismyNextFunction) => (url: URL, method: string | undefined) => any
 >(middleware1.handler)
 
-prismy([], () => Result(''), [middleware1])
+// @ts-expect-error
+Middleware([BodySelector], () => () => Result(null))
+
+http.createServer(prismy([], () => Result(''), [middleware1]))
