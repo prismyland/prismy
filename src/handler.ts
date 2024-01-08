@@ -77,7 +77,7 @@ export function Handler<S extends PrismySelector<any>[]>(
   handler: (
     ...args: SelectorReturnTypeTuple<S>
   ) => MaybePromise<ResponseObject<any>>,
-  middlewareList: PrismyMiddleware<any[]>[] = [],
+  middlewareList: PrismyMiddleware<PrismySelector<any>[]>[] = [],
 ) {
   return new PrismyHandler(selectors, handler, middlewareList)
 }
