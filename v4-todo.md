@@ -15,12 +15,10 @@
   http.createServer(requestListener).listen()
 
   ```
+- [ ] Update docs
+- [ ] Shorthand Prismy, Route
 - [x] redesigned router interface
   - [x] introduced route method
-  - [ ] Add combine router to put routers together
-    - [ ] NotFoundHandler must be ignored when routers are combined.
-      - Should roll back NotFoundHandler
-      - combineRouters should take NotFoundHandler
   - [ ] Add tests
     - [ ] Wildcard parm handling
     - [x] Router middleware test
@@ -74,7 +72,6 @@
 - [x] Adopted async local storage to communicate between selectors, middleware and handlers
   - [x] Added `getPrismyContext` method to get context. (must be used in the scope of selectors, middleware and handlers)
   - [x] Removed `contextSelector`, use `getPrismyContext`
-- [ ] Add `createConcurrentSelector(...selectors: PrismySelector[])`
 - [x] Simplified middleware interface
   - Before
 
@@ -88,7 +85,6 @@
     (next: () => Promise<ResObj>) => Promise<ResObj>
     ```
 - [x] Make middleware into a class
-- [ ] Return without res
 - [ ] Include prismy-cookie
 - [ ] Added DI Selector
 
@@ -96,6 +92,12 @@
 
 - ESM support
   - Replace jest with node-tap, mocha or ava
+- Add `createConcurrentSelector(...selectors: PrismySelector[])`
+
+# Idea, Might not be worth to do.
+- Return without res
+- Add combine router to put routers together
+  - notFoundHandler must be ignored when routers are combined.
 
 # Fix router
 
