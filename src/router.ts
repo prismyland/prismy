@@ -39,7 +39,7 @@ export class PrismyRoute {
   }
 }
 
-export function router(
+export function Router(
   routes: PrismyRoute[],
   { prefix = '/', middleware = [], notFoundHandler }: PrismyRouterOptions = {},
 ) {
