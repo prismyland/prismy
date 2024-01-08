@@ -1,6 +1,6 @@
-import { PrismyNextFunction } from '.'
+import { PrismyNextFunction, PrismyResult } from '.'
 import { PrismySelector } from './selectors/createSelector'
-import { ResponseObject, SelectorReturnTypeTuple } from './types'
+import { SelectorReturnTypeTuple } from './types'
 import { compileHandler } from './utils'
 
 export class PrismyMiddleware<
@@ -14,7 +14,7 @@ export class PrismyMiddleware<
      */
     public handler: (
       next: PrismyNextFunction,
-    ) => (...args: SelectorReturnTypeTuple<S>) => Promise<ResponseObject<any>>,
+    ) => (...args: SelectorReturnTypeTuple<S>) => Promise<PrismyResult>,
   ) {}
 
   pipe(next: PrismyNextFunction) {
@@ -37,7 +37,6 @@ export class PrismyMiddleware<
  *    'access-control-allow-origin': '*'
  *  })
  * })
- *
  * ```
  *
  * @remarks
@@ -61,7 +60,7 @@ export function Middleware<SS extends PrismySelector<any>[]>(
   selectors: [...SS],
   handler: (
     next: PrismyNextFunction,
-  ) => (...args: SelectorReturnTypeTuple<SS>) => Promise<ResponseObject<any>>,
+  ) => (...args: SelectorReturnTypeTuple<SS>) => Promise<PrismyResult>,
 ): PrismyMiddleware<SS> {
   return new PrismyMiddleware(selectors, handler)
 }

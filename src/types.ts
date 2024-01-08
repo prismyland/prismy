@@ -1,4 +1,5 @@
-import { IncomingMessage, OutgoingHttpHeaders } from 'http'
+import { IncomingMessage } from 'http'
+import { PrismyResult } from './res'
 import { PrismySelector } from './selectors/createSelector'
 
 /**
@@ -51,25 +52,7 @@ export type PromiseResolve<T> = T extends Promise<infer U> ? U : T
  */
 export type MaybePromise<T> = T | Promise<T>
 
-/**
- * prismy's representation of a response
- *
- * @public
- */
-export interface ResponseObject<B = unknown> {
-  body?: B
-  statusCode?: number
-  headers?: OutgoingHttpHeaders
-}
-
-/**
- * shorter type alias for ResponseObject<B>
- *
- * @public
- */
-export type Res<B> = ResponseObject<B>
-
-export type PrismyNextFunction = () => Promise<ResponseObject<any>>
+export type PrismyNextFunction = () => Promise<PrismyResult<unknown>>
 
 /**
  * @public

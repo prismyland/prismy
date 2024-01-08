@@ -6,7 +6,7 @@ import {
   prismy,
   PrismyHandler,
   PrismyNextFunction,
-  ResponseObject,
+  PrismyResult,
   Result,
   urlSelector,
 } from '../../src'
@@ -24,7 +24,7 @@ expectType<
     url: URL,
     method: string | undefined,
     url2: URL,
-  ) => ResponseObject<any> | Promise<ResponseObject<any>>
+  ) => PrismyResult | Promise<PrismyResult>
 >(handler1.handler)
 
 expectType<PrismyHandler>(Handler([BodySelector()], () => Result(null)))

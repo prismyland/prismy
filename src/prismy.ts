@@ -3,13 +3,7 @@ import { IncomingMessage, RequestListener, ServerResponse } from 'http'
 import { PrismyMiddleware } from './middleware'
 import { Handler, PrismyHandler } from './handler'
 import { PrismySelector } from './selectors/createSelector'
-import { send } from './send'
-import {
-  ResponseObject,
-  MaybePromise,
-  PrismyContext,
-  SelectorReturnTypeTuple,
-} from './types'
+import { MaybePromise, PrismyContext, SelectorReturnTypeTuple } from './types'
 import { PrismyResult } from './res'
 
 export const prismyContextStorage = new AsyncLocalStorage<PrismyContext>()
@@ -50,16 +44,12 @@ export function prismy<S extends PrismySelector<unknown>[]>(
  */
 export function prismy<S extends PrismySelector<any>[]>(
   selectors: [...S],
-  handler: (
-    ...args: SelectorReturnTypeTuple<S>
-  ) => MaybePromise<ResponseObject<any>>,
+  handler: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<PrismyResult>,
   middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
 ): RequestListener
 export function prismy<S extends PrismySelector<unknown>[]>(
   selectorsOrPrismyHandler: [...S] | PrismyHandler<S>,
-  handler?: (
-    ...args: SelectorReturnTypeTuple<S>
-  ) => MaybePromise<ResponseObject<any>>,
+  handler?: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<PrismyResult>,
   middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
 ): RequestListener {
   const injectedHandler =
@@ -77,11 +67,7 @@ export function prismy<S extends PrismySelector<unknown>[]>(
     prismyContextStorage.run(context, async () => {
       const resObject = await injectedHandler.handle()
 
-      if (resObject instanceof PrismyResult) {
-        resObject.resolve(request, response)
-        return
-      }
-      send(request, response, resObject)
+      resObject.resolve(request, response)
     })
   }
 

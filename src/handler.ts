@@ -3,9 +3,8 @@ import {
   PrismyMiddleware,
   PrismyNextFunction,
   MaybePromise,
-  ResponseObject,
   SelectorReturnTypeTuple,
-  PrismySendResult,
+  PrismyResult,
 } from '.'
 import { PrismySelector } from './selectors/createSelector'
 import { compileHandler } from './utils'
@@ -21,11 +20,11 @@ export class PrismyHandler<
      */
     public handler: (
       ...args: SelectorReturnTypeTuple<S>
-    ) => MaybePromise<ResponseObject<any>>,
+    ) => MaybePromise<PrismyResult>,
     public middlewareList: PrismyMiddleware<any[]>[],
   ) {}
 
-  async handle(): Promise<ResponseObject<any> | PrismySendResult<any>> {
+  async handle(): Promise<PrismyResult> {
     const next: PrismyNextFunction = compileHandler(
       this.selectors,
       this.handler,
@@ -74,9 +73,7 @@ export class PrismyHandler<
  */
 export function Handler<S extends PrismySelector<any>[]>(
   selectors: [...S],
-  handler: (
-    ...args: SelectorReturnTypeTuple<S>
-  ) => MaybePromise<ResponseObject<any>>,
+  handler: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<PrismyResult>,
   middlewareList: PrismyMiddleware<PrismySelector<any>[]>[] = [],
 ) {
   return new PrismyHandler(selectors, handler, middlewareList)

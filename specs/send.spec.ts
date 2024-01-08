@@ -1,7 +1,8 @@
 import got from 'got'
 import { IncomingMessage, RequestListener, ServerResponse } from 'http'
 import { Readable } from 'stream'
-import { send } from '../src/send'
+import { Result } from '../src'
+import { sendPrismyResult } from '../src/send'
 import { testHandler } from './helpers'
 
 describe('send', () => {
@@ -9,7 +10,7 @@ describe('send', () => {
     expect.hasAssertions()
 
     const handler: RequestListener = (req, res) => {
-      send(req, res, {})
+      sendPrismyResult(req, res, Result(null))
     }
 
     await testHandler(handler, async (url) => {
@@ -22,7 +23,7 @@ describe('send', () => {
     expect.hasAssertions()
 
     const handler: RequestListener = (req, res) => {
-      send(req, res, { body: 'test' })
+      sendPrismyResult(req, res, Result('test'))
     }
 
     await testHandler(handler, async (url) => {
@@ -38,7 +39,7 @@ describe('send', () => {
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/octet-stream')
       const statusCode = res.statusCode
-      send(req, res, { statusCode, body: targetBuffer })
+      sendPrismyResult(req, res, Result(targetBuffer, statusCode))
     }
 
     await testHandler(handler, async (url) => {
@@ -62,10 +63,7 @@ describe('send', () => {
     const targetBuffer = Buffer.from('Hello, world!')
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(req, res, {
-        statusCode,
-        body: targetBuffer,
-      })
+      sendPrismyResult(req, res, Result(targetBuffer, statusCode))
     }
 
     await testHandler(handler, async (url) => {
@@ -92,10 +90,7 @@ describe('send', () => {
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/octet-stream')
       const statusCode = res.statusCode
-      send(req, res, {
-        statusCode,
-        body: stream,
-      })
+      sendPrismyResult(req, res, Result(stream, statusCode))
     }
 
     await testHandler(handler, async (url) => {
@@ -115,7 +110,7 @@ describe('send', () => {
       response.end('test')
     }
     const handler: RequestListener = (req, res) => {
-      send(req, res, sendHandler)
+      sendPrismyResult(req, res, Result(sendHandler))
     }
 
     await testHandler(handler, async (url) => {
@@ -131,7 +126,7 @@ describe('send', () => {
     const stream = Readable.from(targetBuffer.toString())
     const handler: RequestListener = (req, res) => {
       const statusCode = res.statusCode
-      send(req, res, { statusCode, body: stream })
+      sendPrismyResult(req, res, Result(stream, statusCode))
     }
 
     await testHandler(handler, async (url) => {
@@ -154,8 +149,7 @@ describe('send', () => {
     }
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/json; charset=utf-8')
-      const statusCode = res.statusCode
-      send(req, res, { statusCode, body: target })
+      sendPrismyResult(req, res, Result(target))
     }
 
     await testHandler(handler, async (url) => {
@@ -176,8 +170,7 @@ describe('send', () => {
       foo: 'bar',
     }
     const handler: RequestListener = (req, res) => {
-      const statusCode = res.statusCode
-      send(req, res, { statusCode, body: target })
+      sendPrismyResult(req, res, Result(target))
     }
 
     await testHandler(handler, async (url) => {
@@ -200,11 +193,7 @@ describe('send', () => {
     const target = 1004
     const handler: RequestListener = (req, res) => {
       res.setHeader('Content-Type', 'application/json; charset=utf-8')
-      const statusCode = res.statusCode
-      send(req, res, {
-        statusCode,
-        body: target,
-      })
+      sendPrismyResult(req, res, Result(target))
     }
 
     await testHandler(handler, async (url) => {
@@ -222,11 +211,7 @@ describe('send', () => {
 
     const target = 1004
     const handler: RequestListener = (req, res) => {
-      const statusCode = res.statusCode
-      send(req, res, {
-        statusCode,
-        body: target,
-      })
+      sendPrismyResult(req, res, Result(target))
     }
 
     await testHandler(handler, async (url) => {
@@ -246,30 +231,13 @@ describe('send', () => {
     expect.hasAssertions()
 
     const handler: RequestListener = (req, res) => {
-      const statusCode = res.statusCode
-      send(req, res, {
-        statusCode,
-        headers: {
+      sendPrismyResult(
+        req,
+        res,
+        Result(null, 200, {
           test: 'test value',
-        },
-      })
-    }
-
-    await testHandler(handler, async (url) => {
-      const response = await got(url)
-      expect(response.body).toBeFalsy()
-      expect(response.headers['test']).toEqual('test value')
-    })
-  })
-  it('sends with header', async () => {
-    expect.hasAssertions()
-
-    const handler: RequestListener = (req, res) => {
-      send(req, res, {
-        headers: {
-          test: 'test value',
-        },
-      })
+        }),
+      )
     }
 
     await testHandler(handler, async (url) => {

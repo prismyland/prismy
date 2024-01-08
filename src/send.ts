@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http'
 import { readable } from 'is-stream'
 import { Stream } from 'stream'
-import { ResponseObject } from './types'
+import { PrismyResult } from './res'
 
 /**
  * Function to send data to the client
@@ -12,15 +12,13 @@ import { ResponseObject } from './types'
  *
  * @public
  */
-export const send = (
+export const sendPrismyResult = (
   request: IncomingMessage,
   response: ServerResponse,
-  sendable:
-    | ((request: IncomingMessage, response: ServerResponse) => void)
-    | ResponseObject<any>,
+  sendable: PrismyResult<any>,
 ) => {
-  if (typeof sendable === 'function') {
-    sendable(request, response)
+  if (typeof sendable.body === 'function') {
+    sendable.body(request, response)
     return
   }
   const { statusCode = 200, body, headers = [] } = sendable
