@@ -61,6 +61,6 @@
     "is-stream": "^2.0.0",
     "path-to-regexp": "^6.2.0",
     "raw-body": "^2.4.1",
-    "tslib": "^2.0.3"
+    "tslib": "^2.6.2"
   }
 }
