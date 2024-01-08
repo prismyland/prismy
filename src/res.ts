@@ -1,37 +1,12 @@
-import {
-  IncomingMessage,
-  OutgoingHttpHeaders,
-  RequestListener,
-  ServerResponse,
-} from 'http'
-import { send } from './send'
-import { ResponseObject } from './types'
+import { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from 'http'
+import { sendPrismyResult } from './send'
 
-export class PrismyResult {
-  constructor(public resolver: RequestListener) {}
-}
-
-/**
- * Create a raw result it will directly handle node.js's requests and responses.
- * It is useful when controlling raw request stream and raw response stream.
- *
- * @param resolver
- * @returns {@link PrismyResult}
- */
-export function RawResult(resolver: RequestListener): PrismyResult {
-  return new PrismyResult(resolver)
-}
-
-export class PrismySendResult<B> extends PrismyResult {
+export class PrismyResult<B = unknown> {
   constructor(
     public readonly body: B,
     public readonly statusCode: number,
     public readonly headers: OutgoingHttpHeaders,
-  ) {
-    super((request: IncomingMessage, response: ServerResponse) => {
-      this.resolve(request, response)
-    })
-  }
+  ) {}
 
   /**
    * Resolve function used by http.Server
@@ -39,35 +14,31 @@ export class PrismySendResult<B> extends PrismyResult {
    * @param response
    */
   resolve(request: IncomingMessage, response: ServerResponse) {
-    send(request, response, {
-      body: this.body,
-      statusCode: this.statusCode,
-      headers: this.headers,
-    })
+    sendPrismyResult(request, response, this)
   }
 
   /**
    * Creates a new result with a new status code
    *
    * @param statusCode - HTTP status code
-   * @returns New {@link PrismySendResult}
+   * @returns New {@link PrismyResult}
    *
    * @public
    */
   setStatusCode(statusCode: number) {
-    return new PrismySendResult(this.body, statusCode, this.headers)
+    return new PrismyResult(this.body, statusCode, this.headers)
   }
 
   /**
    * Creates a new result with a new body
    *
    * @param body - Body to be set
-   * @returns New {@link PrismySendResult}
+   * @returns New {@link PrismyResult}
    *
    * @public
    */
   setBody<BB>(body: BB) {
-    return new PrismySendResult<BB>(body, this.statusCode, this.headers)
+    return new PrismyResult<BB>(body, this.statusCode, this.headers)
   }
 
   /**
@@ -76,7 +47,7 @@ export class PrismySendResult<B> extends PrismyResult {
    * `{...existingHeaders, ...newHeaders}`
    *
    * @param newHeaders - HTTP response headers
-   * @returns New {@link PrismySendResult}
+   * @returns New {@link PrismyResult}
    *
    * To set multiple headers with same name, use an array.
    * @example
@@ -100,7 +71,7 @@ export class PrismySendResult<B> extends PrismyResult {
    * @public
    */
   updateHeaders(newHeaders: OutgoingHttpHeaders) {
-    return new PrismySendResult(this.body, this.statusCode, {
+    return new PrismyResult(this.body, this.statusCode, {
       ...this.headers,
       ...newHeaders,
     })
@@ -111,12 +82,12 @@ export class PrismySendResult<B> extends PrismyResult {
    * This will flush all existing headers and set new ones only.
    *
    * @param newHeaders - HTTP response headers
-   * @returns New {@link PrismySendResult}
+   * @returns New {@link PrismyResult}
    *
    * @public
    */
   setHeaders(headers: OutgoingHttpHeaders) {
-    return new PrismySendResult(this.body, this.statusCode, headers)
+    return new PrismyResult(this.body, this.statusCode, headers)
   }
 }
 
@@ -126,7 +97,7 @@ export class PrismySendResult<B> extends PrismyResult {
  * @param body - Body of the response
  * @param statusCode - HTTP status code of the response
  * @param headers - HTTP headers for the response
- * @returns A {@link PrismySendResult} containing necessary information
+ * @returns A {@link PrismyResult} containing necessary information
  *
  * @public
  */
@@ -134,8 +105,8 @@ export function Result<B>(
   body: B,
   statusCode: number = 200,
   headers: OutgoingHttpHeaders = {},
-): PrismySendResult<B> {
-  return new PrismySendResult(body, statusCode, headers)
+): PrismyResult<B> {
+  return new PrismyResult(body, statusCode, headers)
 }
 
 /**
@@ -145,7 +116,7 @@ export function Result<B>(
  * @param body - Body of the response
  * @param statusCode - HTTP status code of the response
  * @param headers - HTTP headers for the response
- * @returns A {@link PrismySendResult} containing necessary information
+ * @returns A {@link PrismyResult} containing necessary information
  *
  * @public
  */
@@ -153,8 +124,8 @@ export function ErrorResult<B>(
   statusCode: number,
   body: B,
   headers: OutgoingHttpHeaders = {},
-): PrismySendResult<B> {
-  return new PrismySendResult(body, statusCode, headers)
+): PrismyResult<B> {
+  return new PrismyResult(body, statusCode, headers)
 }
 
 /**
@@ -171,7 +142,7 @@ export function Redirect(
   location: string,
   statusCode: number = 302,
   extraHeaders: OutgoingHttpHeaders = {},
-): ResponseObject<null> {
+): PrismyResult<null> {
   return Result(null, statusCode, {
     location,
     ...extraHeaders,

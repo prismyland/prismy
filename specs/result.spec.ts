@@ -9,12 +9,10 @@ afterAll(async () => {
   await testServerManager.close()
 })
 
-// TODO: Implement tests
-describe('PrismyResult', () => {})
-
+// TODO: Implement Error Result tests
 describe('ErrorResult', () => {})
 
-describe('PrismySendResult', () => {
+describe('PrismyResult', () => {
   describe('#setStatusCode', () => {
     it('sets status code', async () => {
       const handler = Handler([], () =>
