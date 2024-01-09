@@ -135,4 +135,27 @@ describe('Redirect', () => {
     expect(response.headers.get('location')).toBe('https://github.com/')
     expect(response.headers.get('custom-header')).toBe('Hello!')
   })
+
+  it('sets cookies', async () => {
+    const handler = Handler([], () =>
+      Result(null)
+        .setCookie('testCookie', 'testValue', {
+          secure: true,
+          domain: 'https://example.com',
+        })
+        .setCookie('testCookie2', 'testValue2', {
+          httpOnly: true,
+        }),
+    )
+
+    const response = await testServerManager.loadAndCall(handler, '/')
+
+    expect(response).toMatchObject({
+      statusCode: 200,
+    })
+    expect(response.headers.getSetCookie()).toEqual([
+      'testCookie=testValue; Domain=https://example.com; Secure',
+      'testCookie2=testValue2; HttpOnly',
+    ])
+  })
 })

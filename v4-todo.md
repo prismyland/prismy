@@ -86,7 +86,7 @@
     (next: () => Promise<ResObj>) => Promise<ResObj>
     ```
 - [x] Make middleware into a class
-- [ ] Include prismy-cookie
+- [x] Include prismy-cookie
 - [x] Added DI Selector
 - [ ] File uploading
 - [ ] Rewrite prismy-session

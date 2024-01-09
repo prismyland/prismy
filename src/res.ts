@@ -1,5 +1,6 @@
 import { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from 'http'
 import { sendPrismyResult } from './send'
+import cookie from 'cookie'
 
 export class PrismyResult<B = unknown> {
   constructor(
@@ -74,6 +75,33 @@ export class PrismyResult<B = unknown> {
     return new PrismyResult(this.body, this.statusCode, {
       ...this.headers,
       ...newHeaders,
+    })
+  }
+
+  /**
+   * Appends `set-cookie` header. This method won't replace existing `set-cookie` header.
+   * To remove or replace existing headers, please use `updateHeaders` method.
+   *
+   * @param key Cookie key
+   * @param value Cookie value
+   * @param options Cookie options
+   * @returns New {@link PrismyResult}
+   */
+  setCookie(
+    key: string,
+    value: string,
+    options?: cookie.CookieSerializeOptions,
+  ) {
+    const existingValue = this.headers['set-cookie']
+    const newValue = cookie.serialize(key, value, options)
+
+    return this.updateHeaders({
+      'set-cookie':
+        existingValue == null
+          ? [newValue]
+          : Array.isArray(existingValue)
+            ? [...existingValue, newValue]
+            : [existingValue, newValue],
     })
   }
 
