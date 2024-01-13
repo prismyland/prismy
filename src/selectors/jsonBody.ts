@@ -47,7 +47,7 @@ export function JsonBodySelector(
   return createPrismySelector(() => {
     const { req } = getPrismyContext()
     const contentType = req.headers['content-type']
-    if (!isContentTypeIsApplicationJSON(contentType)) {
+    if (!isContentTypeApplicationJSON(contentType)) {
       throw createError(
         400,
         `Content type must be application/json. (Current: ${contentType})`,
@@ -58,7 +58,7 @@ export function JsonBodySelector(
   })
 }
 
-function isContentTypeIsApplicationJSON(contentType: string | undefined) {
+function isContentTypeApplicationJSON(contentType: string | undefined) {
   if (typeof contentType !== 'string') return false
   if (!contentType.startsWith('application/json')) return false
   return true
