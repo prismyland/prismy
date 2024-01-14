@@ -30,7 +30,7 @@ export class PrismyMiddleware<
  * Simple Example
  * ```ts
  *
- * const withCors = middleware([], next => async () => {
+ * const withCors = Middleware([], next => async () => {
  *  const resObject = await next()
  *
  *  return updateHeaders(resObject, {

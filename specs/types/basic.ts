@@ -12,8 +12,26 @@ import {
 } from '../../src'
 import { expectType } from '../helpers'
 import http from 'http'
-import { InjectSelector } from '../../src/selectors/injector'
+import { InjectSelector } from '../../src/selectors/inject'
 
+/**
+ *
+        | "missingPlugin"
+        | "pluginFunction"
+        | "aborted"
+        | "noParser"
+        | "uninitializedParser"
+        | "filenameNotString"
+        | "maxFieldsSizeExceeded"
+        | "maxFieldsExceeded"
+        | "smallerThanMinFileSize"
+        | "biggerThanMaxFileSize"
+        | "noEmptyFiles"
+        | "missingContentType"
+        | "malformedMultipart"
+        | "missingMultipartBoundary"
+        | "unknownTransferEncoding",
+ */
 const handler1 = Handler([urlSelector, methodSelector], (url, method) => {
   expectType<URL>(url)
   expectType<string | undefined>(method)
