@@ -65,7 +65,7 @@ describe('prismy', () => {
     )
     const handler = Handler([rawUrlSelector], (url) => Result(url))
 
-    const result = handler.handler('Hello, World!')
+    const result = handler.handlerFunction('Hello, World!')
 
     expect(result).toMatchObject({
       body: 'Hello, World!',

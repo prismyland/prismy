@@ -1,4 +1,4 @@
-import { PrismyContext } from './types'
+import { MaybePromise, PrismyContext, SelectorReturnTypeTuple } from './types'
 import { methodSelector, urlSelector } from './selectors'
 import { match as createMatchFunction } from 'path-to-regexp'
 import { getPrismyContext } from './prismy'
@@ -7,7 +7,7 @@ import {
   createPrismySelector,
   PrismySelector,
 } from './selectors/createSelector'
-import { PrismyMiddleware } from '.'
+import { PrismyMiddleware, PrismyResult } from '.'
 import { Handler, PrismyHandler } from './handler'
 import { join as joinPath } from 'path'
 
@@ -26,16 +26,15 @@ type Route = {
   listener: PrismyHandler<PrismySelector<unknown>[]>
 }
 
-export class PrismyRoute {
+export class PrismyRoute<
+  S extends PrismySelector<any>[] = PrismySelector<any>[],
+> {
   indicator: RouteIndicator
-  listener: PrismyHandler<PrismySelector<unknown>[]>
+  handler: PrismyHandler<S>
 
-  constructor(
-    indicator: RouteIndicator,
-    listener: PrismyHandler<PrismySelector<unknown>[]>,
-  ) {
+  constructor(indicator: RouteIndicator, handler: PrismyHandler<S>) {
     this.indicator = indicator
-    this.listener = listener
+    this.handler = handler
   }
 }
 
@@ -44,7 +43,7 @@ export function Router(
   { prefix = '/', middleware = [], notFoundHandler }: PrismyRouterOptions = {},
 ) {
   const compiledRoutes = routes.map((route) => {
-    const { indicator, listener } = route
+    const { indicator, handler: listener } = route
     const [targetPath, method] = indicator
     const compiledTargetPath = removeTralingSlash(
       joinPath('/', prefix, targetPath),
@@ -92,14 +91,34 @@ export function Router(
   )
 }
 
-export function Route(
+export function Route<S extends PrismySelector<any>[]>(
   indicator: RouteIndicator | string,
-  listener: PrismyHandler<PrismySelector<any>[]>,
-): PrismyRoute {
+  handler: PrismyHandler<S>,
+): PrismyRoute<S>
+export function Route<S extends PrismySelector<any>[]>(
+  indicator: RouteIndicator | string,
+  selectors: [...S],
+  handlerFunction?: (
+    ...args: SelectorReturnTypeTuple<S>
+  ) => MaybePromise<PrismyResult>,
+  middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
+): PrismyRoute<S>
+export function Route<S extends PrismySelector<any>[]>(
+  indicator: RouteIndicator | string,
+  selectorsOrPrismyHandler: [...S] | PrismyHandler<S>,
+  handlerFunction?: (
+    ...args: SelectorReturnTypeTuple<S>
+  ) => MaybePromise<PrismyResult>,
+  middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
+): PrismyRoute<S> {
+  const handler =
+    selectorsOrPrismyHandler instanceof PrismyHandler
+      ? selectorsOrPrismyHandler
+      : Handler(selectorsOrPrismyHandler, handlerFunction!, middlewareList)
   if (typeof indicator === 'string') {
-    return new PrismyRoute([indicator, 'get'], listener)
+    return new PrismyRoute([indicator, 'get'], handler)
   }
-  return new PrismyRoute(indicator, listener)
+  return new PrismyRoute(indicator, handler)
 }
 
 const routeParamsMap = new WeakMap()

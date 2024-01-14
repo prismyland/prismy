@@ -1,37 +1,23 @@
 import {
   BodySelector,
   Handler,
+  MaybePromise,
   methodSelector,
   Middleware,
   prismy,
   PrismyHandler,
   PrismyNextFunction,
   PrismyResult,
+  PrismyRoute,
   Result,
+  Route,
   urlSelector,
 } from '../../src'
 import { expectType } from '../helpers'
 import http from 'http'
 import { InjectSelector } from '../../src/selectors/inject'
+import { PrismySelector } from '../../src/selectors/createSelector'
 
-/**
- *
-        | "missingPlugin"
-        | "pluginFunction"
-        | "aborted"
-        | "noParser"
-        | "uninitializedParser"
-        | "filenameNotString"
-        | "maxFieldsSizeExceeded"
-        | "maxFieldsExceeded"
-        | "smallerThanMinFileSize"
-        | "biggerThanMaxFileSize"
-        | "noEmptyFiles"
-        | "missingContentType"
-        | "malformedMultipart"
-        | "missingMultipartBoundary"
-        | "unknownTransferEncoding",
- */
 const handler1 = Handler([urlSelector, methodSelector], (url, method) => {
   expectType<URL>(url)
   expectType<string | undefined>(method)
@@ -44,7 +30,7 @@ expectType<
     method: string | undefined,
     url2: URL,
   ) => PrismyResult | Promise<PrismyResult>
->(handler1.handler)
+>(handler1.handlerFunction)
 
 expectType<PrismyHandler>(Handler([BodySelector()], () => Result(null)))
 
@@ -82,7 +68,23 @@ const mailService: MailService =
 
 const mailServiceSelector = InjectSelector(mailService)
 
-Handler([mailServiceSelector], (mailService) => {
+const handler = Handler([mailServiceSelector], (mailService) => {
   expectType<MailService>(mailService)
   return Result(null)
 })
+
+const mailHandlerRoute = Route('/', handler)
+expectType<PrismyRoute<[PrismySelector<MailService>]>>(mailHandlerRoute)
+
+const shortRoute = Route('/', [urlSelector, methodSelector], (url, method) => {
+  expectType<URL>(url)
+  expectType<string | undefined>(method)
+  return Result(null)
+})
+
+expectType<
+  PrismyRoute<[PrismySelector<URL>, PrismySelector<string | undefined>]>
+>(shortRoute)
+expectType<
+  (url: URL, method: string | undefined) => MaybePromise<PrismyResult<any>>
+>(shortRoute.handler.handlerFunction)

@@ -16,15 +16,17 @@ export function getPrismyContext(): PrismyContext {
 }
 
 /**
- * Generates a handler to be used by http.Server
+ * Make a RequestListener from PrismyHandler
  *
  * @example
  * ```ts
  * const handler = Handler([], () => { ... })
  *
- * http.createServer(prismy(handler))
- * // Or directly
- * http.createServer([], () => { ... })
+ * const listener = prismy(handler)
+ * // Or
+ * // const listener = prismy([], () => {...})
+ *
+ * http.createServerlistener)
  * ```
  *
  * @param prismyHandler
@@ -34,28 +36,30 @@ export function prismy<S extends PrismySelector<unknown>[]>(
 ): RequestListener
 
 /**
- * Generates a handler to be used by http.Server
- *
- * prismy(Handler(...))
+ * Make a RequestListener from PrismyHandler
  *
  * @param selectors
- * @param handler
+ * @param handlerFunction
  * @param middlewareList
  */
 export function prismy<S extends PrismySelector<any>[]>(
   selectors: [...S],
-  handler: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<PrismyResult>,
+  handlerFunction: (
+    ...args: SelectorReturnTypeTuple<S>
+  ) => MaybePromise<PrismyResult>,
   middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
 ): RequestListener
 export function prismy<S extends PrismySelector<unknown>[]>(
   selectorsOrPrismyHandler: [...S] | PrismyHandler<S>,
-  handler?: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<PrismyResult>,
+  handlerFunction?: (
+    ...args: SelectorReturnTypeTuple<S>
+  ) => MaybePromise<PrismyResult>,
   middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
 ): RequestListener {
   const injectedHandler =
     selectorsOrPrismyHandler instanceof PrismyHandler
       ? selectorsOrPrismyHandler
-      : Handler(selectorsOrPrismyHandler, handler!, middlewareList)
+      : Handler(selectorsOrPrismyHandler, handlerFunction!, middlewareList)
 
   async function requestListener(
     request: IncomingMessage,

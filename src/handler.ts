@@ -18,7 +18,7 @@ export class PrismyHandler<
      * PrismyHandler exposes `handler` for unit testing the handler.
      * @param args selected arguments
      */
-    public handler: (
+    public handlerFunction: (
       ...args: SelectorReturnTypeTuple<S>
     ) => MaybePromise<PrismyResult>,
     public middlewareList: PrismyMiddleware<any[]>[],
@@ -27,7 +27,7 @@ export class PrismyHandler<
   async handle(): Promise<PrismyResult> {
     const next: PrismyNextFunction = compileHandler(
       this.selectors,
-      this.handler,
+      this.handlerFunction,
     )
 
     const pipe = this.middlewareList.reduce((next, middleware) => {
@@ -66,15 +66,17 @@ export class PrismyHandler<
  * array outside of the function call.
  *
  * @param selectors - Tuple of Selectors to generate arguments for handler
- * @param handler - Business logic handling the request
+ * @param handlerFunction - Business logic handling the request
  * @param middlewareList - Middleware to pass request and response through
  *
  * @public *
  */
 export function Handler<S extends PrismySelector<any>[]>(
   selectors: [...S],
-  handler: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<PrismyResult>,
+  handlerFunction: (
+    ...args: SelectorReturnTypeTuple<S>
+  ) => MaybePromise<PrismyResult>,
   middlewareList: PrismyMiddleware<PrismySelector<any>[]>[] = [],
 ) {
-  return new PrismyHandler(selectors, handler, middlewareList)
+  return new PrismyHandler(selectors, handlerFunction, middlewareList)
 }
