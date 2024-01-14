@@ -16,7 +16,7 @@
 
   ```
 - [ ] Update docs
-- [ ] Update
+- [ ] Update examples
 - [ ] Shorthand Prismy, Route
 - [x] redesigned router interface
   - [x] introduced route methodexamples
@@ -88,7 +88,8 @@
 - [x] Make middleware into a class
 - [x] Include prismy-cookie
 - [x] Added DI Selector
-- [ ] File uploading
+- [x] File uploading
+  - Interface is a bit confusing and too different and rewriting cost is too high. Should just provide it as an example instead of including this project.
 - [ ] Rewrite prismy-session
   - [ ] Make it compatible with SessionStore of express-session
 
