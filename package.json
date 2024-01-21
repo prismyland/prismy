@@ -24,6 +24,16 @@
     "type": "git",
     "url": "git+https://github.com/prismyland/prismy.git"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js"
+    },
+    "./test": {
+      "types": "./dist/test.d.ts",
+      "require": "./dist/test.js"
+    }
+  },
   "scripts": {
     "build": "rimraf dist && tsc -P tsconfig.build.json",
     "lint": "prettier --check src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",

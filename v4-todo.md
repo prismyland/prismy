@@ -17,7 +17,7 @@
   ```
 - [ ] Update docs
 - [ ] Update examples
-- [ ] Shorthand Prismy, Route
+- [x] Shorthand Prismy, Route
 - [x] redesigned router interface
   - [x] introduced route methodexamples
   - [x] Add tests
