@@ -143,7 +143,7 @@ export function RouteParamSelector(
 
 interface PrismyRouterOptions {
   prefix?: string
-  middleware?: PrismyMiddleware<any[]>[]
+  middleware?: PrismyMiddleware<PrismySelector<any>[]>[]
   notFoundHandler?: PrismyHandler
 }
 

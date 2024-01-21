@@ -7,6 +7,7 @@ import {
   getPrismyContext,
 } from '../src'
 import { Handler } from '../src/handler'
+import { InjectSelector } from '../src/selectors/inject'
 import { testServerManager } from './helpers'
 
 beforeAll(async () => {
@@ -179,31 +180,26 @@ describe('router', () => {
 
       return Result(weakMap.get(context))
     })
-    const handlerB = Handler([], () => {
-      return Result('b')
-    })
 
-    const routerHandler = Router(
-      [Route(['/', 'get'], handlerA), Route(['/', 'post'], handlerB)],
-      {
-        middleware: [
-          Middleware([], (next) => () => {
-            const context = getPrismyContext()
-            weakMap.set(context, (weakMap.get(context) || '') + 'a')
-            return next()
-          }),
-          Middleware([], (next) => () => {
-            const context = getPrismyContext()
-            weakMap.set(context, (weakMap.get(context) || '') + 'b')
-            return next()
-          }),
-        ],
-      },
-    )
+    const routerHandler = Router([Route(['/', 'get'], handlerA)], {
+      middleware: [
+        Middleware([InjectSelector('a')], (next) => (value) => {
+          const context = getPrismyContext()
+          weakMap.set(context, (weakMap.get(context) || '') + value)
+          return next()
+        }),
+        Middleware([InjectSelector('b')], (next) => (value) => {
+          const context = getPrismyContext()
+          weakMap.set(context, (weakMap.get(context) || '') + value)
+          return next()
+        }),
+      ],
+    })
 
     const response = await testServerManager.loadAndCall(routerHandler)
 
     expect(response.statusCode).toBe(200)
+    expect(response.body).toBe('ba')
   })
 })
 
