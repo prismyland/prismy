@@ -170,3 +170,12 @@ describe('prismy', () => {
     })
   })
 })
+
+describe('getPrismyContext', () => {
+  it('throws if context is not set(resolved outside of prismy)', () => {
+    expect(() => {
+      const context = getPrismyContext()
+      throw new Error(`should fail to get context. ${context}`)
+    }).toThrow('Prismy context is not loaded.')
+  })
+})
