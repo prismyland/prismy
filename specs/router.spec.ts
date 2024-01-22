@@ -36,6 +36,20 @@ describe('router', () => {
     })
   })
 
+  it('routes with pathname(shorthand)', async () => {
+    const routerHandler = Router([
+      Route('/a', [InjectSelector('a')], (data) => Result(data)),
+      Route('/b', [InjectSelector('b')], (data) => Result(data)),
+    ])
+
+    const response = await testServerManager.loadAndCall(routerHandler, '/b')
+
+    expect(response).toMatchObject({
+      statusCode: 200,
+      body: 'b',
+    })
+  })
+
   it('routes with method', async () => {
     const handlerA = Handler([], () => {
       return Result('a')
