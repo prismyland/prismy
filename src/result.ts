@@ -92,16 +92,16 @@ export class PrismyResult<B = unknown> {
     value: string,
     options?: cookie.CookieSerializeOptions,
   ) {
-    const existingValue = this.headers['set-cookie']
-    const newValue = cookie.serialize(key, value, options)
-
+    const existingSetCookieHeaders = this.headers['set-cookie']
+    const newSetCookieHeader = cookie.serialize(key, value, options)
+    console.log(existingSetCookieHeaders)
     return this.updateHeaders({
       'set-cookie':
-        existingValue == null
-          ? [newValue]
-          : Array.isArray(existingValue)
-            ? [...existingValue, newValue]
-            : [existingValue, newValue],
+        existingSetCookieHeaders == null
+          ? [newSetCookieHeader]
+          : Array.isArray(existingSetCookieHeaders)
+            ? [...existingSetCookieHeaders, newSetCookieHeader]
+            : [existingSetCookieHeaders, newSetCookieHeader],
     })
   }
 

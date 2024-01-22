@@ -1,4 +1,4 @@
-import { Redirect, Result, Handler } from '../src'
+import { Redirect, Result, Handler, ErrorResult, PrismyResult } from '../src'
 import { testServerManager } from './helpers'
 
 beforeAll(async () => {
@@ -9,11 +9,25 @@ afterAll(async () => {
   await testServerManager.close()
 })
 
-// TODO: Implement Error Result tests
-describe('ErrorResult', () => {})
+describe('ErrorResult', () => {
+  it('creates error PrismyResult', () => {
+    const errorResult = ErrorResult(400, 'Invalid Format')
+
+    expect(errorResult).toBeInstanceOf(PrismyResult)
+    expect(errorResult.statusCode).toBe(400)
+    expect(errorResult.body).toBe('Invalid Format')
+  })
+})
 
 describe('PrismyResult', () => {
   describe('#setStatusCode', () => {
+    it('set body', async () => {
+      const handler = Handler([], () => Result('Hello!').setBody('Hola!'))
+
+      const response = await testServerManager.loadAndCall(handler)
+      expect(response.body).toBe('Hola!')
+    })
+
     it('sets status code', async () => {
       const handler = Handler([], () =>
         Result('Hello, World!').setStatusCode(201),
@@ -156,6 +170,26 @@ describe('Redirect', () => {
     expect(response.headers.getSetCookie()).toEqual([
       'testCookie=testValue; Domain=https://example.com; Secure',
       'testCookie2=testValue2; HttpOnly',
+    ])
+  })
+
+  it('appends set cookie header', async () => {
+    const handler = Handler([], () =>
+      Result(null)
+        .updateHeaders({
+          'set-cookie': 'testCookie=testValue',
+        })
+        .setCookie('testCookie2', 'testValue2'),
+    )
+
+    const response = await testServerManager.loadAndCall(handler, '/')
+
+    expect(response).toMatchObject({
+      statusCode: 200,
+    })
+    expect(response.headers.getSetCookie()).toEqual([
+      'testCookie=testValue',
+      'testCookie2=testValue2',
     ])
   })
 })
