@@ -4,7 +4,7 @@ import { PrismyMiddleware } from './middleware'
 import { Handler, PrismyHandler } from './handler'
 import { PrismySelector } from './selectors/createSelector'
 import { MaybePromise, PrismyContext, SelectorReturnTypeTuple } from './types'
-import { PrismyResult } from './res'
+import { PrismyResult } from './result'
 
 export const prismyContextStorage = new AsyncLocalStorage<PrismyContext>()
 export function getPrismyContext(): PrismyContext {

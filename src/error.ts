@@ -1,4 +1,4 @@
-import { Result } from './res'
+import { Result } from './result'
 
 /**
  * Creates a response object from an error

@@ -1,5 +1,5 @@
 import { IncomingMessage } from 'http'
-import { PrismyResult } from './res'
+import { PrismyResult } from './result'
 import { PrismySelector } from './selectors/createSelector'
 
 /**

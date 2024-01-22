@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http'
 import { readable } from 'is-stream'
 import { Stream } from 'stream'
-import { PrismyResult } from './res'
+import { PrismyResult } from './result'
 
 /**
  * Function to send data to the client
