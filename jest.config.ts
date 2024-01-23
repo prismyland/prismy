@@ -12,6 +12,7 @@ const jestConfig: JestConfigWithTsJest = {
       },
     ],
   },
+  coverageReporters: ['text', 'text-summary'],
 }
 
 export default jestConfig
