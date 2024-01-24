@@ -21,7 +21,7 @@ export const sendPrismyResult = (
     sendable.body(request, response)
     return
   }
-  const { statusCode = 200, body, headers = [] } = sendable
+  const { statusCode, body, headers } = sendable
   Object.entries(headers).forEach(([key, value]) => {
     /* istanbul ignore if */
     if (value == null) {
