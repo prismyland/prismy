@@ -1,12 +1,14 @@
-import { testServerManager } from '../helpers'
 import { CookieSelector, Handler, Result } from '../../src'
+import { TestServer } from '../../src/test'
+
+const ts = TestServer()
 
 beforeAll(async () => {
-  await testServerManager.start()
+  await ts.start()
 })
 
 afterAll(async () => {
-  await testServerManager.close()
+  await ts.close()
 })
 
 describe('CookieSelector', () => {
@@ -15,21 +17,28 @@ describe('CookieSelector', () => {
       return Result({ cookieValue })
     })
 
-    const response = await testServerManager.loadAndCall(
-      handler,
-      '/test?query=true',
-      {
-        headers: {
-          cookie: 'test=Hello!',
-        },
+    const res = await ts.load(handler).call('/', {
+      headers: {
+        cookie: 'test=Hello!',
       },
-    )
-
-    expect(response).toMatchObject({
-      statusCode: 200,
     })
-    expect(JSON.parse(response.body)).toMatchObject({
+
+    expect(await res.json()).toMatchObject({
       cookieValue: 'Hello!',
+    })
+    expect(res.status).toBe(200)
+  })
+
+  it('selects null if cookie is not set', async () => {
+    const handler = Handler([CookieSelector('test')], (cookieValue) => {
+      return Result({ cookieValue })
+    })
+
+    const res = await ts.load(handler).call('/')
+
+    expect(res.status).toBe(200)
+    expect(await res.json()).toMatchObject({
+      cookieValue: null,
     })
   })
 })
