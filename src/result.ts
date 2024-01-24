@@ -94,7 +94,7 @@ export class PrismyResult<B = unknown> {
   ) {
     const existingSetCookieHeaders = this.headers['set-cookie']
     const newSetCookieHeader = cookie.serialize(key, value, options)
-    console.log(existingSetCookieHeaders)
+
     return this.updateHeaders({
       'set-cookie':
         existingSetCookieHeaders == null
