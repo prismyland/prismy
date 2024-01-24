@@ -1,12 +1,14 @@
 import { Redirect, Result, Handler, ErrorResult, PrismyResult } from '../src'
-import { testServerManager } from './helpers'
+import { TestServer } from '../src/test'
+
+const ts = TestServer()
 
 beforeAll(async () => {
-  await testServerManager.start()
+  await ts.start()
 })
 
 afterAll(async () => {
-  await testServerManager.close()
+  await ts.close()
 })
 
 describe('ErrorResult', () => {
@@ -24,8 +26,9 @@ describe('PrismyResult', () => {
     it('set body', async () => {
       const handler = Handler([], () => Result('Hello!').setBody('Hola!'))
 
-      const response = await testServerManager.loadAndCall(handler)
-      expect(response.body).toBe('Hola!')
+      const res = await ts.load(handler).call()
+
+      expect(await res.text()).toBe('Hola!')
     })
 
     it('sets status code', async () => {
@@ -33,12 +36,10 @@ describe('PrismyResult', () => {
         Result('Hello, World!').setStatusCode(201),
       )
 
-      const response = await testServerManager.loadAndCall(handler)
+      const res = await ts.load(handler).call()
 
-      expect(response).toMatchObject({
-        statusCode: 201,
-        body: 'Hello, World!',
-      })
+      expect(await res.text()).toBe('Hello, World!')
+      expect(res.status).toBe(201)
     })
   })
 
@@ -52,14 +53,12 @@ describe('PrismyResult', () => {
         }),
       )
 
-      const response = await testServerManager.loadAndCall(handler)
+      const res = await ts.load(handler).call()
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'Hello, World!',
-      })
-      expect(response.headers.get('existing-header')).toBe('Hello')
-      expect(response.headers.get('new-header')).toBe('Hola')
+      expect(await res.text()).toBe('Hello, World!')
+      expect(res.status).toBe(200)
+      expect(res.headers.get('existing-header')).toBe('Hello')
+      expect(res.headers.get('new-header')).toBe('Hola')
     })
 
     it('replaces existing headers if duplicated, but other headers are still intact', async () => {
@@ -72,14 +71,12 @@ describe('PrismyResult', () => {
         }),
       )
 
-      const response = await testServerManager.loadAndCall(handler)
+      const res = await ts.load(handler).call()
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'Hello, World!',
-      })
-      expect(response.headers.get('existing-header')).toBe('Hola')
-      expect(response.headers.get('other-existing-header')).toBe('World')
+      expect(await res.text()).toBe('Hello, World!')
+      expect(res.status).toBe(200)
+      expect(res.headers.get('existing-header')).toBe('Hola')
+      expect(res.headers.get('other-existing-header')).toBe('World')
     })
   })
 
@@ -93,14 +90,12 @@ describe('PrismyResult', () => {
         }),
       )
 
-      const response = await testServerManager.loadAndCall(handler)
+      const res = await ts.load(handler).call()
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'Hello, World!',
-      })
-      expect(response.headers.get('existing-header')).toBe(null)
-      expect(response.headers.get('new-header')).toBe('Hola')
+      expect(await res.text()).toBe('Hello, World!')
+      expect(res.status).toBe(200)
+      expect(res.headers.get('existing-header')).toBeNull()
+      expect(res.headers.get('new-header')).toBe('Hola')
     })
   })
 })
@@ -109,27 +104,23 @@ describe('Redirect', () => {
   it('redirects', async () => {
     const handler = Handler([], () => Redirect('https://github.com/'))
 
-    const response = await testServerManager.loadAndCall(handler, '/', {
+    const res = await ts.load(handler).call('/', {
       redirect: 'manual',
     })
 
-    expect(response).toMatchObject({
-      statusCode: 302,
-    })
-    expect(response.headers.get('location')).toBe('https://github.com/')
+    expect(res.status).toBe(302)
+    expect(res.headers.get('location')).toBe('https://github.com/')
   })
 
   it('sets statusCode', async () => {
     const handler = Handler([], () => Redirect('https://github.com/', 301))
 
-    const response = await testServerManager.loadAndCall(handler, '/', {
+    const res = await ts.load(handler).call('/', {
       redirect: 'manual',
     })
 
-    expect(response).toMatchObject({
-      statusCode: 301,
-    })
-    expect(response.headers.get('location')).toBe('https://github.com/')
+    expect(res.status).toBe(301)
+    expect(res.headers.get('location')).toBe('https://github.com/')
   })
 
   it('sets headers', async () => {
@@ -139,15 +130,13 @@ describe('Redirect', () => {
       }),
     )
 
-    const response = await testServerManager.loadAndCall(handler, '/', {
+    const res = await ts.load(handler).call('/', {
       redirect: 'manual',
     })
 
-    expect(response).toMatchObject({
-      statusCode: 302,
-    })
-    expect(response.headers.get('location')).toBe('https://github.com/')
-    expect(response.headers.get('custom-header')).toBe('Hello!')
+    expect(res.status).toBe(302)
+    expect(res.headers.get('location')).toBe('https://github.com/')
+    expect(res.headers.get('custom-header')).toBe('Hello!')
   })
 
   it('sets cookies', async () => {
@@ -162,12 +151,10 @@ describe('Redirect', () => {
         }),
     )
 
-    const response = await testServerManager.loadAndCall(handler, '/')
+    const res = await ts.load(handler).call('/')
 
-    expect(response).toMatchObject({
-      statusCode: 200,
-    })
-    expect(response.headers.getSetCookie()).toEqual([
+    expect(res.status).toBe(200)
+    expect(res.headers.getSetCookie()).toEqual([
       'testCookie=testValue; Domain=https://example.com; Secure',
       'testCookie2=testValue2; HttpOnly',
     ])
@@ -182,12 +169,10 @@ describe('Redirect', () => {
         .setCookie('testCookie2', 'testValue2'),
     )
 
-    const response = await testServerManager.loadAndCall(handler, '/')
+    const res = await ts.load(handler).call('/')
 
-    expect(response).toMatchObject({
-      statusCode: 200,
-    })
-    expect(response.headers.getSetCookie()).toEqual([
+    expect(res.status).toBe(200)
+    expect(res.headers.getSetCookie()).toEqual([
       'testCookie=testValue',
       'testCookie2=testValue2',
     ])
