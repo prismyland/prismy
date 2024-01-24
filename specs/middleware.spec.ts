@@ -1,13 +1,15 @@
 import { Result, Middleware, getPrismyContext, Handler } from '../src'
 import { createPrismySelector } from '../src/selectors/createSelector'
-import { testServerManager } from './helpers'
+import { TestServer } from '../src/test'
+
+const ts = TestServer()
 
 beforeAll(async () => {
-  await testServerManager.start()
+  await ts.start()
 })
 
 afterAll(async () => {
-  await testServerManager.close()
+  await ts.close()
 })
 
 describe('middleware', () => {
@@ -33,9 +35,10 @@ describe('middleware', () => {
       [errorMiddleware],
     )
 
-    const response = await testServerManager.loadAndCall(handler)
+    const res = await ts.load(handler).call()
 
-    expect(response).toMatchObject({ statusCode: 500, body: '/ : Hey!' })
+    expect(await res.text()).toBe('/ : Hey!')
+    expect(res.status).toBe(500)
   })
 
   it('accepts async selectors', async () => {
@@ -60,8 +63,9 @@ describe('middleware', () => {
       [errorMiddleware],
     )
 
-    const response = await testServerManager.loadAndCall(handler)
+    const res = await ts.load(handler).call()
 
-    expect(response).toMatchObject({ statusCode: 500, body: '/ : Hey!' })
+    expect(await res.text()).toBe('/ : Hey!')
+    expect(res.status).toBe(500)
   })
 })
