@@ -5,10 +5,10 @@ import { prismy, PrismyHandler } from './'
 export class PrismyTestServer {
   server: http.Server | null = null
   url: string = ''
+  /* istanbul ignore next */
   listener: RequestListener = () => {
-    throw new Error('PrismyTestServer: Listener is not set')
+    throw new Error('PrismyTestServer: Listener is not set.')
   }
-  status: 'idle' | 'starting' | 'closing' = 'idle'
 
   loadRequestListener(listener: RequestListener) {
     this.listener = listener
@@ -24,17 +24,16 @@ export class PrismyTestServer {
     this.listener(req, res)
   }
 
-  call(url: string = '/', options?: RequestInit) {
+  async call(url: string = '/', options?: RequestInit) {
+    if (this.server == null) {
+      throw new Error(
+        'PrismyTestServer: Server is not ready. Please call `.start()` and wait till it finish.',
+      )
+    }
     return fetch(this.url + url, options)
   }
 
   async start() {
-    if (this.status !== 'idle') {
-      throw new Error(
-        `Cannot start test server (Current status: ${this.status})`,
-      )
-    }
-
     if (this.server == null) {
       const server = new http.Server(this.listen.bind(this))
       const url = await listen(server)
@@ -45,12 +44,7 @@ export class PrismyTestServer {
   }
 
   async close() {
-    if (this.status !== 'idle') {
-      throw new Error(
-        `Cannot close test server (Current status: ${this.status})`,
-      )
-    }
-
+    /* istanbul ignore next */
     if (this.server == null) {
       return
     }
@@ -61,6 +55,7 @@ export class PrismyTestServer {
 
     await new Promise((resolve, reject) => {
       server!.close((error) => {
+        /* istanbul ignore next */
         if (error != null) {
           reject(error)
         } else {
