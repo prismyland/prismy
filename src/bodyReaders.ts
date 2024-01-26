@@ -9,6 +9,8 @@ const rawBodyMap = new WeakMap()
 /**
  * An async function to buffer the incoming request body
  *
+ * **This method is not checking content-type of request header. Please check it manually or use JsonBodySelector.**
+ *
  * @remarks
  * Can be called multiple times, as it caches the raw request body the first time
  *
@@ -39,7 +41,7 @@ export const readBufferBody = async (
     return buffer
   } catch (error) {
     if ((error as any).type === 'entity.too.large') {
-      throw createError(413, `Body exceeded ${limit} limit`, error)
+      throw createError(413, `Body is too large (limit: ${limit})`, error)
     } else {
       throw createError(400, `Invalid body`, error)
     }
