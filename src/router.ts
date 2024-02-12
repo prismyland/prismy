@@ -1,5 +1,5 @@
 import { MaybePromise, PrismyContext, SelectorReturnTypeTuple } from './types'
-import { methodSelector, urlSelector } from './selectors'
+import { MethodSelector, UrlSelector } from './selectors'
 import { match as createMatchFunction } from 'path-to-regexp'
 import { getPrismyContext } from './prismy'
 import { createError } from './error'
@@ -58,7 +58,7 @@ export function Router(
   })
 
   return Handler(
-    [methodSelector, urlSelector],
+    [MethodSelector(), UrlSelector()],
     (method, url) => {
       const prismyContext = getPrismyContext()
       /* istanbul ignore next */

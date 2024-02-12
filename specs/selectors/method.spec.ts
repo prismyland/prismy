@@ -1,10 +1,10 @@
 import got from 'got'
 import { testHandler } from '../helpers'
-import { methodSelector, prismy, Result } from '../../src'
+import { MethodSelector, prismy, Result } from '../../src'
 
-describe('methodSelector', () => {
+describe('MethodSelector', () => {
   it('selects method', async () => {
-    const handler = prismy([methodSelector], (method) => {
+    const handler = prismy([MethodSelector()], (method) => {
       return Result(method)
     })
 

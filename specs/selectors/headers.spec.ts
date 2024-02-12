@@ -1,10 +1,10 @@
 import got from 'got'
 import { testHandler } from '../helpers'
-import { headersSelector, prismy, Result } from '../../src'
+import { HeadersSelector, prismy, Result } from '../../src'
 
 describe('headersSelector', () => {
   it('select headers', async () => {
-    const handler = prismy([headersSelector], (headers) => {
+    const handler = prismy([HeadersSelector()], (headers) => {
       return Result(headers['x-test'])
     })
 

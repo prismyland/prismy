@@ -4,6 +4,18 @@ import { createPrismySelector } from './createSelector'
 
 const urlMap = new WeakMap()
 
+const urlSelector = createPrismySelector((): URL => {
+  const context = getPrismyContext()
+  let url: URL | undefined = urlMap.get(context)
+  if (url == null) {
+    const { req } = context
+    /* istanbul ignore next */
+    url = new URL(req.url == null ? '' : req.url, `http://${req.headers.host}`)
+    urlMap.set(context, url)
+  }
+  return url
+})
+
 /**
  * Selector for extracting the requested URL
  *
@@ -23,14 +35,6 @@ const urlMap = new WeakMap()
  *
  * @public
  */
-export const urlSelector = createPrismySelector((): URL => {
-  const context = getPrismyContext()
-  let url: URL | undefined = urlMap.get(context)
-  if (url == null) {
-    const { req } = context
-    /* istanbul ignore next */
-    url = new URL(req.url == null ? '' : req.url, `http://${req.headers.host}`)
-    urlMap.set(context, url)
-  }
-  return url
-})
+export function UrlSelector() {
+  return urlSelector
+}

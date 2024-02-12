@@ -2,7 +2,7 @@ import {
   BodySelector,
   Handler,
   MaybePromise,
-  methodSelector,
+  MethodSelector,
   Middleware,
   prismy,
   PrismyHandler,
@@ -11,14 +11,14 @@ import {
   PrismyRoute,
   Result,
   Route,
-  urlSelector,
+  UrlSelector,
 } from '../../src'
 import { expectType } from '../helpers'
 import http from 'http'
 import { InjectSelector } from '../../src/selectors/inject'
 import { PrismySelector } from '../../src/selectors/createSelector'
 
-const handler1 = Handler([urlSelector, methodSelector], (url, method) => {
+const handler1 = Handler([UrlSelector(), MethodSelector()], (url, method) => {
   expectType<URL>(url)
   expectType<string | undefined>(method)
   return Result('')
@@ -40,7 +40,7 @@ http.createServer(prismy(handler1))
 Handler([BodySelector], () => Result(null))
 
 const middleware1 = Middleware(
-  [urlSelector, methodSelector],
+  [UrlSelector(), MethodSelector()],
   (next) => async (url, method) => {
     expectType<URL>(url)
     expectType<string | undefined>(method)
@@ -76,11 +76,15 @@ const handler = Handler([mailServiceSelector], (mailService) => {
 const mailHandlerRoute = Route('/', handler)
 expectType<PrismyRoute<[PrismySelector<MailService>]>>(mailHandlerRoute)
 
-const shortRoute = Route('/', [urlSelector, methodSelector], (url, method) => {
-  expectType<URL>(url)
-  expectType<string | undefined>(method)
-  return Result(null)
-})
+const shortRoute = Route(
+  '/',
+  [UrlSelector(), MethodSelector()],
+  (url, method) => {
+    expectType<URL>(url)
+    expectType<string | undefined>(method)
+    return Result(null)
+  },
+)
 
 expectType<
   PrismyRoute<[PrismySelector<URL>, PrismySelector<string | undefined>]>

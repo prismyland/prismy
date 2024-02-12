@@ -1,5 +1,7 @@
 import { createPrismySelector, PrismySelector } from './createSelector'
-import { urlSelector } from './url'
+import { UrlSelector } from './url'
+
+const urlSelector = UrlSelector()
 
 /**
  * Create a selector which resolves the first value of the search param.
