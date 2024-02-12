@@ -1,20 +1,27 @@
-import got from 'got'
-import { testHandler } from '../helpers'
-import { BufferBodySelector, prismy, Result } from '../../src'
+import { BufferBodySelector, Handler, Result } from '../../src'
+import { TestServer } from '../../src/test'
+
+const ts = TestServer()
+
+beforeAll(async () => {
+  await ts.start()
+})
+
+afterAll(async () => {
+  await ts.close()
+})
 
 describe('BufferBodySelector', () => {
   it('creates buffer body selector', async () => {
-    const handler = prismy([BufferBodySelector()], (body) => {
+    const handler = Handler([BufferBodySelector()], (body) => {
       return Result(`${body.constructor.name}: ${body}`)
     })
 
-    await testHandler(handler, async (url) => {
-      const response = await got(url, { method: 'POST', body: 'Hello, World!' })
-
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'Buffer: Hello, World!',
-      })
+    const res = await ts.load(handler).call('/', {
+      method: 'post',
+      body: Buffer.from('Hello!'),
     })
+
+    expect(await res.text()).toBe('Buffer: Hello!')
   })
 })

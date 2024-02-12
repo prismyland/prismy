@@ -1,70 +1,60 @@
-import got from 'got'
-import { testHandler } from '../helpers'
-import { BodySelector } from '../../src/selectors'
-import { prismy, Result } from '../../src'
+import { Handler, Result, BodySelector } from '../../src'
+import { TestServer } from '../../src/test'
+
+const ts = TestServer()
+
+beforeAll(async () => {
+  await ts.start()
+})
+
+afterAll(async () => {
+  await ts.close()
+})
 
 describe('BodySelector', () => {
-  it('returns text body', async () => {
-    expect.hasAssertions()
-    const handler = prismy([BodySelector()], (body) => {
-      return Result(`${body.constructor.name}: ${body}`)
-    })
-
-    await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        method: 'POST',
-        body: 'Hello, World!',
-      })
-
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: `String: Hello, World!`,
-      })
-    })
-  })
-
-  it('returns parsed url encoded body', async () => {
-    expect.hasAssertions()
-    const handler = prismy([BodySelector()], (body) => {
+  it('selects text body', async () => {
+    const handler = Handler([BodySelector()], (body) => {
       return Result(body)
     })
 
-    await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        method: 'POST',
-        responseType: 'json',
-        form: {
-          message: 'Hello, World!',
-        },
-      })
-
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: {
-          message: 'Hello, World!',
-        },
-      })
+    const res = await ts.load(handler).call('/', {
+      method: 'post',
+      body: 'Hello!',
     })
+
+    expect(await res.text()).toBe('Hello!')
   })
 
-  it('returns JSON object body', async () => {
-    expect.hasAssertions()
-    const handler = prismy([BodySelector()], (body) => {
+  it('selects parsed form', async () => {
+    const handler = Handler([BodySelector()], (body) => {
       return Result(body)
     })
 
-    await testHandler(handler, async (url) => {
-      const target = {
-        foo: 'bar',
-      }
-      const response = await got(url, {
-        method: 'POST',
-        responseType: 'json',
-        json: target,
-      })
+    const res = await ts.load(handler).call('/', {
+      method: 'post',
+      body: new URLSearchParams([['message', 'Hello!']]),
+    })
 
-      expect(response.statusCode).toBe(200)
-      expect(response.body).toMatchObject(target)
+    expect(await res.json()).toEqual({
+      message: 'Hello!',
+    })
+  })
+
+  it('selects json body', async () => {
+    const handler = Handler([BodySelector()], (body) => {
+      return Result(body)
+    })
+
+    const res = await ts.load(handler).call('/', {
+      method: 'post',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ message: 'Hello!' }),
+    })
+
+    expect(await res.json()).toEqual({
+      message: 'Hello!',
     })
   })
 })

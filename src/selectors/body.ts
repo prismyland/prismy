@@ -44,11 +44,15 @@ export function BodySelector(
 ): PrismySelector<object | string> {
   return createPrismySelector(async () => {
     const { req } = getPrismyContext()
-    const type = req.headers['content-type']
+    /* istanbul ignore next */
+    const type = req.headers['content-type'] || ''
 
-    if (type === 'application/json' || type === 'application/ld+json') {
+    if (
+      type.startsWith('application/json') ||
+      type.startsWith('application/ld+json')
+    ) {
       return readJsonBody(req, options)
-    } else if (type === 'application/x-www-form-urlencoded') {
+    } else if (type.startsWith('application/x-www-form-urlencoded')) {
       const textBody = await readTextBody(req, options)
       try {
         return parse(textBody)

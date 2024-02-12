@@ -1,86 +1,77 @@
-import got from 'got'
-import { testHandler } from '../helpers'
 import {
   SearchParamSelector,
   SearchParamListSelector,
-  prismy,
   Result,
+  Handler,
 } from '../../src'
-import { URLSearchParams } from 'url'
+import { TestServer } from '../../src/test'
+
+const ts = TestServer()
+
+beforeAll(async () => {
+  await ts.start()
+})
+
+afterAll(async () => {
+  await ts.close()
+})
 
 describe('SearchParamSelector', () => {
   it('selects a search param', async () => {
-    const handler = prismy([SearchParamSelector('message')], (message) => {
+    const handler = Handler([SearchParamSelector('message')], (message) => {
       return Result({ message })
     })
 
-    await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        searchParams: { message: 'Hello, World!' },
-        responseType: 'json',
-      })
+    const res = await ts.load(handler).call('/?message=Hello!')
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: { message: 'Hello, World!' },
-      })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      message: 'Hello!',
     })
   })
 
   it('selects null if there is no param with the name', async () => {
-    const handler = prismy([SearchParamSelector('message')], (message) => {
+    const handler = Handler([SearchParamSelector('message')], (message) => {
       return Result({ message })
     })
 
-    await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        responseType: 'json',
-      })
+    const res = await ts.load(handler).call('/')
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: { message: null },
-      })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      message: null,
     })
   })
 })
 
 describe('SearchParamListSelector', () => {
   it('selects a search param list', async () => {
-    const handler = prismy([SearchParamListSelector('message')], (messages) => {
-      return Result({ messages })
-    })
+    const handler = Handler(
+      [SearchParamListSelector('message')],
+      (messages) => {
+        return Result({ messages })
+      },
+    )
 
-    await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        searchParams: new URLSearchParams([
-          ['message', 'Hello, World!'],
-          ['message', 'Have a nice day!'],
-        ]),
-        responseType: 'json',
-      })
+    const res = await ts.load(handler).call('?message=Hello!&message=Hi!')
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: { messages: ['Hello, World!', 'Have a nice day!'] },
-      })
+    expect(await res.json()).toEqual({
+      messages: ['Hello!', 'Hi!'],
     })
   })
 
-  it('selects null if there is no param with the name', async () => {
-    const handler = prismy([SearchParamListSelector('message')], (messages) => {
-      return Result({ messages })
-    })
+  it('selects an empty array if there is no param with the name', async () => {
+    const handler = Handler(
+      [SearchParamListSelector('message')],
+      (messages) => {
+        return Result({ messages })
+      },
+    )
 
-    await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        responseType: 'json',
-      })
+    const res = await ts.load(handler).call('/')
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: { messages: [] },
-      })
+    expect(await res.json()).toEqual({
+      messages: [],
     })
   })
 })

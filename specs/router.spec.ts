@@ -8,14 +8,16 @@ import {
 } from '../src'
 import { Handler } from '../src/handler'
 import { InjectSelector } from '../src/selectors/inject'
-import { testServerManager } from './helpers'
+import { TestServer } from '../src/test'
+
+const ts = TestServer()
 
 beforeAll(async () => {
-  await testServerManager.start()
+  await ts.start()
 })
 
 afterAll(async () => {
-  await testServerManager.close()
+  await ts.close()
 })
 
 describe('router', () => {
@@ -28,12 +30,9 @@ describe('router', () => {
     })
     const routerHandler = Router([Route('/a', handlerA), Route('/b', handlerB)])
 
-    const response = await testServerManager.loadAndCall(routerHandler, '/b')
+    const res = await ts.load(routerHandler).call('/b')
 
-    expect(response).toMatchObject({
-      statusCode: 200,
-      body: 'b',
-    })
+    expect(await res.text()).toBe('b')
   })
 
   it('routes with pathname(shorthand)', async () => {
@@ -42,12 +41,9 @@ describe('router', () => {
       Route('/b', [InjectSelector('b')], (data) => Result(data)),
     ])
 
-    const response = await testServerManager.loadAndCall(routerHandler, '/b')
+    const res = await ts.load(routerHandler).call('/b')
 
-    expect(response).toMatchObject({
-      statusCode: 200,
-      body: 'b',
-    })
+    expect(await res.text()).toBe('b')
   })
 
   it('routes with method', async () => {
@@ -62,25 +58,17 @@ describe('router', () => {
       Route(['/', 'get'], handlerA),
       Route(['/', 'post'], handlerB),
     ])
-    testServerManager.load(routerHandler)
 
-    const response1 = await testServerManager.call('/', { method: 'get' })
+    const res1 = await ts.load(routerHandler).call('/')
 
-    expect(response1).toMatchObject({
-      statusCode: 200,
-      body: 'a',
-    })
+    expect(await res1.text()).toBe('a')
 
-    const response2 = await testServerManager.call('/', { method: 'post' })
+    const res2 = await ts.call('/', { method: 'post' })
 
-    expect(response2).toMatchObject({
-      statusCode: 200,
-      body: 'b',
-    })
+    expect(await res2.text()).toBe('b')
   })
 
   it('throws 404 error when no route found', async () => {
-    expect.hasAssertions()
     const handlerA = Handler([], () => {
       return Result('a')
     })
@@ -93,18 +81,15 @@ describe('router', () => {
       Route(['/', 'post'], handlerB),
     ])
 
-    const response = await testServerManager.loadAndCall(routerHandler, '/', {
+    const res = await ts.load(routerHandler).call('/', {
       method: 'put',
     })
 
-    expect(response).toMatchObject({
-      statusCode: 404,
-      body: expect.stringContaining('Error: Not Found'),
-    })
+    expect(await res.text()).toContain('Error: Not Found')
+    expect(res.status).toBe(404)
   })
 
   it('uses custom not found handler if set', async () => {
-    expect.hasAssertions()
     const handlerA = Handler([], () => {
       return Result('a')
     })
@@ -122,17 +107,15 @@ describe('router', () => {
       },
     )
 
-    const response = await testServerManager.loadAndCall(routerHandler, '/', {
+    const res = await ts.load(routerHandler).call('/', {
       method: 'put',
     })
-    expect(response).toMatchObject({
-      statusCode: 404,
-      body: expect.stringContaining('Error: Customized Not Found Response'),
-    })
+
+    expect(res.status).toBe(404)
+    expect(await res.text()).toContain('Error: Customized Not Found Response')
   })
 
   it('prepends prefix to route path', async () => {
-    expect.hasAssertions()
     const handlerA = Handler([], () => {
       return Result('a')
     })
@@ -147,19 +130,13 @@ describe('router', () => {
       },
     )
 
-    const response = await testServerManager.loadAndCall(
-      routerHandler,
-      '/admin',
-    )
+    const res = await ts.load(routerHandler).call('/admin')
 
-    expect(response).toMatchObject({
-      statusCode: 200,
-      body: expect.stringContaining('a'),
-    })
+    expect(res.status).toBe(200)
+    expect(await res.text()).toContain('a')
   })
 
   it('prepends prefix to route path (without root `/`)', async () => {
-    expect.hasAssertions()
     const handlerA = Handler([], () => {
       return Result('a')
     })
@@ -170,19 +147,14 @@ describe('router', () => {
     const routerHandler = Router(
       [Route(['/', 'get'], handlerA), Route(['/', 'post'], handlerB)],
       {
-        prefix: '/admin',
+        prefix: 'admin',
       },
     )
 
-    const response = await testServerManager.loadAndCall(
-      routerHandler,
-      '/admin',
-    )
+    const res = await ts.load(routerHandler).call('/admin')
 
-    expect(response).toMatchObject({
-      statusCode: 200,
-      body: expect.stringContaining('a'),
-    })
+    expect(res.status).toBe(200)
+    expect(await res.text()).toContain('a')
   })
 
   it('applies middleware', async () => {
@@ -210,10 +182,10 @@ describe('router', () => {
       ],
     })
 
-    const response = await testServerManager.loadAndCall(routerHandler)
+    const res = await ts.load(routerHandler).call()
 
-    expect(response.statusCode).toBe(200)
-    expect(response.body).toBe('ba')
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('ba')
   })
 })
 
@@ -232,15 +204,10 @@ describe('RouteParamSelector', () => {
       Route('/b/:id', handlerB),
     ])
 
-    const response = await testServerManager.loadAndCall(
-      routerHandler,
-      '/b/test-param',
-    )
+    const res = await ts.load(routerHandler).call('/b/test-param')
 
-    expect(response).toMatchObject({
-      statusCode: 200,
-      body: '',
-    })
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('')
   })
 
   it('resolves a param (named parameter)', async () => {
@@ -256,15 +223,10 @@ describe('RouteParamSelector', () => {
       Route('/b/:id', handlerB),
     ])
 
-    const response = await testServerManager.loadAndCall(
-      routerHandler,
-      '/b/test-param',
-    )
+    const res = await ts.load(routerHandler).call('/b/test-param')
 
-    expect(response).toMatchObject({
-      statusCode: 200,
-      body: 'test-param',
-    })
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('test-param')
   })
 
   it('resolves params (custom suffix)', async () => {
@@ -291,28 +253,18 @@ describe('RouteParamSelector', () => {
       Route('/b/:attr1?{-:attr2}?{-:attr3}?', handlerB),
     ])
 
-    const response1 = await testServerManager.loadAndCall(
-      routerHandler,
-      '/b/test1-test2-test3',
-    )
+    const res = await ts.load(routerHandler).call('/b/test1-test2-test3')
 
-    expect(response1).toMatchObject({
-      statusCode: 200,
-    })
-    expect(JSON.parse(response1.body)).toMatchObject({
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
       attr1: 'test1',
       attr2: 'test2',
       attr3: 'test3',
     })
 
-    const response2 = await testServerManager.loadAndCall(
-      routerHandler,
-      '/b/test1-test2',
-    )
-    expect(response2).toMatchObject({
-      statusCode: 200,
-    })
-    expect(JSON.parse(response2.body)).toMatchObject({
+    const res2 = await ts.call('/b/test1-test2')
+    expect(res2.status).toBe(200)
+    expect(await res2.json()).toEqual({
       attr1: 'test1',
       attr2: 'test2',
       attr3: null,
@@ -338,15 +290,10 @@ describe('RouteParamSelector', () => {
       Route('/b/:id/(.*)', handlerB),
     ])
 
-    const response = await testServerManager.loadAndCall(
-      routerHandler,
-      '/b/test1/test2/test3',
-    )
+    const res = await ts.load(routerHandler).call('/b/test1/test2/test3')
 
-    expect(response).toMatchObject({
-      statusCode: 200,
-    })
-    expect(JSON.parse(response.body)).toMatchObject({
+    expect(res.status).toBe(200)
+    expect(await res.json()).toMatchObject({
       id: 'test1',
       unnamedParam: 'test2/test3',
     })
@@ -371,25 +318,18 @@ describe('RouteParamSelector', () => {
       Route('/b/:param1/:param2?', handlerB),
     ])
 
-    const response1 = await testServerManager.loadAndCall(
-      routerHandler,
-      '/b/test1/test2',
-    )
+    const res1 = await ts.load(routerHandler).call('/b/test1/test2')
 
-    expect(response1).toMatchObject({
-      statusCode: 200,
-    })
-    expect(JSON.parse(response1.body)).toMatchObject({
+    expect(res1.status).toBe(200)
+    expect(await res1.json()).toEqual({
       param1: 'test1',
       param2: 'test2',
     })
 
-    const response2 = await testServerManager.call('/b/test1')
+    const res2 = await ts.load(routerHandler).call('/b/test1')
 
-    expect(response2).toMatchObject({
-      statusCode: 200,
-    })
-    expect(JSON.parse(response2.body)).toMatchObject({
+    expect(res2.status).toBe(200)
+    expect(await res2.json()).toEqual({
       param1: 'test1',
       param2: null,
     })
@@ -410,24 +350,17 @@ describe('RouteParamSelector', () => {
       Route('/b/:param*', handlerB),
     ])
 
-    const response1 = await testServerManager.loadAndCall(
-      routerHandler,
-      '/b/test1/test2',
-    )
+    const res1 = await ts.load(routerHandler).call('/b/test1/test2')
 
-    expect(response1).toMatchObject({
-      statusCode: 200,
-    })
-    expect(JSON.parse(response1.body)).toMatchObject({
+    expect(res1.status).toBe(200)
+    expect(await res1.json()).toEqual({
       param: 'test1',
     })
 
-    const response2 = await testServerManager.loadAndCall(routerHandler, '/b')
+    const res2 = await ts.load(routerHandler).call('/b')
 
-    expect(response2).toMatchObject({
-      statusCode: 200,
-    })
-    expect(JSON.parse(response2.body)).toMatchObject({
+    expect(res2.status).toBe(200)
+    expect(await res2.json()).toEqual({
       param: null,
     })
   })
@@ -447,22 +380,15 @@ describe('RouteParamSelector', () => {
       Route('/b/:param+', handlerB),
     ])
 
-    const response1 = await testServerManager.loadAndCall(
-      routerHandler,
-      '/b/test1/test2',
-    )
+    const res1 = await ts.load(routerHandler).call('/b/test1/test2')
 
-    expect(response1).toMatchObject({
-      statusCode: 200,
-    })
-    expect(JSON.parse(response1.body)).toMatchObject({
+    expect(res1.status).toBe(200)
+    expect(await res1.json()).toEqual({
       param: 'test1',
     })
 
-    const response2 = await testServerManager.loadAndCall(routerHandler, '/b')
+    const res2 = await ts.load(routerHandler).call('/b')
 
-    expect(response2).toMatchObject({
-      statusCode: 404,
-    })
+    expect(res2.status).toBe(404)
   })
 })

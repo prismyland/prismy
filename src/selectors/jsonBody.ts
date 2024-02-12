@@ -59,6 +59,7 @@ export function JsonBodySelector(
 }
 
 function isContentTypeApplicationJSON(contentType: string | undefined) {
+  /* istanbul ignore next */
   if (typeof contentType !== 'string') return false
   if (!contentType.startsWith('application/json')) return false
   return true

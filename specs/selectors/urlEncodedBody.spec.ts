@@ -1,28 +1,31 @@
-import got from 'got'
-import { testHandler } from '../helpers'
-import { prismy, Result, UrlEncodedBodySelector } from '../../src'
+import { Handler, Result, UrlEncodedBodySelector } from '../../src'
+import { TestServer } from '../../src/test'
+
+const ts = TestServer()
+
+beforeAll(async () => {
+  await ts.start()
+})
+
+afterAll(async () => {
+  await ts.close()
+})
 
 describe('UrlEncodedBody', () => {
   it('injects parsed url encoded body', async () => {
-    const handler = prismy([UrlEncodedBodySelector()], (body) => {
+    const handler = Handler([UrlEncodedBodySelector()], (body) => {
       return Result(body)
     })
+    const body = new URLSearchParams()
+    body.append('message', 'Hello, World!')
 
-    await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        method: 'POST',
-        responseType: 'json',
-        form: {
-          message: 'Hello, World!',
-        },
-      })
+    const res = await ts.load(handler).call('/', {
+      method: 'post',
+      body: body,
+    })
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: {
-          message: 'Hello, World!',
-        },
-      })
+    expect(await res.json()).toEqual({
+      message: 'Hello, World!',
     })
   })
 })

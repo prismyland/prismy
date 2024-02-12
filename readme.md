@@ -36,7 +36,7 @@
 
 ## Features
 
-- Very small (No Expressjs, the only deps are micro and tslib)
+- Very small (using node.js's http module directly)
 - Takes advantage of the asynchronous nature of Javascript with full support for async / await
 - Simple and easy argument injection for handlers (Inspired by ReselectJS)
   - Completely **TYPE-SAFE**

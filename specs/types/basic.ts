@@ -13,10 +13,11 @@ import {
   Route,
   UrlSelector,
 } from '../../src'
-import { expectType } from '../helpers'
 import http from 'http'
 import { InjectSelector } from '../../src/selectors/inject'
 import { PrismySelector } from '../../src/selectors/createSelector'
+
+function expectType<T>(value: T): void {}
 
 const handler1 = Handler([UrlSelector(), MethodSelector()], (url, method) => {
   expectType<URL>(url)
