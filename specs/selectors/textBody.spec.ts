@@ -2,7 +2,7 @@ import got from 'got'
 import { testHandler } from '../helpers'
 import { prismy, Result, TextBodySelector } from '../../src'
 
-describe('createTextBodySelector', () => {
+describe('TextBodySelector', () => {
   it('creates buffer body selector', async () => {
     const handler = prismy([TextBodySelector()], (body) => {
       return Result(`${body.constructor.name}: ${body}`)

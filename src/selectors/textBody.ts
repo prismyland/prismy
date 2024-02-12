@@ -45,8 +45,3 @@ export function TextBodySelector(
     return readTextBody(req, options)
   })
 }
-
-/**
- * @deprecated Use `TextBodySelector`
- */
-export const createTextBodySelector = TextBodySelector

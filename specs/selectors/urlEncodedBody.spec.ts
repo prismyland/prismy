@@ -2,7 +2,7 @@ import got from 'got'
 import { testHandler } from '../helpers'
 import { prismy, Result, UrlEncodedBodySelector } from '../../src'
 
-describe('URLEncodedBody', () => {
+describe('UrlEncodedBody', () => {
   it('injects parsed url encoded body', async () => {
     const handler = prismy([UrlEncodedBodySelector()], (body) => {
       return Result(body)

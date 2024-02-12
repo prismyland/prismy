@@ -55,8 +55,3 @@ export function UrlEncodedBodySelector(
     }
   })
 }
-
-/**
- * @deprecated Use `UrlEncodedBodySelector`
- */
-export const createUrlEncodedBodySelector = UrlEncodedBodySelector

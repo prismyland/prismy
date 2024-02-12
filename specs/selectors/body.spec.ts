@@ -3,7 +3,7 @@ import { testHandler } from '../helpers'
 import { BodySelector } from '../../src/selectors'
 import { prismy, Result } from '../../src'
 
-describe('createBodySelector', () => {
+describe('BodySelector', () => {
   it('returns text body', async () => {
     expect.hasAssertions()
     const handler = prismy([BodySelector()], (body) => {
