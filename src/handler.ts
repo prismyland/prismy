@@ -11,6 +11,7 @@ import { compileHandler } from './utils'
 
 export class PrismyHandler<
   S extends PrismySelector<any>[] = PrismySelector<any>[],
+  R extends PrismyResult<any> = PrismyResult<any>,
 > {
   constructor(
     public selectors: [...S],
@@ -18,13 +19,11 @@ export class PrismyHandler<
      * PrismyHandler exposes `handler` for unit testing the handler.
      * @param args selected arguments
      */
-    public handle: (
-      ...args: SelectorReturnTypeTuple<S>
-    ) => MaybePromise<PrismyResult>,
+    public handle: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<R>,
     public middlewareList: PrismyMiddleware<any[]>[],
   ) {}
 
-  async __internal__handler(): Promise<PrismyResult> {
+  async __internal__handler(): Promise<PrismyResult<any>> {
     const next: PrismyNextFunction = compileHandler(this.selectors, this.handle)
 
     const pipe = this.middlewareList.reduce((next, middleware) => {
@@ -68,11 +67,12 @@ export class PrismyHandler<
  *
  * @public *
  */
-export function Handler<S extends PrismySelector<any>[]>(
+export function Handler<
+  S extends PrismySelector<any>[],
+  R extends PrismyResult<any> = PrismyResult<any>,
+>(
   selectors: [...S],
-  handlerFunction: (
-    ...args: SelectorReturnTypeTuple<S>
-  ) => MaybePromise<PrismyResult>,
+  handlerFunction: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<R>,
   middlewareList: PrismyMiddleware<PrismySelector<any>[]>[] = [],
 ) {
   return new PrismyHandler(selectors, handlerFunction, middlewareList)

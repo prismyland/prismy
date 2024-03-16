@@ -19,11 +19,14 @@ import { PrismySelector } from '../../src/selectors/createSelector'
 
 function expectType<T>(value: T): void {}
 
-const handler1 = Handler([UrlSelector(), MethodSelector()], (url, method) => {
-  expectType<URL>(url)
-  expectType<string | undefined>(method)
-  return Result('')
-})
+const handler1 = Handler(
+  [UrlSelector(), MethodSelector()],
+  async (url, method) => {
+    expectType<URL>(url)
+    expectType<string | undefined>(method)
+    return Result('')
+  },
+)
 
 expectType<
   (
@@ -34,6 +37,10 @@ expectType<
 >(handler1.handle)
 
 expectType<PrismyHandler>(Handler([BodySelector()], () => Result(null)))
+
+expectType<MaybePromise<PrismyResult<string>>>(
+  handler1.handle(new URL('...'), 'get'),
+)
 
 http.createServer(prismy(handler1))
 
