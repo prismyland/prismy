@@ -69,7 +69,7 @@ export function prismy<S extends PrismySelector<unknown>[]>(
       req: request,
     }
     prismyContextStorage.run(context, async () => {
-      const resObject = await injectedHandler.handle()
+      const resObject = await injectedHandler.__internal__handler()
 
       resObject.resolve(request, response)
     })

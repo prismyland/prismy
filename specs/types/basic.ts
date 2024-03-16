@@ -31,7 +31,7 @@ expectType<
     method: string | undefined,
     url2: URL,
   ) => PrismyResult | Promise<PrismyResult>
->(handler1.handlerFunction)
+>(handler1.handle)
 
 expectType<PrismyHandler>(Handler([BodySelector()], () => Result(null)))
 
@@ -92,4 +92,4 @@ expectType<
 >(shortRoute)
 expectType<
   (url: URL, method: string | undefined) => MaybePromise<PrismyResult<any>>
->(shortRoute.handler.handlerFunction)
+>(shortRoute.handler.handle)

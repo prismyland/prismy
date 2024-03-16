@@ -79,11 +79,11 @@ export function Router(
 
         setRouteParamsToPrismyContext(prismyContext, result.params)
 
-        return route.listener.handle()
+        return route.listener.__internal__handler()
       }
 
       if (notFoundHandler != null) {
-        return notFoundHandler.handle()
+        return notFoundHandler.__internal__handler()
       }
       throw createError(404, 'Not Found')
     },

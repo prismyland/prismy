@@ -7,7 +7,7 @@ describe('Handler', () => {
     )
     const handler = Handler([rawUrlSelector], (url) => Result(url))
 
-    const result = handler.handlerFunction('Hello, World!')
+    const result = handler.handle('Hello, World!')
 
     expect(result).toMatchObject({
       body: 'Hello, World!',
