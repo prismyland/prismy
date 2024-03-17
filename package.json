@@ -15,6 +15,7 @@
   "homepage": "https://github.com/prismyland/prismy",
   "license": "MIT",
   "main": "dist/index.js",
+  "module": "dist/es/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/index.d.ts",
@@ -27,15 +28,18 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.js"
+      "require": "./dist/index.js",
+      "import": "./dist/es/index.js"
     },
     "./test": {
       "types": "./dist/test.d.ts",
-      "require": "./dist/test.js"
+      "require": "./dist/test.js",
+      "import": "./dist/es/index.js"
     }
   },
   "scripts": {
-    "build": "rimraf dist && tsc -P tsconfig.build.json",
+    "build": "rimraf dist && tsc -P tsconfig.build.json && npm run build-es",
+    "build-es": "tsc -P tsconfig.es.json",
     "lint": "prettier --check src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",
     "format": "prettier --write src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",
     "test": "npm run lint && npm run test-type && npm run test-coverage",
