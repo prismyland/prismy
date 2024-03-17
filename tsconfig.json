@@ -1,9 +1,9 @@
 {
   "include": ["src/**/*.ts", "specs/**/*.ts"],
   "compilerOptions": {
-    "target": "es2018",
-    "lib": ["es2018"],
-    "module": "commonjs",
+    "lib": ["ES2022"],
+    "module": "node16",
+    "target": "ES2022",
     "moduleResolution": "node",
     "importHelpers": true,
     "esModuleInterop": true,
@@ -27,6 +27,6 @@
   },
   "typedocOptions": {
     "out": "out",
-    "mode": "file",
+    "mode": "file"
   }
 }

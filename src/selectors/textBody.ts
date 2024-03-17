@@ -1,8 +1,9 @@
+import { getPrismyContext } from '../prismy'
 import { readTextBody } from '../bodyReaders'
-import { AsyncSelector } from '../types'
+import { createPrismySelector, PrismySelector } from './createSelector'
 
 /**
- * Options for {@link createTextBodySelector}
+ * Options for {@link textBodySelector}
  *
  * @public
  */
@@ -36,10 +37,11 @@ export interface TextBodySelectorOptions {
  *
  * @public
  */
-export function createTextBodySelector(
-  options?: TextBodySelectorOptions
-): AsyncSelector<string> {
-  return ({ req }) => {
+export function TextBodySelector(
+  options?: TextBodySelectorOptions,
+): PrismySelector<string> {
+  return createPrismySelector(() => {
+    const { req } = getPrismyContext()
     return readTextBody(req, options)
-  }
+  })
 }

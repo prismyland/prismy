@@ -1,85 +1,79 @@
-import { IncomingMessage, ServerResponse } from 'http'
-import { createErrorResObject } from './error'
-import { send } from './send'
-import {
-  ResponseObject,
-  Selector,
-  PrismyPureMiddleware,
-  Promisable,
-  Context,
-  ContextHandler,
-  PrismyHandler,
-  SelectorReturnTypeTuple,
-} from './types'
-import { compileHandler } from './utils'
+import { AsyncLocalStorage } from 'async_hooks'
+import { IncomingMessage, RequestListener, ServerResponse } from 'http'
+import { PrismyMiddleware } from './middleware'
+import { Handler, PrismyHandler } from './handler'
+import { PrismySelector } from './selectors/createSelector'
+import { MaybePromise, PrismyContext, SelectorReturnTypeTuple } from './types'
+import { PrismyResult } from './result'
+
+export const prismyContextStorage = new AsyncLocalStorage<PrismyContext>()
+export function getPrismyContext(): PrismyContext {
+  const context = prismyContextStorage.getStore()
+  if (context == null) {
+    throw new Error('Prismy context is not loaded.')
+  }
+  return context
+}
 
 /**
- * Generates a handler to be used by http.Server
+ * Make a RequestListener from PrismyHandler
  *
  * @example
  * ```ts
- * const worldSelector: Selector<string> = () => "world"!
+ * const handler = Handler([], () => { ... })
  *
- * export default prismy([ worldSelector ], async world => {
- *  return res(`Hello ${world}!`) // Hello world!
- * })
+ * const listener = prismy(handler)
+ * // Or
+ * // const listener = prismy([], () => {...})
+ *
+ * http.createServerlistener)
  * ```
  *
- * @remarks
- * Selectors must be a tuple (`[Selector<string>, Selector<number>]`) not an
- * array (`Selector<string>|Selector<number>[] `). Be careful when declaring the
- * array outside of the function call.
- *
- * @param selectors - Tuple of Selectors to generate arguments for handler
- * @param handler - Business logic handling the request
- * @param middlewareList - Middleware to pass request and response through
- *
- * @public
- *
+ * @param prismyHandler
  */
-export function prismy<S extends Selector<unknown>[]>(
+export function prismy<S extends PrismySelector<unknown>[]>(
+  prismyHandler: PrismyHandler<S>,
+): RequestListener
+
+/**
+ * Make a RequestListener from PrismyHandler
+ *
+ * @param selectors
+ * @param handlerFunction
+ * @param middlewareList
+ */
+export function prismy<S extends PrismySelector<any>[]>(
   selectors: [...S],
-  handler: (
+  handlerFunction: (
     ...args: SelectorReturnTypeTuple<S>
-  ) => Promisable<ResponseObject<any>>,
-  middlewareList: PrismyPureMiddleware[] = []
-): PrismyHandler<SelectorReturnTypeTuple<S>> {
-  const contextHandler: ContextHandler = async (context: Context) => {
-    const next = async () => compileHandler(selectors, handler)(context)
-
-    const pipe = middlewareList.reduce((next, middleware) => {
-      return () => middleware(context)(next)
-    }, next)
-
-    let resObject
-    try {
-      resObject = await pipe()
-    } catch (error) {
-      /* istanbul ignore next */
-      if (process.env.NODE_ENV !== 'test') {
-        console.error(error)
-      }
-      resObject = createErrorResObject(error)
-    }
-
-    return resObject
-  }
+  ) => MaybePromise<PrismyResult>,
+  middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
+): RequestListener
+export function prismy<S extends PrismySelector<unknown>[]>(
+  selectorsOrPrismyHandler: [...S] | PrismyHandler<S>,
+  handlerFunction?: (
+    ...args: SelectorReturnTypeTuple<S>
+  ) => MaybePromise<PrismyResult>,
+  middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
+): RequestListener {
+  const injectedHandler =
+    selectorsOrPrismyHandler instanceof PrismyHandler
+      ? selectorsOrPrismyHandler
+      : Handler(selectorsOrPrismyHandler, handlerFunction!, middlewareList)
 
   async function requestListener(
     request: IncomingMessage,
-    response: ServerResponse
+    response: ServerResponse,
   ) {
-    const context = {
+    const context: PrismyContext = {
       req: request,
     }
+    prismyContextStorage.run(context, async () => {
+      const resObject = await injectedHandler.__internal__handler()
 
-    const resObject = await contextHandler(context)
-
-    await send(request, response, resObject)
+      resObject.resolve(request, response)
+    })
   }
-
-  requestListener.handler = handler
-  requestListener.contextHandler = contextHandler
 
   return requestListener
 }

@@ -1,14 +1,22 @@
-import { SyncSelector } from '../types'
+import { getPrismyContext } from '../prismy'
+import { createPrismySelector, PrismySelector } from './createSelector'
+
+const methodSelector: PrismySelector<string | undefined> = createPrismySelector(
+  () => {
+    const { req } = getPrismyContext()
+    return req.method
+  },
+)
 
 /**
- * Selector to extract the HTTP method from the request
+ * Returns a selector to extract the HTTP method from the request
  *
  * @example
  * Simple example
  * ```ts
  *
  * const prismyHandler = prismy(
- *  [methodSelector],
+ *  [MethodSelector()],
  *  method => {
  *    if (method !== 'GET') {
  *      throw createError(405)
@@ -17,11 +25,11 @@ import { SyncSelector } from '../types'
  * )
  * ```
  *
- * @param context - The request context
- * @returns the http request method
+ * @returns PrismySelector
  *
  * @public
  */
-export const methodSelector: SyncSelector<string | undefined> = ({ req }) => {
-  return req.method
+
+export function MethodSelector() {
+  return methodSelector
 }

@@ -1,7 +1,20 @@
-import { UrlWithStringQuery, parse } from 'url'
-import { SyncSelector } from '../types'
+import { URL } from 'url'
+import { getPrismyContext } from '../prismy'
+import { createPrismySelector } from './createSelector'
 
-const urlSymbol = Symbol('prismy-url')
+const urlMap = new WeakMap()
+
+const urlSelector = createPrismySelector((): URL => {
+  const context = getPrismyContext()
+  let url: URL | undefined = urlMap.get(context)
+  if (url == null) {
+    const { req } = context
+    /* istanbul ignore next */
+    url = new URL(req.url == null ? '' : req.url, `http://${req.headers.host}`)
+    urlMap.set(context, url)
+  }
+  return url
+})
 
 /**
  * Selector for extracting the requested URL
@@ -13,22 +26,15 @@ const urlSymbol = Symbol('prismy-url')
  * const prismyHandler = prismy(
  *  [urlSelector],
  *  url => {
- *    return res(url.path)
+ *    return Result(url.path)
  *  }
  * )
  * ```
  *
- * @param context - Request context
  * @returns The url of the request
  *
  * @public
  */
-export const urlSelector: SyncSelector<UrlWithStringQuery> = context => {
-  let url: UrlWithStringQuery | undefined = context[urlSymbol]
-  if (url == null) {
-    const { req } = context
-    /* istanbul ignore next */
-    url = context[urlSymbol] = parse(req.url == null ? '' : req.url)
-  }
-  return url
+export function UrlSelector() {
+  return urlSelector
 }

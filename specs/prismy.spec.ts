@@ -1,157 +1,158 @@
-import got from 'got'
-import { testHandler } from './helpers'
-import { prismy, res, Selector, PrismyPureMiddleware, err } from '../src'
+import {
+  prismy,
+  getPrismyContext,
+  Middleware,
+  Result,
+  ErrorResult,
+} from '../src'
+import { createPrismySelector } from '../src/selectors/createSelector'
+import { TestServer } from '../src/test'
+
+const ts = TestServer()
+
+beforeAll(async () => {
+  await ts.start()
+})
+
+afterAll(async () => {
+  await ts.close()
+})
 
 describe('prismy', () => {
   it('returns node.js request handler', async () => {
-    const handler = prismy([], () => res('Hello, World!'))
+    const listener = prismy([], () => Result('Hello, World!'))
 
-    await testHandler(handler, async url => {
-      const response = await got(url)
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: 'Hello, World!'
-      })
-    })
+    const res = await ts.loadRequestListener(listener).call()
+
+    expect(await res.text()).toBe('Hello, World!')
+    expect(res.status).toBe(200)
   })
 
   it('selects value from context via selector', async () => {
-    const rawUrlSelector: Selector<string> = context => context.req.url!
-    const handler = prismy([rawUrlSelector], url => res(url))
-
-    await testHandler(handler, async url => {
-      const response = await got(url)
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: '/'
-      })
+    const rawUrlSelector = createPrismySelector(() => {
+      const { req } = getPrismyContext()
+      return req.url!
     })
+    const listener = prismy([rawUrlSelector], (url) => Result(url))
+
+    const res = await ts.loadRequestListener(listener).call()
+
+    expect(await res.text()).toBe('/')
+    expect(res.status).toBe(200)
   })
 
-  it('selects value from context via selector', async () => {
-    const asyncRawUrlSelector: Selector<string> = async context =>
-      context.req.url!
-    const handler = prismy([asyncRawUrlSelector], url => res(url))
-
-    await testHandler(handler, async url => {
-      const response = await got(url)
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: '/'
-      })
-    })
-  })
-
-  it('expose raw prismy handler for unit tests', () => {
-    const rawUrlSelector: Selector<string> = context => context.req.url!
-    const handler = prismy([rawUrlSelector], url => res(url))
-
-    const result = handler.handler('Hello, World!')
-
-    expect(result).toEqual({
-      body: 'Hello, World!',
-      headers: {},
-      statusCode: 200
-    })
-  })
-
-  it('applys middleware', async () => {
-    const errorMiddleware: PrismyPureMiddleware = context => async next => {
-      try {
-        return await next()
-      } catch (error) {
-        return err(500, (error as any).message)
+  it('applies middleware', async () => {
+    const errorMiddleware = Middleware([], (next) => {
+      return async () => {
+        try {
+          return await next()
+        } catch (error) {
+          return ErrorResult(500, (error as any).message)
+        }
       }
-    }
-    const rawUrlSelector: Selector<string> = context => context.req.url!
-    const handler = prismy(
+    })
+    const rawUrlSelector = createPrismySelector(
+      () => getPrismyContext().req.url!,
+    )
+    const listener = prismy(
       [rawUrlSelector],
-      url => {
+      (url) => {
         throw new Error('Hey!')
       },
-      [errorMiddleware]
+      [errorMiddleware],
     )
 
-    await testHandler(handler, async url => {
-      const response = await got(url, {
-        throwHttpErrors: false
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: 'Hey!'
-      })
-    })
+    const res = await ts.loadRequestListener(listener).call()
+
+    expect(await res.text()).toBe('Hey!')
+    expect(res.status).toBe(500)
   })
 
-  it('applys middleware orderly', async () => {
-    const problematicMiddleware: PrismyPureMiddleware = context => async next => {
+  it('applies middleware in order (later = deeper)', async () => {
+    const problematicMiddleware = Middleware([], (next) => () => {
       throw new Error('Hey!')
-    }
-    const errorMiddleware: PrismyPureMiddleware = context => async next => {
+    })
+    const errorMiddleware = Middleware([], (next) => async () => {
       try {
         return await next()
       } catch (error) {
-        return res((error as any).message, 500)
+        return ErrorResult(500, 'Something is wrong!')
       }
-    }
-    const rawUrlSelector: Selector<string> = context => context.req.url!
+    })
+    const rawUrlSelector = createPrismySelector(
+      () => getPrismyContext().req.url!,
+    )
     const handler = prismy(
       [rawUrlSelector],
-      url => {
-        return res(url)
+      (url) => {
+        return Result(url)
       },
-      [problematicMiddleware, errorMiddleware]
+      [problematicMiddleware, errorMiddleware],
     )
 
-    await testHandler(handler, async url => {
-      const response = await got(url, {
-        throwHttpErrors: false
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: 'Hey!'
-      })
-    })
+    const res = await ts.loadRequestListener(handler).call()
+
+    expect(await res.text()).toBe('Something is wrong!')
+    expect(res.status).toBe(500)
   })
 
-  it('handles unhandled errors from handlers', async () => {
-    const handler = prismy(
+  it('handles errors from handlers by default', async () => {
+    const listener = prismy(
       [],
       () => {
         throw new Error('Hey!')
       },
-      []
+      [],
     )
-    await testHandler(handler, async url => {
-      const response = await got(url, {
-        throwHttpErrors: false
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: expect.stringContaining('Error: Hey!')
-      })
-    })
+
+    const res = await ts.loadRequestListener(listener).call()
+
+    expect(await res.text()).toContain('Error: Hey!')
+    expect(res.status).toBe(500)
   })
 
-  it('handles unhandled errors from selectors', async () => {
-    const rawUrlSelector: Selector<string> = context => {
+  it('handles errors from selectors by default', async () => {
+    const rawUrlSelector = createPrismySelector(() => {
       throw new Error('Hey!')
-    }
-    const handler = prismy(
-      [rawUrlSelector],
-      url => {
-        return res(url)
-      },
-      []
-    )
-    await testHandler(handler, async url => {
-      const response = await got(url, {
-        throwHttpErrors: false
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: expect.stringContaining('Error: Hey!')
-      })
     })
+    const listener = prismy(
+      [rawUrlSelector],
+      (url) => {
+        return Result(url)
+      },
+      [],
+    )
+
+    const res = await ts.loadRequestListener(listener).call()
+
+    expect(await res.text()).toContain('Error: Hey!')
+    expect(res.status).toBe(500)
+  })
+
+  it('handles errors from middleware by default', async () => {
+    const middleware = Middleware([], (next) => () => {
+      throw new Error('Hey!')
+    })
+    const listener = prismy(
+      [],
+      () => {
+        return Result('Hello!')
+      },
+      [middleware],
+    )
+
+    const res = await ts.loadRequestListener(listener).call()
+
+    expect(await res.text()).toContain('Error: Hey!')
+    expect(res.status).toBe(500)
+  })
+})
+
+describe('getPrismyContext', () => {
+  it('throws if context is not set(resolved outside of prismy)', () => {
+    expect(() => {
+      const context = getPrismyContext()
+      throw new Error(`should fail to get context. ${context}`)
+    }).toThrow('Prismy context is not loaded.')
   })
 })

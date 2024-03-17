@@ -1,10 +1,11 @@
 import { parse } from 'querystring'
+import { getPrismyContext } from '../prismy'
 import { readJsonBody, readTextBody } from '../bodyReaders'
 import { createError } from '../error'
-import { AsyncSelector } from '../types'
+import { createPrismySelector, PrismySelector } from './createSelector'
 
 /**
- * Options for {@link createBodySelector}
+ * Options for {@link bodySelector}
  *
  * @public
  */
@@ -38,15 +39,20 @@ export interface BodySelectorOptions {
  *
  * @public
  */
-export function createBodySelector(
-  options?: BodySelectorOptions
-): AsyncSelector<object | string> {
-  return async ({ req }) => {
-    const type = req.headers['content-type']
+export function BodySelector(
+  options?: BodySelectorOptions,
+): PrismySelector<object | string> {
+  return createPrismySelector(async () => {
+    const { req } = getPrismyContext()
+    /* istanbul ignore next */
+    const type = req.headers['content-type'] || ''
 
-    if (type === 'application/json' || type === 'application/ld+json') {
+    if (
+      type.startsWith('application/json') ||
+      type.startsWith('application/ld+json')
+    ) {
       return readJsonBody(req, options)
-    } else if (type === 'application/x-www-form-urlencoded') {
+    } else if (type.startsWith('application/x-www-form-urlencoded')) {
       const textBody = await readTextBody(req, options)
       try {
         return parse(textBody)
@@ -57,5 +63,10 @@ export function createBodySelector(
     } else {
       return readTextBody(req, options)
     }
-  }
+  })
 }
+
+/**
+ * @deprecated Use `BodySelector`
+ */
+export const createBodySelector = BodySelector

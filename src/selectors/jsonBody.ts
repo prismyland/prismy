@@ -1,7 +1,7 @@
 import { readJsonBody } from '../bodyReaders'
 import { createError } from '../error'
-import { AsyncSelector } from '../types'
-import { headersSelector } from './headers'
+import { getPrismyContext } from '../prismy'
+import { createPrismySelector, PrismySelector } from './createSelector'
 
 /**
  * Options for {@link createJsonBodySelector}
@@ -9,7 +9,6 @@ import { headersSelector } from './headers'
  * @public
  */
 export interface JsonBodySelectorOptions {
-  skipContentTypeCheck?: boolean
   limit?: string | number
   encoding?: string
 }
@@ -42,25 +41,25 @@ export interface JsonBodySelectorOptions {
  *
  * @public
  */
-export function createJsonBodySelector(
-  options?: JsonBodySelectorOptions
-): AsyncSelector<any> {
-  return context => {
-    const { skipContentTypeCheck = false } = options || {}
-    if (!skipContentTypeCheck) {
-      const contentType = headersSelector(context)['content-type']
-      if (!isContentTypeIsApplicationJSON(contentType)) {
-        throw createError(
-          400,
-          `Content type must be application/json. (Current: ${contentType})`
-        )
-      }
+export function JsonBodySelector(
+  options?: JsonBodySelectorOptions,
+): PrismySelector<any> {
+  return createPrismySelector(() => {
+    const { req } = getPrismyContext()
+    const contentType = req.headers['content-type']
+    if (!isContentTypeApplicationJSON(contentType)) {
+      throw createError(
+        400,
+        `Content type must be application/json. (Current: ${contentType})`,
+      )
     }
-    return readJsonBody(context.req, options)
-  }
+
+    return readJsonBody(req, options)
+  })
 }
 
-function isContentTypeIsApplicationJSON(contentType: string | undefined) {
+function isContentTypeApplicationJSON(contentType: string | undefined) {
+  /* istanbul ignore next */
   if (typeof contentType !== 'string') return false
   if (!contentType.startsWith('application/json')) return false
   return true

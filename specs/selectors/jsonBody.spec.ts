@@ -1,108 +1,47 @@
-import got from 'got'
-import { testHandler } from '../helpers'
-import { createJsonBodySelector, prismy, res } from '../../src'
+import { Handler, JsonBodySelector, Result } from '../../src'
+import { TestServer } from '../../src/test'
 
-describe('createJsonBodySelector', () => {
+const ts = TestServer()
+
+beforeAll(async () => {
+  await ts.start()
+})
+
+afterAll(async () => {
+  await ts.close()
+})
+
+describe('JsonBodySelector', () => {
   it('creates json body selector', async () => {
-    const jsonBodySelector = createJsonBodySelector()
-    const handler = prismy([jsonBodySelector], body => {
-      return res(body)
+    const handler = Handler([JsonBodySelector()], (body) => {
+      return Result(body)
     })
 
-    await testHandler(handler, async url => {
-      const response = await got(url, {
-        method: 'POST',
-        responseType: 'json',
-        json: {
-          message: 'Hello, World!'
-        }
-      })
+    const res = await ts.load(handler).call('/', {
+      method: 'post',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ message: 'Hello!' }),
+    })
 
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: {
-          message: 'Hello, World!'
-        }
-      })
+    expect(await res.json()).toEqual({
+      message: 'Hello!',
     })
   })
 
-  it('throws if content type of a request is not application/json #1 (Anti CSRF)', async () => {
-    const jsonBodySelector = createJsonBodySelector()
-    const handler = prismy([jsonBodySelector], body => {
-      return res(body)
+  it('throw if content type of a request is not application/json', async () => {
+    const handler = Handler([JsonBodySelector()], (body) => {
+      return Result(body)
     })
 
-    await testHandler(handler, async url => {
-      const response = await got(url, {
-        method: 'POST',
-        body: JSON.stringify({
-          message: 'Hello, World!'
-        }),
-        throwHttpErrors: false
-      })
-
-      expect(response).toMatchObject({
-        statusCode: 400,
-        body: expect.stringContaining(
-          'Error: Content type must be application/json. (Current: undefined)'
-        )
-      })
-    })
-  })
-
-  it('throws if content type of a request is not application/json #2 (Anti CSRF)', async () => {
-    const jsonBodySelector = createJsonBodySelector()
-    const handler = prismy([jsonBodySelector], body => {
-      return res(body)
+    const res = await ts.load(handler).call('/', {
+      method: 'post',
+      body: JSON.stringify({ message: 'Hello!' }),
     })
 
-    await testHandler(handler, async url => {
-      const response = await got(url, {
-        method: 'POST',
-        json: {
-          message: 'Hello, World!'
-        },
-        headers: {
-          'content-type': 'text/plain'
-        },
-        throwHttpErrors: false
-      })
-
-      expect(response).toMatchObject({
-        statusCode: 400,
-        body: expect.stringContaining(
-          'Error: Content type must be application/json. (Current: text/plain)'
-        )
-      })
-    })
-  })
-
-  it('skips content-type checking if the option is given', async () => {
-    const jsonBodySelector = createJsonBodySelector({
-      skipContentTypeCheck: true
-    })
-    const handler = prismy([jsonBodySelector], body => {
-      return res(body)
-    })
-
-    await testHandler(handler, async url => {
-      const response = await got(url, {
-        method: 'POST',
-        json: {
-          message: 'Hello, World!'
-        },
-        headers: {
-          'content-type': 'text/plain'
-        }
-      })
-
-      expect(response).toMatchObject({
-        statusCode: 200,
-        body: JSON.stringify({
-          message: 'Hello, World!'
-        })
-      })
-    })
+    expect(await res.text()).toContain(
+      'Error: Content type must be application/json. (Current: text/plain',
+    )
   })
 })

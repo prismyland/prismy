@@ -1,25 +1,32 @@
 import { IncomingHttpHeaders } from 'http'
-import { SyncSelector } from '../types'
+import { getPrismyContext } from '../prismy'
+import { createPrismySelector, PrismySelector } from './createSelector'
+
+const headersSelector: PrismySelector<IncomingHttpHeaders> =
+  createPrismySelector(() => {
+    const { req } = getPrismyContext()
+    return req.headers
+  })
 
 /**
- * A selector to extract the headers of a request
+ * Returns a selector to extract the headers of a request
  *
  * @example
  * Simple example
  * ```ts
  *
  * const prismyHandler = prismy(
- *  [headerSelector],
+ *  [HeaderSelector()],
  *  headers => {
  *    ...
  *  }
  * )
  * ```
  *
- * @param context - The request context
- * @returns The request headers
+ * @returns PrismySelector
  *
  * @public
  */
-export const headersSelector: SyncSelector<IncomingHttpHeaders> = context =>
-  context.req.headers
+export function HeadersSelector() {
+  return headersSelector
+}

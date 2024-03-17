@@ -9,6 +9,8 @@ const rawBodyMap = new WeakMap()
 /**
  * An async function to buffer the incoming request body
  *
+ * **This method is not checking content-type of request header. Please check it manually or use JsonBodySelector.**
+ *
  * @remarks
  * Can be called multiple times, as it caches the raw request body the first time
  *
@@ -20,7 +22,7 @@ const rawBodyMap = new WeakMap()
  */
 export const readBufferBody = async (
   req: IncomingMessage,
-  options?: BufferBodyOptions
+  options?: BufferBodyOptions,
 ): Promise<Buffer | string> => {
   const { limit, encoding } = resolveBufferBodyOptions(req, options)
   const length = req.headers['content-length']
@@ -39,7 +41,7 @@ export const readBufferBody = async (
     return buffer
   } catch (error) {
     if ((error as any).type === 'entity.too.large') {
-      throw createError(413, `Body exceeded ${limit} limit`, error)
+      throw createError(413, `Body is too large (limit: ${limit})`, error)
     } else {
       throw createError(400, `Invalid body`, error)
     }
@@ -57,11 +59,11 @@ export const readBufferBody = async (
  */
 export const readTextBody = async (
   req: IncomingMessage,
-  options?: BufferBodyOptions
+  options?: BufferBodyOptions,
 ): Promise<string> => {
   const { encoding } = resolveBufferBodyOptions(req, options)
   const body = await readBufferBody(req, options)
-  return body.toString(encoding)
+  return body.toString(encoding as any)
 }
 
 /**
@@ -75,7 +77,7 @@ export const readTextBody = async (
  */
 export const readJsonBody = async (
   req: IncomingMessage,
-  options?: BufferBodyOptions
+  options?: BufferBodyOptions,
 ): Promise<object> => {
   const body = await readTextBody(req, options)
   try {
@@ -87,7 +89,7 @@ export const readJsonBody = async (
 
 function resolveBufferBodyOptions(
   req: IncomingMessage,
-  options?: BufferBodyOptions
+  options?: BufferBodyOptions,
 ): BufferBodyOptions {
   const type = req.headers['content-type'] || 'text/plain'
   let { limit = '1mb', encoding } = options || {}

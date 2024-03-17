@@ -1,75 +1,71 @@
-import got from 'got'
-import { testHandler } from './helpers'
-import {
-  prismy,
-  res,
-  Selector,
-  PrismyPureMiddleware,
-  middleware,
-  AsyncSelector,
-} from '../src'
+import { Result, Middleware, getPrismyContext, Handler } from '../src'
+import { createPrismySelector } from '../src/selectors/createSelector'
+import { TestServer } from '../src/test'
+
+const ts = TestServer()
+
+beforeAll(async () => {
+  await ts.start()
+})
+
+afterAll(async () => {
+  await ts.close()
+})
 
 describe('middleware', () => {
   it('creates Middleware via selectors and middleware handler', async () => {
-    const rawUrlSelector: Selector<string> = (context) => context.req.url!
-    const errorMiddleware: PrismyPureMiddleware = middleware(
+    const rawUrlSelector = createPrismySelector(
+      () => getPrismyContext().req.url!,
+    )
+    const errorMiddleware = Middleware(
       [rawUrlSelector],
       (next) => async (url) => {
         try {
           return await next()
         } catch (error) {
-          return res(`${url} : ${(error as any).message}`, 500)
+          return Result(`${url} : ${(error as any).message}`, 500)
         }
-      }
+      },
     )
-    const handler = prismy(
+    const handler = Handler(
       [],
       () => {
         throw new Error('Hey!')
       },
-      [errorMiddleware]
+      [errorMiddleware],
     )
 
-    await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        throwHttpErrors: false,
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: '/ : Hey!',
-      })
-    })
+    const res = await ts.load(handler).call()
+
+    expect(await res.text()).toBe('/ : Hey!')
+    expect(res.status).toBe(500)
   })
 
   it('accepts async selectors', async () => {
-    const asyncRawUrlSelector: AsyncSelector<string> = async (context) =>
-      context.req.url!
-    const errorMiddleware = middleware(
+    const asyncRawUrlSelector = createPrismySelector(
+      async () => getPrismyContext().req.url!,
+    )
+    const errorMiddleware = Middleware(
       [asyncRawUrlSelector],
       (next) => async (url) => {
         try {
           return await next()
         } catch (error) {
-          return res(`${url} : ${(error as any).message}`, 500)
+          return Result(`${url} : ${(error as any).message}`, 500)
         }
-      }
+      },
     )
-    const handler = prismy(
+    const handler = Handler(
       [],
       () => {
         throw new Error('Hey!')
       },
-      [errorMiddleware]
+      [errorMiddleware],
     )
 
-    await testHandler(handler, async (url) => {
-      const response = await got(url, {
-        throwHttpErrors: false,
-      })
-      expect(response).toMatchObject({
-        statusCode: 500,
-        body: '/ : Hey!',
-      })
-    })
+    const res = await ts.load(handler).call()
+
+    expect(await res.text()).toBe('/ : Hey!')
+    expect(res.status).toBe(500)
   })
 })

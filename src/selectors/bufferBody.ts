@@ -1,5 +1,6 @@
-import { AsyncSelector } from '../types'
 import { readBufferBody } from '../bodyReaders'
+import { getPrismyContext } from '../prismy'
+import { createPrismySelector, PrismySelector } from './createSelector'
 
 /**
  * Options for {@link createBufferBodySelector}
@@ -36,10 +37,11 @@ export interface BufferBodySelectorOptions {
  *
  * @public
  */
-export function createBufferBodySelector(
-  options?: BufferBodySelectorOptions
-): AsyncSelector<string | Buffer> {
-  return ({ req }) => {
+export function BufferBodySelector(
+  options?: BufferBodySelectorOptions,
+): PrismySelector<string | Buffer> {
+  return createPrismySelector(() => {
+    const { req } = getPrismyContext()
     return readBufferBody(req, options)
-  }
+  })
 }
