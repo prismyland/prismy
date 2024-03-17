@@ -1,6 +1,6 @@
 {
   "name": "prismy",
-  "version": "4.0.0-8",
+  "version": "4.0.0-9",
   "description": ":rainbow: Simple and fast type safe server library.",
   "keywords": [
     "http",
