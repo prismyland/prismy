@@ -3,7 +3,9 @@
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "node16",
-    "outDir": "dist/es"
+    "outDir": "dist/es",
+    "declaration": false
   },
+
   "include": ["src/**/*.ts"]
 }
