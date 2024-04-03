@@ -1,8 +1,6 @@
 import { createPrismySelector, PrismySelector } from './createSelector'
 import { UrlSelector } from './url'
 
-const urlSelector = UrlSelector()
-
 /**
  * Create a selector which resolves the first value of the search param.
  * Using `url.searchParams.get(name)` internally.
@@ -25,9 +23,7 @@ const urlSelector = UrlSelector()
 export const SearchParamSelector: (
   name: string,
 ) => PrismySelector<string | null> = (name) =>
-  createPrismySelector(async () => {
-    const url = await urlSelector.resolve()
-
+  createPrismySelector([UrlSelector()], async (url) => {
     return url.searchParams.get(name)
   })
 
@@ -56,8 +52,6 @@ export const SearchParamSelector: (
 export const SearchParamListSelector: (
   name: string,
 ) => PrismySelector<string[]> = (name) =>
-  createPrismySelector(async () => {
-    const url = await urlSelector.resolve()
-
+  createPrismySelector([UrlSelector()], async (url) => {
     return url.searchParams.getAll(name)
   })
