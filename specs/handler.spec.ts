@@ -15,4 +15,16 @@ describe('Handler', () => {
       statusCode: 200,
     })
   })
+
+  it('handles without a selector', () => {
+    const handler = Handler(() => Result('Hello!'))
+
+    const result = handler.handle()
+
+    expect(result).toMatchObject({
+      body: 'Hello!',
+      headers: {},
+      statusCode: 200,
+    })
+  })
 })

@@ -73,7 +73,30 @@ export function Handler<
 >(
   selectors: [...S],
   handlerFunction: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<R>,
-  middlewareList: PrismyMiddleware<PrismySelector<any>[]>[] = [],
+  middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
+): PrismyHandler<S, R>
+export function Handler<R extends PrismyResult<any> = PrismyResult<any>>(
+  handlerFunction: () => MaybePromise<R>,
+  middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
+): PrismyHandler<[], R>
+export function Handler<
+  S extends PrismySelector<any>[],
+  R extends PrismyResult<any> = PrismyResult<any>,
+>(
+  selectorsOrHandler: any,
+  handlerFunctionOrMiddlewareList?: any | any[],
+  middlewareList?: any[],
 ) {
-  return new PrismyHandler(selectors, handlerFunction, middlewareList)
+  if (Array.isArray(selectorsOrHandler)) {
+    return new PrismyHandler(
+      selectorsOrHandler,
+      handlerFunctionOrMiddlewareList,
+      middlewareList || [],
+    )
+  }
+  return new PrismyHandler(
+    [],
+    selectorsOrHandler,
+    handlerFunctionOrMiddlewareList || [],
+  )
 }

@@ -120,3 +120,7 @@ expectType<{
   pathname: string
   hash: string
 }>(await UrlPortSelector().select(new URL('')))
+
+Handler(() => {
+  return Result('')
+})

@@ -22,10 +22,10 @@ afterAll(async () => {
 
 describe('router', () => {
   it('routes with pathname', async () => {
-    const handlerA = Handler([], () => {
+    const handlerA = Handler(() => {
       return Result('a')
     })
-    const handlerB = Handler([], () => {
+    const handlerB = Handler(() => {
       return Result('b')
     })
     const routerHandler = Router([Route('/a', handlerA), Route('/b', handlerB)])
@@ -39,6 +39,17 @@ describe('router', () => {
     const routerHandler = Router([
       Route('/a', [InjectSelector('a')], (data) => Result(data)),
       Route('/b', [InjectSelector('b')], (data) => Result(data)),
+    ])
+
+    const res = await ts.load(routerHandler).call('/b')
+
+    expect(await res.text()).toBe('b')
+  })
+
+  it('routes with pathname(shorthand w/o selectors)', async () => {
+    const routerHandler = Router([
+      Route('/a', () => Result('a')),
+      Route('/b', () => Result('b')),
     ])
 
     const res = await ts.load(routerHandler).call('/b')
