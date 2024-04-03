@@ -1,5 +1,6 @@
 import {
   BodySelector,
+  createPrismySelector,
   Handler,
   MaybePromise,
   MethodSelector,
@@ -100,3 +101,22 @@ expectType<
 expectType<
   (url: URL, method: string | undefined) => MaybePromise<PrismyResult<any>>
 >(shortRoute.handler.handle)
+
+expectType<PrismySelector<number>>(
+  createPrismySelector(() => {
+    return 0
+  }),
+)
+
+const UrlPortSelector = () =>
+  createPrismySelector([UrlSelector()], (url) => {
+    return {
+      pathname: url.pathname,
+      hash: url.hash,
+    }
+  })
+
+expectType<{
+  pathname: string
+  hash: string
+}>(await UrlPortSelector().select(new URL('')))

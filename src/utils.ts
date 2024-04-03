@@ -36,7 +36,7 @@ async function resolveSelectors<S extends PrismySelector<unknown>[]>(
 ): Promise<SelectorReturnTypeTuple<S>> {
   const resolvedValues = []
   for (const selector of selectors) {
-    const resolvedValue = await selector.resolve()
+    const resolvedValue = await selector.__internal__selector()
     resolvedValues.push(resolvedValue)
   }
 
