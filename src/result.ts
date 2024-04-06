@@ -152,8 +152,8 @@ export function ErrorResult<B>(
   statusCode: number,
   body: B,
   headers: OutgoingHttpHeaders = {},
-): PrismyResult<B> {
-  return new PrismyResult(body, statusCode, headers)
+): PrismyErrorResult<B> {
+  return new PrismyErrorResult(body, statusCode, headers)
 }
 
 /**
@@ -175,4 +175,8 @@ export function Redirect(
     location,
     ...extraHeaders,
   })
+}
+
+export class PrismyErrorResult<B = unknown> extends PrismyResult<B> {
+  readonly __isError = true
 }

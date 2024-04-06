@@ -1,11 +1,13 @@
 import {
   BodySelector,
   createPrismySelector,
+  ErrorResult,
   Handler,
   MaybePromise,
   MethodSelector,
   Middleware,
   prismy,
+  PrismyErrorResult,
   PrismyHandler,
   PrismyNextFunction,
   PrismyResult,
@@ -123,4 +125,24 @@ expectType<{
 
 Handler(() => {
   return Result('')
+})
+
+Handler((): PrismyResult<{ data: string }> | PrismyErrorResult => {
+  if ('' === '') {
+    return ErrorResult(400, null)
+  } else if ('' === '') {
+    // @ts-expect-error
+    return Result({ test: 'test' })
+  }
+  return Result({ data: '123' })
+})
+
+Handler((): PrismyResult<{ data: string }> | PrismyErrorResult<string> => {
+  if ('' === '') {
+    return ErrorResult(400, '')
+  } else if ('' === '') {
+    // @ts-expect-error
+    return ErrorResult(400, null)
+  }
+  return Result({ data: '123' })
 })
