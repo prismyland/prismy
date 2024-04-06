@@ -1,4 +1,14 @@
-import { Redirect, Result, Handler, ErrorResult, PrismyResult } from '../src'
+import {
+  RedirectResult,
+  Result,
+  Handler,
+  ErrorResult,
+  PrismyResult,
+  PrismyErrorResult,
+  isErrorResult,
+  assertErrorResult,
+  assertNoErrorResult,
+} from '../src'
 import { TestServer } from '../src/test'
 
 const ts = TestServer()
@@ -16,6 +26,7 @@ describe('ErrorResult', () => {
     const errorResult = ErrorResult(400, 'Invalid Format')
 
     expect(errorResult).toBeInstanceOf(PrismyResult)
+    expect(errorResult).toBeInstanceOf(PrismyErrorResult)
     expect(errorResult.statusCode).toBe(400)
     expect(errorResult.body).toBe('Invalid Format')
   })
@@ -100,9 +111,71 @@ describe('PrismyResult', () => {
   })
 })
 
-describe('Redirect', () => {
+describe('isErrorResult', () => {
+  it('returns false if result is NOT an error result', () => {
+    const result = Result(null)
+
+    const value = isErrorResult(result)
+
+    expect(value).toBe(false)
+  })
+
+  it('returns true if result is an error result', () => {
+    const result = ErrorResult(400, null)
+
+    const value = isErrorResult(result)
+
+    expect(value).toBe(true)
+  })
+})
+
+describe('assertErrorResult', () => {
+  it('throws error if result is NOT an error result', () => {
+    const result = Result(null)
+    try {
+      assertErrorResult(result)
+    } catch (error) {
+      expect(error)
+      return
+    }
+    throw new Error('must throw')
+  })
+
+  it('does not throw if result is an error result', () => {
+    const result = ErrorResult(400, null)
+    try {
+      assertErrorResult(result)
+    } catch (error) {
+      throw new Error('must NOT throw')
+    }
+  })
+})
+
+describe('assertErrorResult', () => {
+  it('throws error if result is an error result', () => {
+    const result = ErrorResult(400, null)
+    try {
+      assertNoErrorResult(result)
+    } catch (error) {
+      expect(error)
+      return
+    }
+    throw new Error('must throw')
+  })
+
+  it('does not throw if result is NOT an error result', () => {
+    const result = Result(null)
+    try {
+      assertNoErrorResult(result)
+    } catch (error) {
+      throw new Error('must NOT throw')
+    }
+  })
+})
+
+describe('RedirectResult', () => {
   it('redirects', async () => {
-    const handler = Handler([], () => Redirect('https://github.com/'))
+    const handler = Handler([], () => RedirectResult('https://github.com/'))
 
     const res = await ts.load(handler).call('/', {
       redirect: 'manual',
@@ -113,7 +186,9 @@ describe('Redirect', () => {
   })
 
   it('sets statusCode', async () => {
-    const handler = Handler([], () => Redirect('https://github.com/', 301))
+    const handler = Handler([], () =>
+      RedirectResult('https://github.com/', 301),
+    )
 
     const res = await ts.load(handler).call('/', {
       redirect: 'manual',
@@ -125,7 +200,7 @@ describe('Redirect', () => {
 
   it('sets headers', async () => {
     const handler = Handler([], () =>
-      Redirect('https://github.com/', 302, {
+      RedirectResult('https://github.com/', 302, {
         'custom-header': 'Hello!',
       }),
     )
