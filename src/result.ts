@@ -156,6 +156,37 @@ export function ErrorResult<B>(
   return new PrismyErrorResult(body, statusCode, headers)
 }
 
+export class PrismyErrorResult<B = unknown> extends PrismyResult<B> {
+  readonly __isError = true
+}
+
+export function isErrorResult(
+  result: PrismyResult,
+): result is PrismyErrorResult {
+  if ((result as PrismyErrorResult).__isError) {
+    return true
+  }
+  return false
+}
+
+export function assertErrorResult(
+  result: PrismyResult,
+): asserts result is PrismyErrorResult {
+  if (isErrorResult(result)) {
+    return
+  }
+  throw new Error('The given PrismyResult is NOT an error result.')
+}
+
+export function assertNoErrorResult<P extends PrismyResult>(
+  result: P,
+): asserts result is P extends PrismyErrorResult ? never : P {
+  if (!isErrorResult(result)) {
+    return
+  }
+  throw new Error('The given PrismyResult is an error result.')
+}
+
 /**
  * Factory function for easily generating a redirect response
  *
@@ -166,17 +197,44 @@ export function ErrorResult<B>(
  *
  * @public
  */
-export function Redirect(
+export function RedirectResult(
   location: string,
   statusCode: number = 302,
   extraHeaders: OutgoingHttpHeaders = {},
-): PrismyResult<null> {
-  return Result(null, statusCode, {
+): PrismyRedirectResult {
+  return new PrismyRedirectResult(null, statusCode, {
     location,
     ...extraHeaders,
   })
 }
 
-export class PrismyErrorResult<B = unknown> extends PrismyResult<B> {
-  readonly __isError = true
+export class PrismyRedirectResult extends PrismyResult<null> {
+  readonly __isRedirect = true
+}
+
+export function isRedirectResult(
+  result: PrismyResult,
+): result is PrismyRedirectResult {
+  if ((result as PrismyRedirectResult).__isRedirect) {
+    return true
+  }
+  return false
+}
+
+export function assertRedirectResult(
+  result: PrismyResult,
+): asserts result is PrismyRedirectResult {
+  if (isRedirectResult(result)) {
+    return
+  }
+  throw new Error('The given PrismyResult is NOT a redirect result.')
+}
+
+export function assertNoRedirectResult<P extends PrismyResult>(
+  result: P,
+): asserts result is P extends PrismyRedirectResult ? never : P {
+  if (!isRedirectResult(result)) {
+    return
+  }
+  throw new Error('The given PrismyResult is a redirect result.')
 }
