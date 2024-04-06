@@ -8,6 +8,9 @@ import {
   isErrorResult,
   assertErrorResult,
   assertNoErrorResult,
+  isRedirectResult,
+  assertRedirectResult,
+  assertNoRedirectResult,
 } from '../src'
 import { TestServer } from '../src/test'
 
@@ -251,5 +254,67 @@ describe('RedirectResult', () => {
       'testCookie=testValue',
       'testCookie2=testValue2',
     ])
+  })
+})
+
+describe('isRedirectResult', () => {
+  it('returns false if result is NOT an error result', () => {
+    const result = Result(null)
+
+    const value = isRedirectResult(result)
+
+    expect(value).toBe(false)
+  })
+
+  it('returns true if result is an error result', () => {
+    const result = RedirectResult('/')
+
+    const value = isRedirectResult(result)
+
+    expect(value).toBe(true)
+  })
+})
+
+describe('assertRedirectResult', () => {
+  it('throws error if result is NOT an error result', () => {
+    const result = Result(null)
+    try {
+      assertRedirectResult(result)
+    } catch (error) {
+      expect(error)
+      return
+    }
+    throw new Error('must throw')
+  })
+
+  it('does not throw if result is an error result', () => {
+    const result = RedirectResult('/')
+    try {
+      assertRedirectResult(result)
+    } catch (error) {
+      throw new Error('must NOT throw')
+    }
+  })
+})
+
+describe('assertRedirectResult', () => {
+  it('throws error if result is an error result', () => {
+    const result = RedirectResult('/')
+    try {
+      assertNoRedirectResult(result)
+    } catch (error) {
+      expect(error)
+      return
+    }
+    throw new Error('must throw')
+  })
+
+  it('does not throw if result is NOT an error result', () => {
+    const result = Result(null)
+    try {
+      assertNoRedirectResult(result)
+    } catch (error) {
+      throw new Error('must NOT throw')
+    }
   })
 })
