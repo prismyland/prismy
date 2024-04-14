@@ -4,8 +4,8 @@ import {
   Middleware,
   Result,
   ErrorResult,
+  createPrismySelector,
 } from '../src'
-import { createPrismySelector } from '../src/selectors/createSelector'
 import { TestServer } from '../src/test'
 
 const ts = TestServer()

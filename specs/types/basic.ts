@@ -18,7 +18,7 @@ import {
 } from '../../src'
 import http from 'http'
 import { InjectSelector } from '../../src/selectors/inject'
-import { PrismySelector } from '../../src/selectors/createSelector'
+import { PrismySelector } from '../../src/selector'
 
 function expectType<T>(value: T): void {}
 
@@ -52,7 +52,7 @@ Handler([BodySelector], () => Result(null))
 
 const middleware1 = Middleware(
   [UrlSelector(), MethodSelector()],
-  (next) => async (url, method) => {
+  async (next, url, method) => {
     expectType<URL>(url)
     expectType<string | undefined>(method)
     return next()
@@ -60,7 +60,7 @@ const middleware1 = Middleware(
 )
 
 expectType<
-  (next: PrismyNextFunction) => (url: URL, method: string | undefined) => any
+  (next: PrismyNextFunction, url: URL, method: string | undefined) => any
 >(middleware1.handler)
 
 // @ts-expect-error

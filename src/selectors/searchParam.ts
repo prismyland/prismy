@@ -1,4 +1,4 @@
-import { createPrismySelector, PrismySelector } from './createSelector'
+import { createPrismySelector, PrismySelector } from '../selector'
 import { UrlSelector } from './url'
 
 /**

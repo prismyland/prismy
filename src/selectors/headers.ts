@@ -1,6 +1,6 @@
 import { IncomingHttpHeaders } from 'http'
 import { getPrismyContext } from '../prismy'
-import { createPrismySelector, PrismySelector } from './createSelector'
+import { createPrismySelector, PrismySelector } from '../selector'
 
 const headersSelector: PrismySelector<IncomingHttpHeaders> =
   createPrismySelector(() => {

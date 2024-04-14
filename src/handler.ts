@@ -4,9 +4,9 @@ import {
   MaybePromise,
   SelectorReturnTypeTuple,
   PrismyResult,
+  resolveSelectors,
 } from '.'
-import { PrismySelector } from './selectors/createSelector'
-import { compileHandler } from './utils'
+import { PrismySelector } from './selector'
 
 export class PrismyHandler<
   S extends PrismySelector<any>[] = PrismySelector<any>[],
@@ -23,7 +23,9 @@ export class PrismyHandler<
   ) {}
 
   async __internal__handler(): Promise<PrismyResult<any>> {
-    const next: PrismyNextFunction = compileHandler(this.selectors, this.handle)
+    const next: PrismyNextFunction = async () => {
+      return this.handle(...(await resolveSelectors(this.selectors)))
+    }
 
     const pipe = this.middlewareList.reduce((next, middleware) => {
       return middleware.pipe(next)

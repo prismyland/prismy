@@ -1,6 +1,6 @@
 import cookie from 'cookie'
 import { getPrismyContext } from '../prismy'
-import { createPrismySelector } from './createSelector'
+import { createPrismySelector } from '../selector'
 
 const cookieMap = new WeakMap()
 

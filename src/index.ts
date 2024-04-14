@@ -1,6 +1,7 @@
 export * from './types'
 export * from './prismy'
 export * from './middleware'
+export * from './selector'
 export * from './selectors'
 export * from './error'
 export * from './router'

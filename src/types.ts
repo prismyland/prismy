@@ -1,6 +1,6 @@
 import { IncomingMessage } from 'http'
 import { PrismyResult } from './result'
-import { PrismySelector } from './selectors/createSelector'
+import { PrismySelector } from './selector'
 
 /**
  * Request context used in selectors

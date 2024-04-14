@@ -1,6 +1,6 @@
 import { getPrismyContext } from '../prismy'
 import { readTextBody } from '../bodyReaders'
-import { createPrismySelector, PrismySelector } from './createSelector'
+import { createPrismySelector, PrismySelector } from '../selector'
 
 /**
  * Options for {@link textBodySelector}

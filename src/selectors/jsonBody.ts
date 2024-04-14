@@ -1,7 +1,7 @@
 import { readJsonBody } from '../bodyReaders'
 import { createError } from '../error'
 import { getPrismyContext } from '../prismy'
-import { createPrismySelector, PrismySelector } from './createSelector'
+import { createPrismySelector, PrismySelector } from '../selector'
 
 /**
  * Options for {@link createJsonBodySelector}

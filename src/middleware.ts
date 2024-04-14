@@ -1,7 +1,6 @@
-import { PrismyNextFunction, PrismyResult } from '.'
-import { PrismySelector } from './selectors/createSelector'
+import { PrismyNextFunction, PrismyResult, resolveSelectors } from '.'
+import { PrismySelector } from './selector'
 import { SelectorReturnTypeTuple } from './types'
-import { resolveSelectors } from './utils'
 
 export class PrismyMiddleware<
   S extends PrismySelector<any>[] = PrismySelector<any>[],

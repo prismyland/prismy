@@ -1,6 +1,6 @@
 import { URL } from 'url'
 import { getPrismyContext } from '../prismy'
-import { createPrismySelector } from './createSelector'
+import { createPrismySelector } from '../selector'
 
 const urlMap = new WeakMap()
 

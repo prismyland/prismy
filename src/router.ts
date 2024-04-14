@@ -3,10 +3,7 @@ import { MethodSelector, UrlSelector } from './selectors'
 import { match as createMatchFunction } from 'path-to-regexp'
 import { getPrismyContext } from './prismy'
 import { createError } from './error'
-import {
-  createPrismySelector,
-  PrismySelector,
-} from './selectors/createSelector'
+import { createPrismySelector, PrismySelector } from './selector'
 import { PrismyMiddleware, PrismyResult } from '.'
 import { Handler, PrismyHandler } from './handler'
 import { join as joinPath } from 'path'

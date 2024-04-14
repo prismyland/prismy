@@ -1,5 +1,5 @@
 import { getPrismyContext } from '../prismy'
-import { createPrismySelector, PrismySelector } from './createSelector'
+import { createPrismySelector, PrismySelector } from '../selector'
 
 const methodSelector: PrismySelector<string | undefined> = createPrismySelector(
   () => {

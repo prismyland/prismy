@@ -1,5 +1,5 @@
 import { Result, Middleware, getPrismyContext, Handler } from '../src'
-import { createPrismySelector } from '../src/selectors/createSelector'
+import { createPrismySelector } from '../src/selector'
 import { TestServer } from '../src/test'
 
 const ts = TestServer()

@@ -1,6 +1,6 @@
 import { readBufferBody } from '../bodyReaders'
 import { getPrismyContext } from '../prismy'
-import { createPrismySelector, PrismySelector } from './createSelector'
+import { createPrismySelector, PrismySelector } from '../selector'
 
 /**
  * Options for {@link createBufferBodySelector}

@@ -1,5 +1,4 @@
-import { SelectorReturnTypeTuple } from '..'
-import { compileHandler } from '../utils'
+import { SelectorReturnTypeTuple } from '.'
 
 export class PrismySelector<
   T,
@@ -10,9 +9,8 @@ export class PrismySelector<
     public select: (...args: SelectorReturnTypeTuple<S>) => Promise<T> | T,
   ) {}
 
-  __internal__selector(): T | Promise<T> {
-    const compiledSelector = compileHandler(this.selectors, this.select)
-    return compiledSelector()
+  async __internal__selector(): Promise<T> {
+    return this.select(...(await resolveSelectors(this.selectors)))
   }
 }
 
@@ -34,4 +32,26 @@ export function createPrismySelector(
     return new PrismySelector([], selectorsOrFn)
   }
   return new PrismySelector(selectorsOrFn, selectorFunction)
+}
+
+/**
+ * Executes the selectors and produces an array of args to be passed to
+ * a handler
+ *
+ * @param context - Context object to be passed to the selectors
+ * @param selectors - array of selectos
+ * @returns arguments for a handler
+ *
+ * @internal
+ */
+export async function resolveSelectors<S extends PrismySelector<unknown>[]>(
+  selectors: [...S],
+): Promise<SelectorReturnTypeTuple<S>> {
+  const resolvedValues = []
+  for (const selector of selectors) {
+    const resolvedValue = await selector.__internal__selector()
+    resolvedValues.push(resolvedValue)
+  }
+
+  return resolvedValues as SelectorReturnTypeTuple<S>
 }
