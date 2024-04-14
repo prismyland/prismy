@@ -9,6 +9,7 @@ import {
   prismy,
   PrismyErrorResult,
   PrismyHandler,
+  PrismyMiddleware,
   PrismyNextFunction,
   PrismyResult,
   PrismyRoute,
@@ -63,8 +64,15 @@ expectType<
   (next: PrismyNextFunction, url: URL, method: string | undefined) => any
 >(middleware1.handler)
 
+const middleware2 = Middleware((next) => {
+  return next()
+})
+
+expectType<PrismyMiddleware<[]>>(middleware2)
+expectType<(next: PrismyNextFunction) => any>(middleware2.handler)
+
 // @ts-expect-error
-Middleware([BodySelector], () => () => Result(null))
+Middleware([BodySelector], () => Result(null))
 
 http.createServer(prismy([], () => Result(''), [middleware1]))
 

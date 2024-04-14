@@ -65,4 +65,26 @@ describe('middleware', () => {
     expect(await res.text()).toBe('/ : Hey!')
     expect(res.status).toBe(500)
   })
+
+  it('creates without selectors(shorthand)', async () => {
+    const errorMiddleware = Middleware(async (next) => {
+      try {
+        return await next()
+      } catch (error) {
+        return Result(`Customized : ${(error as any).message}`, 500)
+      }
+    })
+    const handler = Handler(
+      [],
+      () => {
+        throw new Error('Hey!')
+      },
+      [errorMiddleware],
+    )
+
+    const res = await ts.load(handler).call()
+
+    expect(await res.text()).toBe('Customized : Hey!')
+    expect(res.status).toBe(500)
+  })
 })

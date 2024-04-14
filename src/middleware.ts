@@ -64,6 +64,18 @@ export function Middleware<SS extends PrismySelector<any>[]>(
     next: PrismyNextFunction,
     ...args: SelectorReturnTypeTuple<SS>
   ) => Promise<PrismyResult>,
-): PrismyMiddleware<SS> {
-  return new PrismyMiddleware(selectors, handler)
+): PrismyMiddleware<SS>
+export function Middleware(
+  handler: (next: PrismyNextFunction) => Promise<PrismyResult>,
+): PrismyMiddleware<[]>
+export function Middleware(
+  selectorsOrHandler:
+    | any[]
+    | ((next: PrismyNextFunction) => Promise<PrismyResult>),
+  handler?: (next: PrismyNextFunction, ...args: any[]) => Promise<PrismyResult>,
+): PrismyMiddleware {
+  if (Array.isArray(selectorsOrHandler)) {
+    return new PrismyMiddleware(selectorsOrHandler, handler!)
+  }
+  return new PrismyMiddleware([], selectorsOrHandler)
 }
