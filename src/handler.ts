@@ -1,5 +1,4 @@
 import {
-  createErrorResObject,
   PrismyMiddleware,
   PrismyNextFunction,
   MaybePromise,
@@ -29,18 +28,8 @@ export class PrismyHandler<
     const pipe = this.middlewareList.reduce((next, middleware) => {
       return middleware.pipe(next)
     }, next)
-    let result: PrismyResult
-    try {
-      result = await pipe()
-    } catch (error) {
-      /* istanbul ignore next */
-      if (process.env.NODE_ENV !== 'test') {
-        console.error(error)
-      }
-      result = createErrorResObject(error)
-    }
 
-    return result
+    return await pipe()
   }
 }
 

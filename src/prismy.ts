@@ -5,6 +5,7 @@ import { Handler, PrismyHandler } from './handler'
 import { PrismySelector } from './selectors/createSelector'
 import { MaybePromise, PrismyContext, SelectorReturnTypeTuple } from './types'
 import { PrismyResult } from './result'
+import { createErrorResultFromError } from './error'
 
 export const prismyContextStorage = new AsyncLocalStorage<PrismyContext>()
 export function getPrismyContext(): PrismyContext {
@@ -69,9 +70,17 @@ export function prismy<S extends PrismySelector<unknown>[]>(
       req: request,
     }
     prismyContextStorage.run(context, async () => {
-      const resObject = await injectedHandler.__internal__handler()
+      try {
+        const result = await injectedHandler.__internal__handler()
 
-      resObject.resolve(request, response)
+        result.resolve(request, response)
+      } catch (error) {
+        /* istanbul ignore next */
+        if (process.env.NODE_ENV !== 'test') {
+          console.error(error)
+        }
+        createErrorResultFromError(error).resolve(request, response)
+      }
     })
   }
 

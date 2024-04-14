@@ -5,6 +5,8 @@ import {
   Route,
   Middleware,
   getPrismyContext,
+  ErrorResult,
+  createPrismySelector,
 } from '../src'
 import { Handler } from '../src/handler'
 import { InjectSelector } from '../src/selectors/inject'
@@ -197,6 +199,63 @@ describe('router', () => {
 
     expect(res.status).toBe(200)
     expect(await res.text()).toBe('ba')
+  })
+
+  it('applies error handler middleware(Error from handler', async () => {
+    expect.hasAssertions()
+
+    const handler = Handler([], () => {
+      throw new Error('Hello, Error!')
+    })
+
+    const routerHandler = Router([Route(['/', 'get'], handler)], {
+      middleware: [
+        Middleware([], (next) => async () => {
+          try {
+            return await next()
+          } catch (error) {
+            return ErrorResult(500, 'hijacked')
+          }
+        }),
+      ],
+    })
+
+    const res = await ts.load(routerHandler).call()
+
+    expect(res.status).toBe(500)
+    expect(await res.text()).toBe('hijacked')
+  })
+
+  it('applies error handler middleware(Error from handler selectors)', async () => {
+    expect.hasAssertions()
+
+    const handler = Handler(
+      [
+        createPrismySelector<string>(() => {
+          throw new Error('Hello from a selector')
+        }),
+      ],
+      () => {
+        return Result(null)
+      },
+    )
+
+    const routerHandler = Router([Route(['/', 'get'], handler)], {
+      middleware: [
+        Middleware([], (next) => async () => {
+          try {
+            return await next()
+          } catch (error) {
+            return ErrorResult(500, 'hijacked')
+          }
+        }),
+      ],
+    })
+
+    const res = await ts.load(routerHandler).call()
+
+    expect(res.status).toBe(500)
+    expect(await res.text()).toBe('hijacked')
   })
 })
 

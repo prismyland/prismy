@@ -11,7 +11,7 @@ import { Result } from './result'
  *
  * @public
  */
-export function createErrorResObject(error: any) {
+export function createErrorResultFromError(error: any) {
   const statusCode = error.statusCode || error.status || 500
   /* istanbul ignore next */
   const message =
