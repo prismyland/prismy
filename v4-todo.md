@@ -90,8 +90,11 @@
 - [x] Added DI Selector
 - [x] File uploading
   - Interface is a bit confusing and too different and rewriting cost is too high. Should just provide it as an example instead of including this project.
-- [ ] Rewrite prismy-session
-  - [ ] Make it compatible with SessionStore of express-session
+- [x] Rewrite prismy-session
+- [ ] Make middleware selectors omittable
+- [x] Fix midelware behavior
+- [ ] Combine Routers
+
 
 # V5 TODO(TBD)
 
@@ -204,3 +207,35 @@ First one goes first.
 If the first one fails, latter ones never triggered.
 
 If selectors don't cause side effect, you can even run them concurrently.
+
+## Middleare issue
+Handler can resolve error by itself. it should not handle the error. error must be handled in prismy
+
+Handler should throw error but middleware must be applied.
+Default error handling behavior must be performed in prismy not in handlers.
+
+## Combine Routers
+
+There might be multiple notFoundHandlers
+Override it when combining routers
+If it is not givenm, use last one should be used
+
+Not gonna be implemented. Must be handled outside of this lib
+
+## Simplify middleware
+
+Simplify structrue
+
+```js
+// from
+createMiddleware([...selctors]() => (next) => (...selectedValues) => ResObj)
+
+// To
+Middleware([...selectors], (next, ...selectedValues) => ResObj)
+```
+
+Make selectors optionable
+
+```js
+Middleware((next) => ResObj)
+```
