@@ -17,16 +17,13 @@ describe('middleware', () => {
     const rawUrlSelector = createPrismySelector(
       () => getPrismyContext().req.url!,
     )
-    const errorMiddleware = Middleware(
-      [rawUrlSelector],
-      (next) => async (url) => {
-        try {
-          return await next()
-        } catch (error) {
-          return Result(`${url} : ${(error as any).message}`, 500)
-        }
-      },
-    )
+    const errorMiddleware = Middleware([rawUrlSelector], async (next, url) => {
+      try {
+        return await next()
+      } catch (error) {
+        return Result(`${url} : ${(error as any).message}`, 500)
+      }
+    })
     const handler = Handler(
       [],
       () => {
@@ -47,7 +44,7 @@ describe('middleware', () => {
     )
     const errorMiddleware = Middleware(
       [asyncRawUrlSelector],
-      (next) => async (url) => {
+      async (next, url) => {
         try {
           return await next()
         } catch (error) {

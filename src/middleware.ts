@@ -1,7 +1,7 @@
 import { PrismyNextFunction, PrismyResult } from '.'
 import { PrismySelector } from './selectors/createSelector'
 import { SelectorReturnTypeTuple } from './types'
-import { compileHandler } from './utils'
+import { resolveSelectors } from './utils'
 
 export class PrismyMiddleware<
   S extends PrismySelector<any>[] = PrismySelector<any>[],
@@ -14,11 +14,14 @@ export class PrismyMiddleware<
      */
     public handler: (
       next: PrismyNextFunction,
-    ) => (...args: SelectorReturnTypeTuple<S>) => Promise<PrismyResult>,
+      ...args: SelectorReturnTypeTuple<S>
+    ) => Promise<PrismyResult>,
   ) {}
 
-  pipe(next: PrismyNextFunction) {
-    return compileHandler(this.selectors, this.handler(next))
+  pipe(next: PrismyNextFunction): PrismyNextFunction {
+    return async () => {
+      return this.handler(next, ...(await resolveSelectors(this.selectors)))
+    }
   }
 }
 
@@ -60,7 +63,8 @@ export function Middleware<SS extends PrismySelector<any>[]>(
   selectors: [...SS],
   handler: (
     next: PrismyNextFunction,
-  ) => (...args: SelectorReturnTypeTuple<SS>) => Promise<PrismyResult>,
+    ...args: SelectorReturnTypeTuple<SS>
+  ) => Promise<PrismyResult>,
 ): PrismyMiddleware<SS> {
   return new PrismyMiddleware(selectors, handler)
 }

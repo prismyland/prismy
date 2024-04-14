@@ -31,7 +31,7 @@ export function compileHandler<S extends PrismySelector<unknown>[], R>(
  *
  * @internal
  */
-async function resolveSelectors<S extends PrismySelector<unknown>[]>(
+export async function resolveSelectors<S extends PrismySelector<unknown>[]>(
   selectors: [...S],
 ): Promise<SelectorReturnTypeTuple<S>> {
   const resolvedValues = []

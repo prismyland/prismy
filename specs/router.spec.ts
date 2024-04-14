@@ -182,12 +182,12 @@ describe('router', () => {
 
     const routerHandler = Router([Route(['/', 'get'], handlerA)], {
       middleware: [
-        Middleware([InjectSelector('a')], (next) => (value) => {
+        Middleware([InjectSelector('a')], (next, value) => {
           const context = getPrismyContext()
           weakMap.set(context, (weakMap.get(context) || '') + value)
           return next()
         }),
-        Middleware([InjectSelector('b')], (next) => (value) => {
+        Middleware([InjectSelector('b')], (next, value) => {
           const context = getPrismyContext()
           weakMap.set(context, (weakMap.get(context) || '') + value)
           return next()
@@ -210,7 +210,7 @@ describe('router', () => {
 
     const routerHandler = Router([Route(['/', 'get'], handler)], {
       middleware: [
-        Middleware([], (next) => async () => {
+        Middleware([], async (next) => {
           try {
             return await next()
           } catch (error) {
@@ -242,7 +242,7 @@ describe('router', () => {
 
     const routerHandler = Router([Route(['/', 'get'], handler)], {
       middleware: [
-        Middleware([], (next) => async () => {
+        Middleware([], async (next) => {
           try {
             return await next()
           } catch (error) {

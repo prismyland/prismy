@@ -42,13 +42,11 @@ describe('prismy', () => {
   })
 
   it('applies middleware', async () => {
-    const errorMiddleware = Middleware([], (next) => {
-      return async () => {
-        try {
-          return await next()
-        } catch (error) {
-          return ErrorResult(500, (error as any).message)
-        }
+    const errorMiddleware = Middleware([], async (next) => {
+      try {
+        return await next()
+      } catch (error) {
+        return ErrorResult(500, (error as any).message)
       }
     })
     const rawUrlSelector = createPrismySelector(
@@ -69,10 +67,10 @@ describe('prismy', () => {
   })
 
   it('applies middleware in order (later = deeper)', async () => {
-    const problematicMiddleware = Middleware([], (next) => () => {
+    const problematicMiddleware = Middleware([], () => {
       throw new Error('Hey!')
     })
-    const errorMiddleware = Middleware([], (next) => async () => {
+    const errorMiddleware = Middleware([], async (next) => {
       try {
         return await next()
       } catch (error) {
@@ -130,7 +128,7 @@ describe('prismy', () => {
   })
 
   it('handles errors from middleware by default', async () => {
-    const middleware = Middleware([], (next) => () => {
+    const middleware = Middleware([], () => {
       throw new Error('Hey!')
     })
     const listener = prismy(
