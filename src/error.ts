@@ -20,7 +20,7 @@ export function createErrorResultFromError(error: any) {
   return Result(message, statusCode)
 }
 
-class PrismyError extends Error {
+export class PrismyError extends Error {
   statusCode?: number
   originalError?: unknown
 }
