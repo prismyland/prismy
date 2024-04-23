@@ -1,4 +1,4 @@
-import { Result } from './result'
+import { PrismyResult, Result } from './result'
 
 /**
  * Creates a response object from an error
@@ -12,6 +12,10 @@ import { Result } from './result'
  * @public
  */
 export function createErrorResultFromError(error: any) {
+  if (error instanceof PrismyResult) {
+    return error
+  }
+
   const statusCode = error.statusCode || error.status || 500
   /* istanbul ignore next */
   const message =
