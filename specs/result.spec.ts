@@ -138,7 +138,14 @@ describe('assertErrorResult', () => {
     try {
       assertErrorResult(result)
     } catch (error) {
-      expect(error)
+      expect((error as Error).message).toEqual(
+        [
+          'The given PrismyResult is NOT an error result.',
+          '',
+          'Result:',
+          JSON.stringify(result, null, 2),
+        ].join('\n'),
+      )
       return
     }
     throw new Error('must throw')
@@ -146,11 +153,8 @@ describe('assertErrorResult', () => {
 
   it('does not throw if result is an error result', () => {
     const result = ErrorResult(400, null)
-    try {
-      assertErrorResult(result)
-    } catch (error) {
-      throw new Error('must NOT throw')
-    }
+
+    assertErrorResult(result)
   })
 })
 
@@ -160,7 +164,14 @@ describe('assertErrorResult', () => {
     try {
       assertNoErrorResult(result)
     } catch (error) {
-      expect(error)
+      expect((error as Error).message).toEqual(
+        [
+          'The given PrismyResult is an error result.',
+          '',
+          'Result:',
+          JSON.stringify(result, null, 2),
+        ].join('\n'),
+      )
       return
     }
     throw new Error('must throw')
@@ -168,11 +179,8 @@ describe('assertErrorResult', () => {
 
   it('does not throw if result is NOT an error result', () => {
     const result = Result(null)
-    try {
-      assertNoErrorResult(result)
-    } catch (error) {
-      throw new Error('must NOT throw')
-    }
+
+    assertNoErrorResult(result)
   })
 })
 
@@ -281,7 +289,14 @@ describe('assertRedirectResult', () => {
     try {
       assertRedirectResult(result)
     } catch (error) {
-      expect(error)
+      expect((error as Error).message).toEqual(
+        [
+          'The given PrismyResult is NOT a redirect result.',
+          '',
+          'Result:',
+          JSON.stringify(result, null, 2),
+        ].join('\n'),
+      )
       return
     }
     throw new Error('must throw')
@@ -303,7 +318,14 @@ describe('assertRedirectResult', () => {
     try {
       assertNoRedirectResult(result)
     } catch (error) {
-      expect(error)
+      expect((error as Error).message).toEqual(
+        [
+          'The given PrismyResult is a redirect result.',
+          '',
+          'Result:',
+          JSON.stringify(result, null, 2),
+        ].join('\n'),
+      )
       return
     }
     throw new Error('must throw')

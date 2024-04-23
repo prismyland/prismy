@@ -175,7 +175,14 @@ export function assertErrorResult(
   if (isErrorResult(result)) {
     return
   }
-  throw new Error('The given PrismyResult is NOT an error result.')
+  throw new Error(
+    [
+      'The given PrismyResult is NOT an error result.',
+      '',
+      'Result:',
+      jsonStringifyRecursive(result),
+    ].join('\n'),
+  )
 }
 
 export function assertNoErrorResult<P extends PrismyResult>(
@@ -184,7 +191,14 @@ export function assertNoErrorResult<P extends PrismyResult>(
   if (!isErrorResult(result)) {
     return
   }
-  throw new Error('The given PrismyResult is an error result.')
+  throw new Error(
+    [
+      'The given PrismyResult is an error result.',
+      '',
+      'Result:',
+      jsonStringifyRecursive(result),
+    ].join('\n'),
+  )
 }
 
 /**
@@ -227,7 +241,14 @@ export function assertRedirectResult(
   if (isRedirectResult(result)) {
     return
   }
-  throw new Error('The given PrismyResult is NOT a redirect result.')
+  throw new Error(
+    [
+      'The given PrismyResult is NOT a redirect result.',
+      '',
+      'Result:',
+      jsonStringifyRecursive(result),
+    ].join('\n'),
+  )
 }
 
 export function assertNoRedirectResult<P extends PrismyResult>(
@@ -236,5 +257,29 @@ export function assertNoRedirectResult<P extends PrismyResult>(
   if (!isRedirectResult(result)) {
     return
   }
-  throw new Error('The given PrismyResult is a redirect result.')
+  throw new Error(
+    [
+      'The given PrismyResult is a redirect result.',
+      '',
+      'Result:',
+      jsonStringifyRecursive(result),
+    ].join('\n'),
+  )
+}
+
+function jsonStringifyRecursive(value: any) {
+  const cache = new Set()
+  return JSON.stringify(
+    value,
+    (_key, value) => {
+      if (typeof value === 'object' && value !== null) {
+        if (cache.has(value)) {
+          return '(Recursive)'
+        }
+        cache.add(value)
+      }
+      return value
+    },
+    2,
+  )
 }
