@@ -267,6 +267,7 @@ export function assertNoRedirectResult<P extends PrismyResult>(
   )
 }
 
+/* istanbul ignore next */
 function jsonStringifyRecursive(value: any) {
   const cache = new Set()
   return JSON.stringify(
