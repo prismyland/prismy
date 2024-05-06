@@ -7,6 +7,7 @@ import {
   getPrismyContext,
   ErrorResult,
   createPrismySelector,
+  OptionalRouteParamSelector,
 } from '../src'
 import { Handler } from '../src/handler'
 import { InjectSelector } from '../src/selectors/inject'
@@ -260,7 +261,7 @@ describe('router', () => {
 })
 
 describe('RouteParamSelector', () => {
-  it('resolves null if the param is missing', async () => {
+  it('throws an error if the param is missing', async () => {
     expect.hasAssertions()
     const handlerA = Handler([], () => {
       return Result('a')
@@ -276,8 +277,10 @@ describe('RouteParamSelector', () => {
 
     const res = await ts.load(routerHandler).call('/b/test-param')
 
-    expect(res.status).toBe(200)
-    expect(await res.text()).toBe('')
+    expect(res.status).toBe(404)
+    expect(await res.text()).toContain(
+      'Error: Route parameter not-id not found',
+    )
   })
 
   it('resolves a param (named parameter)', async () => {
@@ -305,9 +308,9 @@ describe('RouteParamSelector', () => {
     })
     const handlerB = Handler(
       [
-        RouteParamSelector('attr1'),
-        RouteParamSelector('attr2'),
-        RouteParamSelector('attr3'),
+        OptionalRouteParamSelector('attr1'),
+        OptionalRouteParamSelector('attr2'),
+        OptionalRouteParamSelector('attr3'),
       ],
       (attr1, attr2, attr3) => {
         return Result({
@@ -374,7 +377,7 @@ describe('RouteParamSelector', () => {
       return Result('a')
     })
     const handlerB = Handler(
-      [RouteParamSelector('param1'), RouteParamSelector('param2')],
+      [RouteParamSelector('param1'), OptionalRouteParamSelector('param2')],
       (param1, param2) => {
         return Result({
           param1,
@@ -409,7 +412,7 @@ describe('RouteParamSelector', () => {
     const handlerA = Handler([], () => {
       return Result('a')
     })
-    const handlerB = Handler([RouteParamSelector('param')], (param) => {
+    const handlerB = Handler([OptionalRouteParamSelector('param')], (param) => {
       return Result({
         param,
       })

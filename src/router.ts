@@ -133,13 +133,27 @@ function getRouteParamsFromPrismyContext(context: PrismyContext) {
   return routeParamsMap.get(context)
 }
 
-export function RouteParamSelector(
+function resolveRouteParam(paramName: string) {
+  const context = getPrismyContext()
+  const param = getRouteParamsFromPrismyContext(context)[paramName]
+  return param != null ? (Array.isArray(param) ? param[0] : param) : null
+}
+
+export function RouteParamSelector(paramName: string): PrismySelector<string> {
+  return createPrismySelector(() => {
+    const resolvedParam = resolveRouteParam(paramName)
+    if (resolvedParam == null) {
+      throw createError(404, `Route parameter ${paramName} not found`)
+    }
+    return resolvedParam
+  })
+}
+
+export function OptionalRouteParamSelector(
   paramName: string,
 ): PrismySelector<string | null> {
   return createPrismySelector(() => {
-    const context = getPrismyContext()
-    const param = getRouteParamsFromPrismyContext(context)[paramName]
-    return param != null ? (Array.isArray(param) ? param[0] : param) : null
+    return resolveRouteParam(paramName)
   })
 }
 
