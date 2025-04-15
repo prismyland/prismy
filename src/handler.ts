@@ -9,8 +9,8 @@ import {
 import { PrismySelector } from './selector'
 
 export class PrismyHandler<
-  S extends PrismySelector<any>[] = PrismySelector<any>[],
   R extends PrismyResult<any> = PrismyResult<any>,
+  S extends PrismySelector<any>[] = PrismySelector<any>[],
 > {
   constructor(
     public selectors: [...S],
@@ -59,20 +59,20 @@ export class PrismyHandler<
  * @public *
  */
 export function Handler<
-  S extends PrismySelector<any>[],
   R extends PrismyResult<any> = PrismyResult<any>,
+  S extends PrismySelector<any>[] = [],
 >(
   selectors: [...S],
   handlerFunction: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<R>,
   middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
-): PrismyHandler<S, R>
+): PrismyHandler<R, S>
 export function Handler<R extends PrismyResult<any> = PrismyResult<any>>(
   handlerFunction: () => MaybePromise<R>,
   middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
-): PrismyHandler<[], R>
+): PrismyHandler<R, []>
 export function Handler<
-  S extends PrismySelector<any>[],
   R extends PrismyResult<any> = PrismyResult<any>,
+  S extends PrismySelector<any>[] = [],
 >(
   selectorsOrHandler: any,
   handlerFunctionOrMiddlewareList?: any | any[],

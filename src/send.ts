@@ -23,7 +23,7 @@ export const sendPrismyResult = (
   }
   const { statusCode, body, headers } = sendable
   Object.entries(headers).forEach(([key, value]) => {
-    /* istanbul ignore if */
+    /* v8 ignore next 3 */
     if (value == null) {
       return
     }

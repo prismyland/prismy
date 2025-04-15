@@ -44,7 +44,7 @@ export function BodySelector(
 ): PrismySelector<object | string> {
   return createPrismySelector(async () => {
     const { req } = getPrismyContext()
-    /* istanbul ignore next */
+    /* v8 ignore next */
     const type = req.headers['content-type'] || ''
 
     if (
@@ -56,10 +56,11 @@ export function BodySelector(
       const textBody = await readTextBody(req, options)
       try {
         return parse(textBody)
+        /* v8 ignore start */
       } catch (error) {
-        /* istanbul ignore next */
         throw createError(400, 'Invalid url-encoded body', error)
       }
+      /* v8 ignore stop */
     } else {
       return readTextBody(req, options)
     }

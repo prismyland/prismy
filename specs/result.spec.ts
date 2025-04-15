@@ -226,22 +226,22 @@ describe('RedirectResult', () => {
   })
 
   it('sets cookies', async () => {
-    const handler = Handler([], () =>
-      Result(null)
+    const handler = Handler([], () => {
+      return Result(null)
         .setCookie('testCookie', 'testValue', {
           secure: true,
-          domain: 'https://example.com',
+          domain: 'example.com',
         })
         .setCookie('testCookie2', 'testValue2', {
           httpOnly: true,
-        }),
-    )
+        })
+    })
 
     const res = await ts.load(handler).call('/')
 
     expect(res.status).toBe(200)
     expect(res.headers.getSetCookie()).toEqual([
-      'testCookie=testValue; Domain=https://example.com; Secure',
+      'testCookie=testValue; Domain=example.com; Secure',
       'testCookie2=testValue2; HttpOnly',
     ])
   })

@@ -93,7 +93,9 @@ const handler = Handler([mailServiceSelector], (mailService) => {
 })
 
 const mailHandlerRoute = Route('/', handler)
-expectType<PrismyRoute<[PrismySelector<MailService>]>>(mailHandlerRoute)
+expectType<PrismyRoute<PrismyResult<null>, [PrismySelector<MailService>]>>(
+  mailHandlerRoute,
+)
 
 const shortRoute = Route(
   '/',
@@ -106,7 +108,10 @@ const shortRoute = Route(
 )
 
 expectType<
-  PrismyRoute<[PrismySelector<URL>, PrismySelector<string | undefined>]>
+  PrismyRoute<
+    PrismyResult<null>,
+    [PrismySelector<URL>, PrismySelector<string | undefined>]
+  >
 >(shortRoute)
 expectType<
   (url: URL, method: string | undefined) => MaybePromise<PrismyResult<any>>
@@ -118,18 +123,16 @@ expectType<PrismySelector<number>>(
   }),
 )
 
-const UrlPortSelector = () =>
-  createPrismySelector([UrlSelector()], (url) => {
-    return {
-      pathname: url.pathname,
-      hash: url.hash,
-    }
-  })
-
-expectType<{
-  pathname: string
-  hash: string
-}>(await UrlPortSelector().select(new URL('')))
+createPrismySelector([UrlSelector()], (url) => {
+  expectType<{
+    pathname: string
+    hash: string
+  }>(url)
+  return {
+    pathname: url.pathname,
+    hash: url.hash,
+  }
+})
 
 Handler(() => {
   return Result('')
@@ -154,3 +157,5 @@ Handler((): PrismyResult<{ data: string }> | PrismyErrorResult<string> => {
   }
   return Result({ data: '123' })
 })
+
+Handler<PrismyResult<{ data: string }>>

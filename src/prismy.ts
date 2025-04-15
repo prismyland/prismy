@@ -33,7 +33,7 @@ export function getPrismyContext(): PrismyContext {
  * @param prismyHandler
  */
 export function prismy<S extends PrismySelector<unknown>[]>(
-  prismyHandler: PrismyHandler<S>,
+  prismyHandler: PrismyHandler<PrismyResult, S>,
 ): RequestListener
 
 /**
@@ -51,7 +51,7 @@ export function prismy<S extends PrismySelector<any>[]>(
   middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
 ): RequestListener
 export function prismy<S extends PrismySelector<unknown>[]>(
-  selectorsOrPrismyHandler: [...S] | PrismyHandler<S>,
+  selectorsOrPrismyHandler: [...S] | PrismyHandler<PrismyResult, S>,
   handlerFunction?: (
     ...args: SelectorReturnTypeTuple<S>
   ) => MaybePromise<PrismyResult>,
@@ -75,7 +75,7 @@ export function prismy<S extends PrismySelector<unknown>[]>(
 
         result.resolve(request, response)
       } catch (error) {
-        /* istanbul ignore next */
+        /* v8 ignore next 3*/
         if (process.env.NODE_ENV !== 'test') {
           console.error(error)
         }

@@ -2,9 +2,9 @@
   "include": ["src/**/*.ts", "specs/**/*.ts"],
   "compilerOptions": {
     "lib": ["ES2022"],
-    "module": "node16",
+    "module": "Node16",
     "target": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "Node16",
     "importHelpers": true,
     "esModuleInterop": true,
     "jsx": "react",
@@ -22,8 +22,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
-
-    "suppressImplicitAnyIndexErrors": true
+    "types": ["vitest/globals"]
   },
   "typedocOptions": {
     "out": "out",

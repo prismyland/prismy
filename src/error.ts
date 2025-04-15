@@ -17,7 +17,7 @@ export function createErrorResultFromError(error: any) {
   }
 
   const statusCode = error.statusCode || error.status || 500
-  /* istanbul ignore next */
+  /* v8 ignore next 2 */
   const message =
     process.env.NODE_ENV === 'production' ? error.message : error.stack
 

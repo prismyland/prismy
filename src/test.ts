@@ -44,7 +44,7 @@ export class PrismyTestServer {
   }
 
   async close() {
-    /* istanbul ignore next */
+    /* v8 ignore next 3*/
     if (this.server == null) {
       return
     }
@@ -55,7 +55,7 @@ export class PrismyTestServer {
 
     await new Promise((resolve, reject) => {
       server!.close((error) => {
-        /* istanbul ignore next */
+        /* v8 ignore next 2 */
         if (error != null) {
           reject(error)
         } else {

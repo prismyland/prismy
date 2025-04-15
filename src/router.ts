@@ -20,16 +20,17 @@ export type RouteIndicator = [string, RouteMethod]
 
 type Route = {
   indicator: RouteIndicator
-  listener: PrismyHandler<PrismySelector<unknown>[]>
+  listener: PrismyHandler<PrismyResult<unknown>, PrismySelector<unknown>[]>
 }
 
 export class PrismyRoute<
+  R extends PrismyResult<any> = PrismyResult<any>,
   S extends PrismySelector<any>[] = PrismySelector<any>[],
 > {
   indicator: RouteIndicator
-  handler: PrismyHandler<S>
+  handler: PrismyHandler<R, S>
 
-  constructor(indicator: RouteIndicator, handler: PrismyHandler<S>) {
+  constructor(indicator: RouteIndicator, handler: PrismyHandler<R, S>) {
     this.indicator = indicator
     this.handler = handler
   }
@@ -58,9 +59,9 @@ export function Router(
     [MethodSelector(), UrlSelector()],
     (method, url) => {
       const prismyContext = getPrismyContext()
-      /* istanbul ignore next */
+      /* v8 ignore next */
       const normalizedMethod = method != null ? method.toLowerCase() : null
-      /* istanbul ignore next */
+      /* v8 ignore next */
       const normalizedPath = removeTralingSlash(url.pathname || '/')
 
       for (const route of compiledRoutes) {
@@ -87,30 +88,36 @@ export function Router(
     middleware,
   )
 }
-
-export function Route<S extends PrismySelector<any>[]>(
+export function Route<
+  R extends PrismyResult<any>,
+  S extends PrismySelector<any>[],
+>(
   indicator: RouteIndicator | string,
-  handler: PrismyHandler<S>,
-): PrismyRoute<S>
-export function Route<S extends PrismySelector<any>[]>(
+  handler: PrismyHandler<R, S>,
+): PrismyRoute<R, S>
+export function Route<
+  R extends PrismyResult<any>,
+  S extends PrismySelector<any>[],
+>(
   indicator: RouteIndicator | string,
-  handler: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<PrismyResult>,
+  handler: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<R>,
   middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
-): PrismyRoute<S>
-export function Route<S extends PrismySelector<any>[]>(
+): PrismyRoute<R, S>
+export function Route<
+  R extends PrismyResult<any>,
+  S extends PrismySelector<any>[],
+>(
   indicator: RouteIndicator | string,
   selectors: [...S],
-  handlerFunction?: (
-    ...args: SelectorReturnTypeTuple<S>
-  ) => MaybePromise<PrismyResult>,
+  handlerFunction?: (...args: SelectorReturnTypeTuple<S>) => MaybePromise<R>,
   middlewareList?: PrismyMiddleware<PrismySelector<any>[]>[],
-): PrismyRoute<S>
+): PrismyRoute<R, S>
 export function Route(
   indicator: RouteIndicator | string,
   selectorsOrPrismyHandler: any,
   handlerFunction?: any,
   middlewareList?: any,
-): PrismyRoute<any[]> {
+): PrismyRoute<PrismyResult, any[]> {
   const handler =
     selectorsOrPrismyHandler instanceof PrismyHandler
       ? selectorsOrPrismyHandler

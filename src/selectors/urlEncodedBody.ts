@@ -49,8 +49,8 @@ export function UrlEncodedBodySelector(
     const textBody = await readTextBody(req, options)
     try {
       return parse(textBody)
+      /* v8 ignore next 3*/
     } catch (error) {
-      /* istanbul ignore next */
       throw createError(400, 'Invalid url-encoded body', error)
     }
   })

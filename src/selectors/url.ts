@@ -9,7 +9,7 @@ const urlSelector = createPrismySelector((): URL => {
   let url: URL | undefined = urlMap.get(context)
   if (url == null) {
     const { req } = context
-    /* istanbul ignore next */
+    /* v8 ignore next */
     url = new URL(req.url == null ? '' : req.url, `http://${req.headers.host}`)
     urlMap.set(context, url)
   }

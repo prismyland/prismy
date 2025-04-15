@@ -87,11 +87,7 @@ export class PrismyResult<B = unknown> {
    * @param options Cookie options
    * @returns New {@link PrismyResult}
    */
-  setCookie(
-    key: string,
-    value: string,
-    options?: cookie.CookieSerializeOptions,
-  ) {
+  setCookie(key: string, value: string, options?: cookie.SerializeOptions) {
     const existingSetCookieHeaders = this.headers['set-cookie']
     const newSetCookieHeader = cookie.serialize(key, value, options)
 
@@ -274,6 +270,7 @@ function jsonStringifyRecursive(value: any) {
     value,
     (_key, value) => {
       if (typeof value === 'object' && value !== null) {
+        /* v8 ignore next 3 */
         if (cache.has(value)) {
           return '(Recursive)'
         }
