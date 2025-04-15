@@ -1,6 +1,6 @@
 {
   "name": "prismy",
-  "version": "4.0.0-16",
+  "version": "4.0.0-17",
   "description": ":rainbow: Simple and fast type safe server library.",
   "keywords": [
     "http",
@@ -36,7 +36,7 @@
     }
   },
   "scripts": {
-    "build": "rimraf dist && src/index.ts --format cjs,esm --dts --clean --sourcemap",
+    "build": "rimraf dist && tsup src/index.ts --format cjs,esm --dts --clean --sourcemap",
     "lint": "prettier --check src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",
     "format": "prettier --write src/**/*.ts specs/**/*.ts examples/*/src/**/*.ts",
     "test": "npm run lint && npm run test-type && npm run test-coverage",
