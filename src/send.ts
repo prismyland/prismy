@@ -1,7 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http'
-import { readable } from 'is-stream'
 import { Stream } from 'stream'
-import { ResponseObject } from './types'
+import { PrismyResult } from './result'
 
 /**
  * Function to send data to the client
@@ -12,20 +11,18 @@ import { ResponseObject } from './types'
  *
  * @public
  */
-export const send = (
+export const sendPrismyResult = async (
   request: IncomingMessage,
   response: ServerResponse,
-  resObject:
-    | ResponseObject<any>
-    | ((request: IncomingMessage, response: ServerResponse) => void)
+  sendable: PrismyResult<any>,
 ) => {
-  if (typeof resObject === 'function') {
-    resObject(request, response)
+  if (typeof sendable.body === 'function') {
+    sendable.body(request, response)
     return
   }
-  const { statusCode = 200, body, headers = [] } = resObject
+  const { statusCode, body, headers } = sendable
   Object.entries(headers).forEach(([key, value]) => {
-    /* istanbul ignore if */
+    /* v8 ignore next 3 */
     if (value == null) {
       return
     }
@@ -48,7 +45,8 @@ export const send = (
     return
   }
 
-  if (body instanceof Stream || readable(body)) {
+  const isReadableStream = await resolveIsReadableStream()
+  if (body instanceof Stream || isReadableStream(body)) {
     if (!response.getHeader('Content-Type')) {
       response.setHeader('Content-Type', 'application/octet-stream')
     }
@@ -70,4 +68,12 @@ export const send = (
 
   response.setHeader('Content-Length', Buffer.byteLength(stringifiedBody))
   response.end(stringifiedBody)
+}
+
+let isReadableStream: (stream: any) => boolean
+async function resolveIsReadableStream() {
+  if (isReadableStream == null) {
+    isReadableStream = (await import('is-stream')).isReadableStream
+  }
+  return isReadableStream
 }

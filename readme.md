@@ -36,7 +36,7 @@
 
 ## Features
 
-- Very small (No Expressjs, the only deps are micro and tslib)
+- Very small (using node.js's http module directly)
 - Takes advantage of the asynchronous nature of Javascript with full support for async / await
 - Simple and easy argument injection for handlers (Inspired by ReselectJS)
   - Completely **TYPE-SAFE**
@@ -80,12 +80,12 @@ Make sure typescript strict setting is on if using typescript.
 `handler.ts`
 
 ```ts
-import { prismy, res, Selector } from 'prismy'
+import { prismy, Result, Selector } from 'prismy'
 
 const worldSelector: Selector<string> = () => 'world'!
 
 export default prismy([worldSelector], async world => {
-  return res(`Hello ${world}`) // Hello world!
+  return Result(`Hello ${world}`) // Hello world!
 })
 ```
 
@@ -163,7 +163,7 @@ Selectors are simple functions used to generate the arguments for the handler. A
 single `context` argument or type `Context`.
 
 ```ts
-import { prismy, res, Selector } from 'prismy'
+import { prismy, Result, Selector } from 'prismy'
 
 // This selector picks the current url off the request object
 const urlSelector: Selector<string> = context => {
@@ -178,7 +178,7 @@ export default prismy(
   // making it type safe without having to worry about verbose typings.
   url => {
     await doSomethingWithUrl(url)
-    return res('Done!')
+    return Result('Done!')
   }
 )
 ```
@@ -187,7 +187,7 @@ Async selectors are also fully supported out of the box!
 It will resolve all selectors right before executing handler.
 
 ```ts
-import { prismy, res, Selector } from 'prismy'
+import { prismy, Result, Selector } from 'prismy'
 
 const asyncSelector: Selector<string> = async context => {
   const value = await readValueFromFileSystem()
@@ -196,7 +196,7 @@ const asyncSelector: Selector<string> = async context => {
 
 export default prismy([asyncSelector], async value => {
   await doSomething(value)
-  return res('Done!')
+  return Result('Done!')
 })
 ```
 
@@ -223,7 +223,7 @@ const jsonBodySelector = createJsonBodySelector({
 
 export default prismy([jsonBodySelector], async jsonBody => {
   await doSomething(jsonBody)
-  return res('Done!')
+  return Result('Done!')
 })
 ```
 
@@ -248,7 +248,7 @@ const requestBodySelector: Selector<RequestBody> = context => {
 }
 
 export default prismy([requestBodySelector], requestBody => {
-  return res(`You're query was ${requestBody.json}!`)
+  return Result(`You're query was ${requestBody.json}!`)
 })
 ```
 
@@ -267,7 +267,7 @@ This pattern, much like Redux middleware, allows you to:
 - Do something other than executing handler (e.g Routing, Error handling)
 
 ```ts
-import { middleware, prismy, res, Selector, updateHeaders } from 'prismy'
+import { middleware, prismy, Result, Selector, updateHeaders } from 'prismy'
 
 const withCors = middleware([], next => async () => {
   const resObject = await next()
@@ -283,7 +283,7 @@ const withErrorHandler = middleware([urlSelector], next => async url => {
   try {
     return await next()
   } catch (error) {
-    return res(`Error from ${url}: ${error.message}`)
+    return Result(`Error from ${url}: ${error.message}`)
   }
 })
 
@@ -316,7 +316,7 @@ selector and middleware to give to prismy.
 Official strategies include `prismy-session-strategy-jwt-cookie` and `prismy-session-strategy-signed-cookie`. Both available on npm.
 
 ```ts
-import { prismy, res } from 'prismy'
+import { prismy, Result } from 'prismy'
 import createSession from 'prismy-session'
 import JWTSessionStrategy from 'prismy-session-strategy'
 
@@ -331,7 +331,7 @@ default export prismy(
   async session => {
     const { data } = session
     await doSomething(data)
-    return res('Done')
+    return Result('Done')
   },
   [sessionMiddleware]
 )
@@ -343,7 +343,7 @@ default export prismy(
 Prismy also offers a selector for cookies in the `prismy-cookie` package.
 
 ```ts
-import { prismy, res } from 'prismy'
+import { prismy, Result } from 'prismy'
 import { appendCookie, createCookiesSelector } from 'prismy-cookie'
 
 const cookiesSelector = createCookiesSelector()
@@ -353,7 +353,7 @@ export default prismy([cookiesSelector], async cookies => {
    * a string key, value tuple returning a new response object with the
    * cookie appended.
    */
-  return appendCookie(res('Cookie added!'), ['key', 'value'])
+  return appendCookie(Result('Cookie added!'), ['key', 'value'])
 })
 ```
 
@@ -362,7 +362,7 @@ export default prismy([cookiesSelector], async cookies => {
 From v3, `prismy` provides `router` method to create a routing handler.
 
 ```ts
-import { prismy, res } from 'prismy'
+import { prismy, Result } from 'prismy'
 import { router } from 'prismy-method-router'
 import http from 'http'
 
@@ -371,7 +371,7 @@ const myRouter = router([
     ['/posts', 'get'], prismy([], () => {
       const posts = fetchPostList()
 
-      return res({ posts })
+      return Result({ posts })
     })
   ],
   [
@@ -387,7 +387,7 @@ const myRouter = router([
     '/posts/:postId', prismy([createRouteParamSelector('postId')], (postId) => {
       const post = fetchOnePost(postId)
 
-      return res({ post })
+      return Result({ post })
     })
   ]
 ])
@@ -410,7 +410,7 @@ import {
   prismy,
   querySelector,
   redirect,
-  res,
+  Result,
   Selector
 } from 'prismy'
 import { methodRouter } from 'prismy-method-router'
@@ -462,15 +462,15 @@ export default methodRouter(
   {
     get: prismy([], async () => {
       const todos = await getTodos()
-      return res({ todos })
+      return Result({ todos })
     }),
     post: prismy([contentSelector], async content => {
       const todo = await createTodo(content)
-      return res({ todo })
+      return Result({ todo })
     }),
     delete: prismy([todoIdSelector], async id => {
       await deleteTodo(id)
-      return res('Deleted')
+      return Result('Deleted')
     })
   },
   [authMiddleware, sessionMiddleware]
@@ -548,7 +548,7 @@ prismy(selectors, handler) // will give type error
 prismy([selector1, selector2], handler) // Ok!
 ```
 
-- This weird type error may also occur if the handler does not return a `ResponseObject`. Use `res(..)` to generate a `ResponseObject` easily.
+- This weird type error may also occur if the handler does not return a `ResponseObject`. Use `Result(..)` to generate a `ResponseObject` easily.
 
 ```ts
 // Will show crazy error.
@@ -558,7 +558,7 @@ prismy([selector1, selector2], (one, two) => {
 
 // Ok!
 prismy([selector1, selector2], (one, two) => {
-  return res('Is a ResponseObject')
+  return Result('Is a ResponseObject')
 })
 ```
 

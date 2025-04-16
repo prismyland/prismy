@@ -1,7 +1,8 @@
 import { ParsedUrlQuery, parse } from 'querystring'
+import { getPrismyContext } from '../prismy'
 import { readTextBody } from '../bodyReaders'
 import { createError } from '../error'
-import { AsyncSelector } from '../types'
+import { createPrismySelector, PrismySelector } from '../selector'
 
 /**
  * Options for {@link createUrlEncodedBodySelector}
@@ -40,16 +41,17 @@ export interface UrlEncodedBodySelectorOptions {
  *
  * @public
  */
-export function createUrlEncodedBodySelector(
-  options?: UrlEncodedBodySelectorOptions
-): AsyncSelector<ParsedUrlQuery> {
-  return async ({ req }) => {
+export function UrlEncodedBodySelector(
+  options?: UrlEncodedBodySelectorOptions,
+): PrismySelector<ParsedUrlQuery> {
+  return createPrismySelector(async () => {
+    const { req } = getPrismyContext()
     const textBody = await readTextBody(req, options)
     try {
       return parse(textBody)
+      /* v8 ignore next 3*/
     } catch (error) {
-      /* istanbul ignore next */
       throw createError(400, 'Invalid url-encoded body', error)
     }
-  }
+  })
 }

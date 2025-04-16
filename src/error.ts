@@ -1,4 +1,4 @@
-import { res } from './utils'
+import { PrismyResult, Result } from './result'
 
 /**
  * Creates a response object from an error
@@ -11,16 +11,20 @@ import { res } from './utils'
  *
  * @public
  */
-export function createErrorResObject(error: any) {
+export function createErrorResultFromError(error: any) {
+  if (error instanceof PrismyResult) {
+    return error
+  }
+
   const statusCode = error.statusCode || error.status || 500
-  /* istanbul ignore next */
+  /* v8 ignore next 2 */
   const message =
     process.env.NODE_ENV === 'production' ? error.message : error.stack
 
-  return res(message, statusCode)
+  return Result(message, statusCode)
 }
 
-class PrismyError extends Error {
+export class PrismyError extends Error {
   statusCode?: number
   originalError?: unknown
 }
@@ -28,7 +32,7 @@ class PrismyError extends Error {
 export function createError(
   statusCode: number,
   message: string,
-  originalError?: any
+  originalError?: any,
 ): PrismyError {
   const error = new PrismyError(message)
 
